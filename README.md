@@ -1,2 +1,6 @@
 # MAR-Projectmanagment-Social
-A project where im working alone and trying to create a project managment site with some social-networking aspects.
+
+### MongoDB, ASP.NET Core & React.js
+<hr/>
+
+This project is using the Clean Architecture, each section have their own Readme.md.
