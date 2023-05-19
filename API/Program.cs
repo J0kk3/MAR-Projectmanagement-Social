@@ -1,10 +1,9 @@
-using MediatR;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 //Project Namespaces
+using API.Extensions;
 using Persistence;
-using Application.Projects;
 
 BsonSerializer.RegisterSerializer(new GuidSerializer(BsonType.Binary));
 
@@ -15,19 +14,7 @@ var mongodbCluster = builder.Configuration["mongodbCluster"];
 
 // Add services to the container.
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.AddSingleton<DataContext>();
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("CorsPolicy", policy =>
-    {
-        policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000");
-    });
-});
-
-builder.Services.AddMediatR(typeof(List.Handler));
+builder.Services.AddApplicationServices(builder.Configuration);
 
 var app = builder.Build();
 
