@@ -4,6 +4,7 @@
 <hr/>
 
 This project is using the Clean Architecture, and is split up into several "layers". Each layer have their own Readme.md.
+Its also implementing the CQRS pattern, and MediatR is used to implement this pattern.
 
 ## Created using the following in powershell:</br>
 

@@ -1,8 +1,10 @@
+using MediatR;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 //Project Namespaces
 using Persistence;
+using Application.Projects;
 
 BsonSerializer.RegisterSerializer(new GuidSerializer(BsonType.Binary));
 
@@ -24,6 +26,8 @@ builder.Services.AddCors(options =>
         policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000");
     });
 });
+
+builder.Services.AddMediatR(typeof(List.Handler));
 
 var app = builder.Build();
 
