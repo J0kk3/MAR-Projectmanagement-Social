@@ -1,2 +1,2 @@
-# MAR-Projectmanagment-Social
-A project where im working alone and trying to create a project managment site with some social-networking aspects.
+# Persistence
+Handles database and caching-related operations. This layer implements the interfaces and repositories defined in the Application layer using specific frameworks or libraries.

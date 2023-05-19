@@ -1,2 +1,2 @@
-# MAR-Projectmanagment-Social
-A project where im working alone and trying to create a project managment site with some social-networking aspects.
+# API or Presentation Layer
+This is the presentation layer, where the ASP.NET Core controllers reside. These controllers will interact with the Application layer to handle incoming HTTP requests, execute the appropriate business logic, and return responses.

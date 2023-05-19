@@ -1,0 +1,80 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:react/recommended"
+    ],
+    "overrides": [
+    ],
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "module"
+    },
+    "plugins": [
+        "react"
+    ],
+    "rules": {
+        // suppress errors for missing 'import React' in files
+        "react/react-in-jsx-scope": "off",
+        "linebreak-style": [
+            2,
+            "unix"
+        ],
+        "quotes": [
+            2,
+            "double",
+            { "allowTemplateLiterals": true}
+        ],
+        "jsx-quotes": [
+            2,
+            "prefer-double"
+        ],
+        "semi": [
+            2,
+            "always"
+        ],
+        "no-trailing-spaces": [
+            2,
+            { "ignoreComments": true }
+        ],
+        // prefer "x += 4" over "x = x + 4"
+        "operator-assignment": [
+            1,
+            "always"
+        ],
+        // prohibits things like "while (true)"
+        "no-constant-condition": 1,
+        // would warn on uncommented empty "catch (ex) {}" blocks
+        "no-empty": 1,
+        "no-extra-semi": 1,
+        "no-unreachable": 2,
+        "consistent-return": 1,
+        "no-empty-pattern": 1,
+        "no-magic-numbers": [
+            1,
+            {
+                "ignore": [0, 1, 2, -1, -2],
+                "ignoreArrayIndexes": true,
+                "enforceConst": true,
+                "detectObjects": false
+            }
+        ],
+        "array-bracket-spacing": [
+            1,
+            "always",
+            {
+                "singleValue": true,
+                "objectsInArrays": true,
+                "arraysInArrays": true
+            }
+        ],
+        "brace-style": [
+            1,
+            "allman",
+            { "allowSingleLine": true }
+        ]
+    }
+}
