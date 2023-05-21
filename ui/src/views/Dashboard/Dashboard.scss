@@ -1,0 +1,11 @@
+.dashboard-container {
+    display: grid;
+    /* 2-column layout */
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+}
+
+.dashboard-section {
+    border: 1px solid #ccc;
+    padding: 1.25rem;
+}

@@ -5,6 +5,7 @@
     },
     "extends": [
         "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
         "plugin:react/recommended"
     ],
     "overrides": [
@@ -14,15 +15,13 @@
         "sourceType": "module"
     },
     "plugins": [
-        "react"
+        "react",
+        "@typescript-eslint"
     ],
     "rules": {
         // suppress errors for missing 'import React' in files
         "react/react-in-jsx-scope": "off",
-        "linebreak-style": [
-            2,
-            "unix"
-        ],
+        "@typescript-eslint/no-unused-vars": "off",
         "quotes": [
             2,
             "double",

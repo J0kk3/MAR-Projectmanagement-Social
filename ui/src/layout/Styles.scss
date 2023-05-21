@@ -1,0 +1,6 @@
+@use "../GlobalVariables.scss" as vars;
+
+body {
+    margin: 0;
+    background-color: vars.$body-background;
+}
