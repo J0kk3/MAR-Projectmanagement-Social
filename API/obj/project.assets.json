@@ -1702,11 +1702,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Repos\\MAR-Projectmanagment-Social\\API\\API.csproj",
+      "projectUniqueName": "D:\\Repos\\MAR-Projectmanagement-Social\\API\\API.csproj",
       "projectName": "API",
-      "projectPath": "D:\\Repos\\MAR-Projectmanagment-Social\\API\\API.csproj",
+      "projectPath": "D:\\Repos\\MAR-Projectmanagement-Social\\API\\API.csproj",
       "packagesPath": "C:\\Users\\joaki\\.nuget\\packages\\",
-      "outputPath": "D:\\Repos\\MAR-Projectmanagment-Social\\API\\obj\\",
+      "outputPath": "D:\\Repos\\MAR-Projectmanagement-Social\\API\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -1729,8 +1729,8 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "projectReferences": {
-            "D:\\Repos\\MAR-Projectmanagment-Social\\Application\\Application.csproj": {
-              "projectPath": "D:\\Repos\\MAR-Projectmanagment-Social\\Application\\Application.csproj"
+            "D:\\Repos\\MAR-Projectmanagement-Social\\Application\\Application.csproj": {
+              "projectPath": "D:\\Repos\\MAR-Projectmanagement-Social\\Application\\Application.csproj"
             }
           }
         }

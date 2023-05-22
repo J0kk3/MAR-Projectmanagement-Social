@@ -12,7 +12,7 @@ namespace Application.Projects
 
         public class Handler : IRequestHandler<Query, List<Project>>
         {
-            private readonly DataContext _ctx;
+            readonly DataContext _ctx;
 
             public Handler(DataContext ctx)
             {

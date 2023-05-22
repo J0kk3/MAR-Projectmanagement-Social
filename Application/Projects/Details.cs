@@ -15,7 +15,7 @@ namespace Application.Projects
 
         public class Handler : IRequestHandler<Query, Project>
         {
-            private readonly DataContext _ctx;
+            readonly DataContext _ctx;
             public Handler(DataContext ctx)
             {
                 _ctx = ctx;

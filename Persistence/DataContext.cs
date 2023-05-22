@@ -7,8 +7,8 @@ namespace Persistence
 {
     public class DataContext
     {
-        private readonly IMongoDatabase _db;
-        private readonly IConfiguration Configuration;
+        readonly IMongoDatabase _db;
+        readonly IConfiguration Configuration;
 
         public DataContext(IConfiguration config)
         {
@@ -18,11 +18,12 @@ namespace Persistence
             var connectionString = $"mongodb+srv://{mongodbUser}:{mongodbPw}@{mongodbCluster}.aa0muro.mongodb.net/?retryWrites=true&w=majority";
 
             var client = new MongoClient(connectionString);
-            _db = client.GetDatabase("YourDatabaseName");
+            _db = client.GetDatabase("ProjectManagement");
         }
 
         //MongoDB Collections
         public IMongoCollection<Project> Projects => _db.GetCollection<Project>("Projects");
-        public IMongoCollection<KanbanBoard> KanbanBoards => _db.GetCollection<KanbanBoard>("KanbanBoards");
+        public IMongoCollection<Notification> Notifications => _db.GetCollection<Notification>("Notifications");
+        public IMongoCollection<ProjectTask> ProjectTasks => _db.GetCollection<ProjectTask>("ProjectTasks");
     }
 }

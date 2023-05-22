@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "rSCXFFmTGX2V83g6JJyB0EdlPcP4/XL2nqjFYKjft7ng0MkQhpYOhqRuD0K1FqOJKmJ9PT1+qOvyv99ArbA85g==",
+  "dgSpecHash": "34n7rIhg0/rcvHk5jbMUHvLWQPukTm7qommUYHPuk0cwi1+vbJvQ2tBgWAE16OOpn4lxCIOlwNjKuGDXnMpZ9w==",
   "success": true,
-  "projectFilePath": "D:\\Repos\\MAR-Projectmanagment-Social\\Persistence\\Persistence.csproj",
+  "projectFilePath": "D:\\Repos\\MAR-Projectmanagement-Social\\Persistence\\Persistence.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\joaki\\.nuget\\packages\\awssdk.core\\3.7.100.14\\awssdk.core.3.7.100.14.nupkg.sha512",
     "C:\\Users\\joaki\\.nuget\\packages\\awssdk.securitytoken\\3.7.100.14\\awssdk.securitytoken.3.7.100.14.nupkg.sha512",

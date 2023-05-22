@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "541KHwSb50+mpBXK1HfGqmwMb12Fyh7h5PumhIVMSghLyhZ1D6KKzXjO8v/AarzXRH6AL6Ts52Lar4Hm3bmBWw==",
+  "dgSpecHash": "83yNV/Ra/2taDk17rCLzGYe7zYON540QYpjfUHiuiuIyS6WV31XTOUQ+ecd7tD/RCpR1DjpJG2B6wuGVf0J3HQ==",
   "success": true,
-  "projectFilePath": "D:\\Repos\\MAR-Projectmanagment-Social\\API\\API.csproj",
+  "projectFilePath": "D:\\Repos\\MAR-Projectmanagement-Social\\API\\API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\joaki\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
     "C:\\Users\\joaki\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.1\\automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",

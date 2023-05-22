@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Repos\\MAR-Projectmanagment-Social\\Domain\\Domain.csproj": {}
+    "D:\\Repos\\MAR-Projectmanagement-Social\\Domain\\Domain.csproj": {}
   },
   "projects": {
-    "D:\\Repos\\MAR-Projectmanagment-Social\\Domain\\Domain.csproj": {
+    "D:\\Repos\\MAR-Projectmanagement-Social\\Domain\\Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Repos\\MAR-Projectmanagment-Social\\Domain\\Domain.csproj",
+        "projectUniqueName": "D:\\Repos\\MAR-Projectmanagement-Social\\Domain\\Domain.csproj",
         "projectName": "Domain",
-        "projectPath": "D:\\Repos\\MAR-Projectmanagment-Social\\Domain\\Domain.csproj",
+        "projectPath": "D:\\Repos\\MAR-Projectmanagement-Social\\Domain\\Domain.csproj",
         "packagesPath": "C:\\Users\\joaki\\.nuget\\packages\\",
-        "outputPath": "D:\\Repos\\MAR-Projectmanagment-Social\\Domain\\obj\\",
+        "outputPath": "D:\\Repos\\MAR-Projectmanagement-Social\\Domain\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
