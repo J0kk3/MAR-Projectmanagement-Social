@@ -1,4 +1,5 @@
 import { useState, ChangeEvent, FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
 import { v4 as uuid } from "uuid";
 //Stores
 import { useStore } from "../../../app/stores/store";
@@ -9,6 +10,8 @@ const CreateProjectForm = () =>
 {
     const { projectStore } = useStore();
     const { selectedProject, closeForm, createProject, updateProject } = projectStore;
+
+    const navigate = useNavigate();
 
     const projectId = uuid();
     const kanbanBoardId = uuid();
@@ -37,8 +40,8 @@ const CreateProjectForm = () =>
                 tasksDone: [],
             }
         } );
-        // Length of "YYYY-MM-DD" is 10
-        const ISO_DATE_LENGTH = 10;
+    // Length of "YYYY-MM-DD" is 10
+    const ISO_DATE_LENGTH = 10;
 
     const handleInputChange = ( event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement> ) =>
     {
@@ -46,7 +49,7 @@ const CreateProjectForm = () =>
         {
             setProject( { ...project, [ event.target.name ]: Number( event.target.value ) as Visibility } );
         }
-        else if ( event.target.name ==="dueDate")
+        else if ( event.target.name === "dueDate" )
         {
             setProject( { ...project, [ event.target.name ]: new Date( event.target.value ) } );
         }
@@ -62,7 +65,7 @@ const CreateProjectForm = () =>
         event.preventDefault();
         createProject( project );
         console.log( project );
-
+        navigate( "/projects" );
     };
 
     return (
@@ -90,7 +93,7 @@ const CreateProjectForm = () =>
                 </label>
                 <label>
                     Due date:
-                    <input name="dueDate" type="date" value={ project.dueDate.toISOString().slice(0, ISO_DATE_LENGTH) } onChange={ handleInputChange } />
+                    <input name="dueDate" type="date" value={ project.dueDate.toISOString().slice( 0, ISO_DATE_LENGTH ) } onChange={ handleInputChange } />
                 </label>
                 <label>
                     Category:

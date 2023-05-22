@@ -10,6 +10,7 @@ export default class ProjectStore
     projectRegistry = new Map<string, Project>();
     selectedProject: Project | undefined = undefined;
     editMode = false;
+    editProjectId: string | null = null;
     loading = false;
     loadingInitial = true;
 
@@ -61,11 +62,13 @@ export default class ProjectStore
     {
         id ? this.selectProject( id ) : this.cancelSelectedProject();
         this.editMode = true;
+        this.editProjectId = id || null;
     };
 
     closeForm = () =>
     {
         this.editMode = false;
+        this.editProjectId = null;
     };
 
     createProject = async ( project: Project ) =>

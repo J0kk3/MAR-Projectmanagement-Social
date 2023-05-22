@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { observer } from "mobx-react-lite";
 //Types & Models
 import { Project } from "../../app/models/project";
 //Components
 import ProjectList from "../../Components/projects/ProjectList/ProjectList";
 import { useStore } from "../../app/stores/store";
+//Styles
+import "./ProjectOverview.scss";
 
 const ProjectOverview = () =>
 {
@@ -16,10 +19,10 @@ const ProjectOverview = () =>
     //TODO: progress bar or chart (visual representation of how much of the project has been completed)
     //TODO: Discussion or comments section?
 
-    const [ initialProjects, setInitialProjects ] = useState<Project[]>( [] );
-
     const { projectStore } = useStore();
-    const { deleteProject } = projectStore;
+    const { deleteProject, selectProject, selectedProject } = projectStore;
+
+    const ISO_DATE_LENGTH = 10; //YYYY-MM-DD is 10 characters long
 
     useEffect( () =>
     {
@@ -28,21 +31,14 @@ const ProjectOverview = () =>
 
     const navigate = useNavigate();
 
-    // Fetch initial projects data
-    // useEffect( () =>
-    // {
-    //     axios.get<Project[]>( "http://localhost:5000/api/projects" )
-    //         .then( res =>
-    //         {
-    //             setInitialProjects( res.data );
-    //         } );
-    // }, [] );
-
-    // Placeholder function for creating a new project
     const createNewProject = () =>
     {
-        // TODO: Implement create new project functionality
         navigate( "/create-project" );
+    };
+
+    const onSelectProject = ( project: Project ) =>
+    {
+        selectProject( project.id );
     };
 
     return (
@@ -50,13 +46,29 @@ const ProjectOverview = () =>
             <h1>Project Overview</h1>
 
             <div className="action-buttons">
-                {/* TODO: Implement action button functionality */ }
                 <button onClick={ createNewProject }>Create New Project</button>
             </div>
 
             <div className="project-list">
-                {/* TODO: Fetch and list all projects */ }
                 <ProjectList />
+            </div>
+
+            <div className="project-details">
+                {/* Display details of selected project */ }
+                { selectedProject && (
+                    <div>
+                        <h2>{ selectedProject.title }</h2>
+                        <p>{ selectedProject.description }</p>
+                        <p>{ selectedProject.priority }</p>
+                        <p>{ selectedProject.owner }</p>
+                        <p>{ selectedProject.collaborators }</p>
+                        <p>{ selectedProject.dueDate.toISOString().slice( 0, ISO_DATE_LENGTH ) }</p>
+                        <p>{ selectedProject.category }</p>
+                        <p>{ selectedProject.tags }</p>
+                        <p>{ selectedProject.visibility }</p>
+                        <p>{ selectedProject.status }</p>
+                    </div>
+                ) }
             </div>
 
             <div className="upcoming-milestones">
@@ -82,4 +94,4 @@ const ProjectOverview = () =>
     );
 };
 
-export default ProjectOverview;
+export default observer( ProjectOverview );
