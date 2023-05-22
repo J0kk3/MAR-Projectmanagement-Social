@@ -9,13 +9,13 @@ import { useStore } from "../../../app/stores/store";
 const ProjectList = () =>
 {
     const { projectStore } = useStore();
-    const { projects, deleteProject } = projectStore;
+    const { projectsByDate, deleteProject } = projectStore;
 
     return (
         <div>
             <h1>Projects</h1>
             <>
-                { projects.map( project => (
+                { projectsByDate.map( project => (
                     <div key={ project.id }>
                         <ul>
                             <li>{ "Title: " + project.title }</li>
