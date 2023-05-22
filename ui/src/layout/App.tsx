@@ -8,13 +8,6 @@ import { useStore } from "../app/stores/store";
 
 const App = () =>
 {
-  const { projectStore } = useStore();
-
-  useEffect( () =>
-  {
-    projectStore.loadProjects();
-  }, [ projectStore ] );
-
   return (
     <Layout>
       <Outlet />

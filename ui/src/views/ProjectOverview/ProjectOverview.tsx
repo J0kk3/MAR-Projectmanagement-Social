@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 //Types & Models
 import { Project } from "../../app/models/project";
@@ -17,8 +17,14 @@ const ProjectOverview = () =>
     //TODO: Discussion or comments section?
 
     const [ initialProjects, setInitialProjects ] = useState<Project[]>( [] );
+
     const { projectStore } = useStore();
     const { deleteProject } = projectStore;
+
+    useEffect( () =>
+    {
+        projectStore.loadProjects();
+    }, [ projectStore ] );
 
     const navigate = useNavigate();
 
