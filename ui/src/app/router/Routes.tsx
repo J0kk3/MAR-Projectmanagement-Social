@@ -7,7 +7,7 @@ import Dashboard from "../../views/Dashboard/Dashboard";
 import ProjectOverview from "../../views/ProjectOverview/ProjectOverview";
 import Search from "../../views/Search/Search";
 import Profile from "../../views/Profile/Profile";
-import CreateProjectForm from "../../Components/ProjectForm/CreateProjectForm";
+import CreateProjectForm from "../../Components/projects/ProjectForm/CreateProjectForm";
 
 export const routes: RouteObject[] =
     [

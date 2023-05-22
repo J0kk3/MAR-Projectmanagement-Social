@@ -17,7 +17,7 @@ const requests =
     del: <T> ( url: string ) => axios.delete<T>( url ).then( responseBody )
 };
 
-const Projects =
+const projects =
 {
     list: () => requests.get<Project[]>( "/projects" ),
     details: ( id: string ) => requests.get<Project>( `/projects/${ id }` ),
@@ -26,9 +26,10 @@ const Projects =
     delete: ( id: string ) => requests.del<void>( `/projects/${ id }` )
 };
 
+
 const agent =
 {
-    Projects
+    projects
 };
 
 export default agent;

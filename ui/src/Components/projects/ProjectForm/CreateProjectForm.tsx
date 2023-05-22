@@ -1,27 +1,35 @@
 import { useState, ChangeEvent, FormEvent } from "react";
 import { v4 as uuid } from "uuid";
-//API Agent
-import agent from "../../app/api/agent";
-import { Project, Visibility } from "../../app/models/project";
+//Stores
+import { useStore } from "../../../app/stores/store";
+//Types & Models
+import { Project, ProjectStatus, Visibility } from "../../../app/models/project";
 
 const CreateProjectForm = () =>
 {
+    const { projectStore } = useStore();
+    const { selectedProject, closeForm, createProject, updateProject } = projectStore;
+
+    const projectId = uuid();
+    const kanbanBoardId = uuid();
     const [ project, setProject ] = useState<Project>(
         {
-            id: uuid(),
+            id: projectId,
             title: "",
             description: "",
             priority: 0,
             owner: "",
             collaborators: [],
-            dueDate: "",
+            dueDate: new Date(),
             category: "",
             tags: [],
             visibility: Visibility.Public,
+            status: ProjectStatus.Active,
+            kanbanBoardId: kanbanBoardId,
             kanbanBoard:
             {
-                id: uuid(),
-                projectId: uuid(),
+                id: kanbanBoardId,
+                projectId: projectId,
                 title: "",
                 tasksToDo: [],
                 tasksInProgress: [],
@@ -29,12 +37,18 @@ const CreateProjectForm = () =>
                 tasksDone: [],
             }
         } );
+        // Length of "YYYY-MM-DD" is 10
+        const ISO_DATE_LENGTH = 10;
 
     const handleInputChange = ( event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement> ) =>
     {
         if ( event.target.name === "visibility" )
         {
-            setProject( { ...project, [ event.target.name ]: event.target.value as Visibility } );
+            setProject( { ...project, [ event.target.name ]: Number( event.target.value ) as Visibility } );
+        }
+        else if ( event.target.name ==="dueDate")
+        {
+            setProject( { ...project, [ event.target.name ]: new Date( event.target.value ) } );
         }
         else
         {
@@ -46,9 +60,9 @@ const CreateProjectForm = () =>
     const handleSubmit = ( event: FormEvent<HTMLFormElement> ) =>
     {
         event.preventDefault();
-        const newProject = { ...project, id: uuid() };
-        agent.Projects.create( newProject );
-        console.log( newProject );
+        createProject( project );
+        console.log( project );
+
     };
 
     return (
@@ -76,7 +90,7 @@ const CreateProjectForm = () =>
                 </label>
                 <label>
                     Due date:
-                    <input name="dueDate" type="date" value={ project.dueDate } onChange={ handleInputChange } />
+                    <input name="dueDate" type="date" value={ project.dueDate.toISOString().slice(0, ISO_DATE_LENGTH) } onChange={ handleInputChange } />
                 </label>
                 <label>
                     Category:
@@ -89,8 +103,8 @@ const CreateProjectForm = () =>
                 <label>
                     Visibility:
                     <select name="visibility" value={ project.visibility } onChange={ handleInputChange }>
-                        <option value={ Visibility.Public }>Public</option>
-                        <option value={ Visibility.Private }>Private</option>
+                        <option value={ Visibility.Public }>{ Visibility[ Visibility.Public ] }</option>
+                        <option value={ Visibility.Private }>{ Visibility[ Visibility.Private ] }</option>
                     </select>
                 </label>
                 <button type="submit">Create Project</button>

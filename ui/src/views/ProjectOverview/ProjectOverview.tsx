@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 //Types & Models
 import { Project } from "../../app/models/project";
 //Components
-import ProjectList from "../../Components/ProjectList/ProjectList";
+import ProjectList from "../../Components/projects/ProjectList/ProjectList";
+import { useStore } from "../../app/stores/store";
 
 const ProjectOverview = () =>
 {
@@ -17,6 +17,9 @@ const ProjectOverview = () =>
     //TODO: Discussion or comments section?
 
     const [ initialProjects, setInitialProjects ] = useState<Project[]>( [] );
+    const { projectStore } = useStore();
+    const { deleteProject } = projectStore;
+
     const navigate = useNavigate();
 
     // Fetch initial projects data
@@ -47,7 +50,7 @@ const ProjectOverview = () =>
 
             <div className="project-list">
                 {/* TODO: Fetch and list all projects */ }
-                <ProjectList initialProjects={ initialProjects } />
+                <ProjectList />
             </div>
 
             <div className="upcoming-milestones">

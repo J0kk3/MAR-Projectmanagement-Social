@@ -1,8 +1,14 @@
+import { observer } from "mobx-react-lite";
+//Stores
+import { useStore } from "../../app/stores/store";
 //Styles
 import "./Dashboard.scss";
 
 const ProjectDashboard = () =>
 {
+    const { projectStore } = useStore();
+    const { selectedProject, editMode } = projectStore;
+
     return (
         //TODO: Implement Notifications/Updates
         //TODO: Implement News Feed
@@ -12,6 +18,7 @@ const ProjectDashboard = () =>
         //TODO: Implement Peformance Metrics (A visual representation of the user's/team's performance)
         //TODO: Implement Team Overview (If the user is a part of a team, you could show a brief overview of the team members, their roles, and perhaps their current task or project.)
         //TODO: OPTIONAL: Implement Quick Links/Shortcuts to frequently accessed features or pages
+
         <div className="dashboard-container">
             <div className="dashboard-section">
                 <h2>Notifications/Updates</h2>
@@ -49,4 +56,4 @@ const ProjectDashboard = () =>
     );
 };
 
-export default ProjectDashboard;
+export default observer( ProjectDashboard );

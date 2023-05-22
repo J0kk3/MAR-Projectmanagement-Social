@@ -1,7 +1,13 @@
 export enum Visibility
 {
-    Public = "Public",
-    Private = "Private",
+    Public = 0,
+    Private = 1,
+}
+
+export enum ProjectStatus
+{
+    Active,
+    Paused,
 }
 
 export interface Project
@@ -12,10 +18,12 @@ export interface Project
     priority: number;
     owner: string;
     collaborators: string[];
-    dueDate: string;
+    dueDate: Date;
     category: string;
     tags: string[];
     visibility: Visibility;
+    status: ProjectStatus;
+    kanbanBoardId: string;
     kanbanBoard: KanbanBoard;
 }
 
