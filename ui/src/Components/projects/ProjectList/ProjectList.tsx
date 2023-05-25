@@ -4,7 +4,11 @@ import { useStore } from "../../../app/stores/store";
 //Components
 import ProjectListItem from "../ProjectListItem/ProjectListItem";
 
-const ProjectList = () =>
+interface Props
+{
+    onSelectProject?: ( id: string ) => void;
+}
+const ProjectList = ( { onSelectProject }: Props ) =>
 {
     const { projectStore } = useStore();
     const { projectsByDate } = projectStore;
@@ -14,7 +18,7 @@ const ProjectList = () =>
             <h1>Projects</h1>
             <>
                 { projectsByDate.map( project => (
-                    <ProjectListItem key={ project.id } project={ project } />
+                    <ProjectListItem key={ project.id } project={ project } onSelectProject={ onSelectProject } />
                 ) ) }
             </>
         </div>

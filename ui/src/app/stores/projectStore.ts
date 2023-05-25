@@ -1,13 +1,15 @@
 import { v4 as uuid } from "uuid";
 import { makeAutoObservable, runInAction } from "mobx";
 //Models & Types
-import { Project } from "../models/project";
+import { KanbanBoard, Project, Task } from "../models/project";
 //API Agent
 import agent from "../api/agent";
 
 export default class ProjectStore
 {
     projectRegistry = new Map<string, Project>();
+    kanbanBoardRegistry = new Map<string, KanbanBoard>();
+    taskRegistry = new Map<string, Task>();
     selectedProject: Project | undefined = undefined;
     editMode = false;
     editProjectId: string | null = null;
@@ -43,6 +45,112 @@ export default class ProjectStore
         }
     };
 
+    loadKanbanBoard = async ( id: string ) =>
+    {
+        try
+        {
+            const kanbanBoard = await agent.kanbanBoards.get( id );
+            this.kanbanBoardRegistry.set( kanbanBoard.id, kanbanBoard );
+            return kanbanBoard;
+        }
+        catch ( err )
+        {
+            console.log( err );
+        }
+        return null;
+    };
+
+    loadTasks = async () =>
+    {
+        try
+        {
+            const tasks = await agent.tasks.list();
+            tasks.forEach( task =>
+            {
+                if ( task.id !== undefined )
+                {
+                    this.taskRegistry.set( task.id, task );
+                }
+                else
+                {
+                    console.error( "Task ID is undefined" );
+                }
+            } );
+            return tasks;
+        }
+        catch ( err )
+        {
+            console.log( err );
+        }
+        return [];
+    };
+
+    updateTaskInKanbanBoard = async ( task: Task ) =>
+    {
+        this.loading = true;
+        try
+        {
+            await agent.tasks.updateTask( task );
+            runInAction( () =>
+            {
+                const project = this.projectRegistry.get( task.projectId );
+                if ( project )
+                {
+                    let kanbanBoard = { ...project.kanbanBoard };
+                    kanbanBoard.tasks = [ ...kanbanBoard.tasks ];
+                    kanbanBoard = {
+                        ...kanbanBoard,
+                        tasks: kanbanBoard.tasks.map( t => t.id === task.id ? task : t ),
+                    };
+                    project.kanbanBoard = kanbanBoard;
+                    this.projectRegistry.set( project.id, project );
+                }
+            } );
+        }
+        catch ( err )
+        {
+            console.log( err );
+        }
+    };
+
+    createTaskInKanbanBoard = async ( task: Task ) =>
+    {
+        this.loading = true;
+        if ( task.projectId === undefined )
+        {
+            console.error( "ProjectId is undefined" );
+            this.loading = false;
+            return undefined;
+        }
+        try
+        {
+            const createdTask = await agent.tasks.addTask( task.projectId, task );
+            runInAction( () =>
+            {
+                console.log( "Created task: ", createdTask );
+                if ( createdTask.id !== undefined )
+                {
+                    this.taskRegistry.set( createdTask.id, createdTask );
+                }
+                else
+                {
+                    console.error( "Created task ID is undefined" );
+                }
+                this.loading = false;
+            } );
+            return createdTask;
+        }
+        catch ( err )
+        {
+            console.log( err );
+            runInAction( () =>
+            {
+                this.loading = false;
+            } );
+            return undefined;
+        }
+    };
+
     setLoadingInitial = ( state: boolean ) =>
     {
         this.loadingInitial = state;
@@ -74,7 +182,6 @@ export default class ProjectStore
     createProject = async ( project: Project ) =>
     {
         this.loading = true;
-        project.id = uuid();
         try
         {
             await agent.projects.create( project );

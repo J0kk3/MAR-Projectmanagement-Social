@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { ChangeEvent, SyntheticEvent, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 //Types & Models
 import { Project } from "../../app/models/project";
@@ -20,7 +20,9 @@ const ProjectOverview = () =>
     //TODO: Discussion or comments section?
 
     const { projectStore } = useStore();
-    const { deleteProject, selectProject, selectedProject } = projectStore;
+
+    const [ localSelectedProject, setLocalSelectedProject ] = useState<Project | undefined>( undefined );
+
 
     const ISO_DATE_LENGTH = 10; //YYYY-MM-DD is 10 characters long
 
@@ -36,9 +38,15 @@ const ProjectOverview = () =>
         navigate( "/create-project" );
     };
 
-    const onSelectProject = ( project: Project ) =>
+    const onSelectProject = ( id: string ) =>
     {
-        selectProject( project.id );
+        const project = projectStore.projectsByDate.find( project => project.id === id );
+        setLocalSelectedProject( project );
+    };
+
+    const deselectProject = () =>
+    {
+        setLocalSelectedProject( undefined );
     };
 
     return (
@@ -50,23 +58,24 @@ const ProjectOverview = () =>
             </div>
 
             <div className="project-list">
-                <ProjectList />
+                <ProjectList onSelectProject={ onSelectProject } />
             </div>
 
-            <div className="project-details">
-                {/* Display details of selected project */ }
-                { selectedProject && (
+            <div className={ `project-details card ${ localSelectedProject ? "active" : "" }` }>
+                { localSelectedProject && (
                     <div>
-                        <h2>{ selectedProject.title }</h2>
-                        <p>{ selectedProject.description }</p>
-                        <p>{ selectedProject.priority }</p>
-                        <p>{ selectedProject.owner }</p>
-                        <p>{ selectedProject.collaborators }</p>
-                        <p>{ selectedProject.dueDate.toISOString().slice( 0, ISO_DATE_LENGTH ) }</p>
-                        <p>{ selectedProject.category }</p>
-                        <p>{ selectedProject.tags }</p>
-                        <p>{ selectedProject.visibility }</p>
-                        <p>{ selectedProject.status }</p>
+                        <h2>{ localSelectedProject.title }</h2>
+                        <p>{ localSelectedProject.description }</p>
+                        <p>{ localSelectedProject.priority }</p>
+                        <p>{ localSelectedProject.owner }</p>
+                        <p>{ localSelectedProject.collaborators }</p>
+                        <p>{ localSelectedProject.dueDate.toISOString().slice( 0, ISO_DATE_LENGTH ) }</p>
+                        <p>{ localSelectedProject.category }</p>
+                        <p>{ localSelectedProject.tags }</p>
+                        <p>{ localSelectedProject.visibility }</p>
+                        <p>{ localSelectedProject.status }</p>
+                        <button className="button cancel" onClick={ deselectProject }>Deselect</button>
+                        <Link className="kanban-link" to={ `/kanbanboard/${ localSelectedProject.id }` }><button>Go to Kanban</button></Link>
                     </div>
                 ) }
             </div>

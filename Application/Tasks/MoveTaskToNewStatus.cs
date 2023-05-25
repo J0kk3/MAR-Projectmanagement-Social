@@ -1,5 +1,6 @@
 using MediatR;
 using MongoDB.Driver;
+using MongoDB.Bson;
 //Project Namespaces
 using Domain;
 using Persistence;
@@ -10,7 +11,7 @@ namespace Application.Tasks
     {
         public class Command : IRequest
         {
-            public Guid TaskId { get; set; }
+            public ObjectId TaskId { get; set; }
             public string NewStatus { get; set; }
             public string UserId { get; set; }
         }
@@ -26,21 +27,23 @@ namespace Application.Tasks
 
             public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
             {
-                // Fetch the task
-                var taskFilter = Builders<ProjectTask>.Filter.Eq(t => t.Id, request.TaskId);
-                var task = await _ctx.ProjectTasks.Find(taskFilter).FirstOrDefaultAsync(cancellationToken);
+                // Fetch the project containing the task
+                var projectFilter = Builders<Project>.Filter.ElemMatch(p => p.kanbanBoard.Tasks, t => t.Id == request.TaskId);
 
-                // Convert string to TaskStatus enum
-                if (!Enum.TryParse(request.NewStatus, out Domain.TaskStatus newStatus))
-                {
-                    throw new ArgumentException("Invalid status value");
-                }
+                var project = await _ctx.Projects.Find(projectFilter).FirstOrDefaultAsync(cancellationToken);
 
-                // Update the status
-                task.Status = newStatus;
+                if (project == null) throw new Exception("Task not found");
 
-                // Save the changes
-                await _ctx.ProjectTasks.ReplaceOneAsync(taskFilter, task, cancellationToken: cancellationToken);
+                // Find the task
+                var task = project.kanbanBoard.Tasks.FirstOrDefault(t => t.Id == request.TaskId);
+
+                if (task == null) throw new Exception("Task not found");
+
+                // Set the new TaskColumn
+                task.TaskColumn = request.NewStatus;
+
+                // Update the project in the database
+                await _ctx.Projects.ReplaceOneAsync(projectFilter, project, cancellationToken: cancellationToken);
 
                 // Convert string to Guid
                 if (!Guid.TryParse(request.UserId, out Guid userId))

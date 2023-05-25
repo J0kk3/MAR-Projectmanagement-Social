@@ -1,6 +1,7 @@
 using MongoDB.Driver;
 //Project Namespaces
 using Domain;
+using MongoDB.Bson;
 
 namespace Persistence
 {
@@ -14,37 +15,33 @@ namespace Persistence
 
                 Console.WriteLine("Starting to seed data...");
 
+                var projectId = ObjectId.GenerateNewId();
+
                 var tasks = new List<ProjectTask>
                 {
                     new ProjectTask
                     {
+                        Id = ObjectId.GenerateNewId(),
+                        ProjectId = projectId,
                         Name = "ToDo Task 0",
                         Description = "ToDo Task 0 Description",
+                        DueDate = DateTime.Now.AddMonths(1),
                         PeopleAssigned = new List<string> { "Jocke", "Sabed" },
-                        Status = Domain.TaskStatus.ToDo
+                        Status = Domain.TaskStatus.ToDo,
+                        TaskColumn = "ToDo"
                     }
                 };
 
-                // Insert the tasks into the ProjectTasks collection and store their Ids
-                var taskIds = new List<Guid>();
-                foreach (var task in tasks)
-                {
-                    await ctx.ProjectTasks.InsertOneAsync(task);
-                    taskIds.Add(task.Id);
-                }
+                Console.WriteLine("Created tasks.");
 
-                Console.WriteLine("Inserted kanban board.");
-                var kanbanBoardId = Guid.NewGuid();
-                var projectId = Guid.NewGuid();
+                var kanbanBoardId = ObjectId.GenerateNewId();
 
                 var kanbanBoard = new KanbanBoard
                 {
                     Id = kanbanBoardId,
+                    ProjectId = projectId,
                     Title = "Kanban Board Title",
-                    TasksToDo = new List<ProjectTask>(), // Use the tasks you created before
-                    TasksInProgress = new List<ProjectTask>(),
-                    TasksInReview = new List<ProjectTask>(),
-                    TasksDone = new List<ProjectTask>()
+                    Tasks = tasks
                 };
 
                 var projects = new List<Project>
@@ -61,7 +58,7 @@ namespace Persistence
                         Category = "Project 0 Category",
                         Tags = new List<string> { "Project 0 Tag 1", "Project 0 Tag 2" },
                         Visibility = Visibility.Public,
-                        KanbanBoardId = kanbanBoardId,
+                        Status = ProjectStatus.Active,
                         kanbanBoard = kanbanBoard
                     }
                 };

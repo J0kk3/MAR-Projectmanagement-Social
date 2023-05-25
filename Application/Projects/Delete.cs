@@ -1,5 +1,6 @@
 using MediatR;
 using MongoDB.Driver;
+using MongoDB.Bson;
 //Project Namespaces
 using Domain;
 using Persistence;
@@ -10,7 +11,7 @@ namespace Application.Projects
     {
         public class Command : IRequest
         {
-            public Guid Id { get; set; }
+            public ObjectId Id { get; set; }
         }
 
         public class Handler : IRequestHandler<Command>

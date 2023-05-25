@@ -3,6 +3,7 @@ using MongoDB.Driver;
 //Project Namespaces
 using Domain;
 using Persistence;
+using MongoDB.Bson;
 
 namespace Application.Projects
 {
@@ -10,7 +11,7 @@ namespace Application.Projects
     {
         public class Query : IRequest<Project>
         {
-            public Guid Id { get; set; }
+            public ObjectId Id { get; set; }
         }
 
         public class Handler : IRequestHandler<Query, Project>

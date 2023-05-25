@@ -1,8 +1,33 @@
+
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+
 namespace Domain
 {
+    public enum TaskStatus
+    {
+        ToDo,
+        InProgress,
+        InReview,
+        Done
+    }
+
+    public enum Visibility
+    {
+        Public,
+        Private
+    }
+
+    public enum ProjectStatus
+    {
+        Active,
+        Paused,
+    }
+
     public class Project
     {
-        public Guid Id { get; set; }
+        [BsonId]
+        public ObjectId Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public int Priority { get; set; }
@@ -19,24 +44,21 @@ namespace Domain
 
     public class KanbanBoard
     {
-        public Guid Id { get; set; }
-        public Guid ProjectId { get; set; }
+        public ObjectId Id { get; set; }
+        public ObjectId ProjectId { get; set; }
         public string Title { get; set; }
-        public IList<ProjectTask> TasksToDo { get; set; }
-        public IList<ProjectTask> TasksInProgress { get; set; }
-        public IList<ProjectTask> TasksInReview { get; set; }
-        public IList<ProjectTask> TasksDone { get; set; }
+        public IList<ProjectTask> Tasks { get; set; }
     }
 
-    public enum Visibility
+    public class ProjectTask
     {
-        Public,
-        Private
-    }
-
-    public enum ProjectStatus
-    {
-        Active,
-        Paused,
+        public ObjectId Id { get; set; }
+        public ObjectId ProjectId { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public DateTime DueDate { get; set; }
+        public TaskStatus Status { get; set; }
+        public IList<string> PeopleAssigned { get; set; } = new List<string>();
+        public string TaskColumn { get; set; }
     }
 }

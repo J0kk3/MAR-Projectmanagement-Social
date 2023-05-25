@@ -1,5 +1,4 @@
 using MediatR;
-using MongoDB.Driver;
 //Project Namespaces
 using Domain;
 using Persistence;

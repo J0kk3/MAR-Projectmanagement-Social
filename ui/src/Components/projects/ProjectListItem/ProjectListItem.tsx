@@ -12,14 +12,17 @@ import "./ProjectListItem.scss";
 interface Props
 {
     project: Project;
+    onSelectProject?: ( id: string ) => void;
 }
 
-const ProjectListItem = ( { project }: Props ) =>
+const ProjectListItem = ( { project, onSelectProject }: Props ) =>
 {
     const { projectStore } = useStore();
     const { deleteProject, openForm, closeForm, editMode, editProjectId, loadProjects, updateProject } = projectStore;
 
     const [ editedProject, setEditedProject ] = useState<Project>( { ...project } );
+
+    const ISO_DATE_LENGTH = 10; //YYYY-MM-DD is 10 characters long
 
     const handleInputChange = ( event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement> ) =>
     {
@@ -29,11 +32,13 @@ const ProjectListItem = ( { project }: Props ) =>
     const handleProjectDelete = ( e: SyntheticEvent<HTMLButtonElement>, id: string ) =>
     {
         e.preventDefault();
+        e.stopPropagation();
         deleteProject( id );
     };
 
-    const handleEdit = () =>
+    const handleEdit = ( e: SyntheticEvent ) =>
     {
+        e.stopPropagation();
         if ( editMode && editProjectId === project.id )
         {
             updateProject( editedProject );
@@ -45,14 +50,24 @@ const ProjectListItem = ( { project }: Props ) =>
         }
     };
 
-    const handleCancel = () =>
+    const handleCancel = ( e: SyntheticEvent ) =>
     {
+        e.stopPropagation();
         closeForm();
         setEditedProject( project );
     };
 
+    const handleSelect = () =>
+    {
+        if ( onSelectProject )
+        {
+            onSelectProject( project.id );
+        }
+    };
+
+
     return (
-        <div className="card" key={ project.id }>
+        <div onClick={ handleSelect } className="card details-click" key={ project.id }>
             <ul>
                 { editMode && editProjectId === project.id ? (
                     <>
@@ -91,7 +106,7 @@ const ProjectListItem = ( { project }: Props ) =>
                         <li>{ "Priority: " + project.priority }</li>
                         <li>{ "Owner: " + project.owner }</li>
                         <li>{ "Collaborators: " + project.collaborators }</li>
-                        <li>{ "Due date: " + project.dueDate }</li>
+                        <li>{ "Due date: " + project.dueDate.toISOString().slice( 0, ISO_DATE_LENGTH ) }</li>
                         <li>{ "Category: " + project.category }</li>
                         <li>{ "Tags: " + project.tags }</li>
                         <li>{ "Visibility: " + project.visibility }</li>

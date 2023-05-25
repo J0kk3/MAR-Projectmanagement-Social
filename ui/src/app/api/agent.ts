@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import axios, { AxiosResponse } from "axios";
 //Models & Types
-import { Project } from "../models/project";
+import { KanbanBoard, Project, Task } from "../models/project";
 
 //all requests that goes to the api
 
@@ -13,7 +13,7 @@ const requests =
 {
     get: <T> ( url: string ) => axios.get<T>( url ).then( responseBody ),
     post: <T> ( url: string, body: {} ) => axios.post<T>( url, body ).then( responseBody ),
-    put: <T> ( url: string, body: {} ) => axios.put<T>( url, body ).then( responseBody ), //note replaced {} with Record<string, unknown>
+    put: <T> ( url: string, body: {} ) => axios.put<T>( url, body ).then( responseBody ),
     del: <T> ( url: string ) => axios.delete<T>( url ).then( responseBody )
 };
 
@@ -26,10 +26,24 @@ const projects =
     delete: ( id: string ) => requests.del<void>( `/projects/${ id }` )
 };
 
+const kanbanBoards =
+{
+    get: ( projectId: string ) => requests.get<KanbanBoard>( `/projects/${ projectId }/kanbanBoard` ),
+};
+
+const tasks =
+{
+    list: () => requests.get<Task[]>( "/projects/tasks" ),
+    updateTask: ( task: Task ) => requests.put<void>( `/kanbanBoards/tasks/${ task.id }`, task ),
+    getTask: ( id: string ) => requests.get<Task>( `/tasks/${ id }` ),
+    addTask: ( id: string, task: Task ) => requests.post<Task>( `/projects/${ id }/tasks`, task ),
+};
 
 const agent =
 {
-    projects
+    projects,
+    kanbanBoards,
+    tasks
 };
 
 export default agent;

@@ -147,7 +147,7 @@
           }
         }
       },
-      "MongoDB.Bson/2.19.1": {
+      "MongoDB.Bson/2.19.2": {
         "type": "package",
         "dependencies": {
           "System.Runtime.CompilerServices.Unsafe": "5.0.0"
@@ -163,12 +163,12 @@
           }
         }
       },
-      "MongoDB.Driver/2.19.1": {
+      "MongoDB.Driver/2.19.2": {
         "type": "package",
         "dependencies": {
           "Microsoft.Extensions.Logging.Abstractions": "2.0.0",
-          "MongoDB.Bson": "2.19.1",
-          "MongoDB.Driver.Core": "2.19.1",
+          "MongoDB.Bson": "2.19.2",
+          "MongoDB.Driver.Core": "2.19.2",
           "MongoDB.Libmongocrypt": "1.7.0"
         },
         "compile": {
@@ -182,13 +182,13 @@
           }
         }
       },
-      "MongoDB.Driver.Core/2.19.1": {
+      "MongoDB.Driver.Core/2.19.2": {
         "type": "package",
         "dependencies": {
           "AWSSDK.SecurityToken": "3.7.100.14",
           "DnsClient": "1.6.1",
           "Microsoft.Extensions.Logging.Abstractions": "2.0.0",
-          "MongoDB.Bson": "2.19.1",
+          "MongoDB.Bson": "2.19.2",
           "MongoDB.Libmongocrypt": "1.7.0",
           "SharpCompress": "0.30.1",
           "Snappier": "1.0.0",
@@ -341,6 +341,9 @@
       "Domain/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v7.0",
+        "dependencies": {
+          "MongoDB.Driver": "2.19.2"
+        },
         "compile": {
           "bin/placeholder/Domain.dll": {}
         },
@@ -583,10 +586,10 @@
         "version.txt"
       ]
     },
-    "MongoDB.Bson/2.19.1": {
-      "sha512": "4FSR3eAbJEYMmvQ1pNFImUpFGtGHT+kEw/Yw/KZjxC9iFMj1XcZC08wMbezgRga2F9tNNFG2vDqh9zt01GinMA==",
+    "MongoDB.Bson/2.19.2": {
+      "sha512": "YpwSLKillPRj+BYEZU0dFgVHdCuj7uGIkLcyEc5a9zwJQYMbZkAc2CRVzobnDY9HMSCtyefXnkrz9CQ6C91KQA==",
       "type": "package",
-      "path": "mongodb.bson/2.19.1",
+      "path": "mongodb.bson/2.19.2",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -597,15 +600,15 @@
         "lib/netstandard2.0/MongoDB.Bson.xml",
         "lib/netstandard2.1/MongoDB.Bson.dll",
         "lib/netstandard2.1/MongoDB.Bson.xml",
-        "mongodb.bson.2.19.1.nupkg.sha512",
+        "mongodb.bson.2.19.2.nupkg.sha512",
         "mongodb.bson.nuspec",
         "packageIcon.png"
       ]
     },
-    "MongoDB.Driver/2.19.1": {
-      "sha512": "EeQnUCIzRmXg20jwHSM9uvw67nrEMpINKsJDF9Y8xFh/8WFWD9QjZyyJLZgUoFUSz9pUAbyLfQj+ctJYbn8gxg==",
+    "MongoDB.Driver/2.19.2": {
+      "sha512": "xT2VA1KmjzxXQYuA8VbnM3r+DVVjja6ntD7YjesxkODAX3GkQLSgLLH+tS7R0uy/zZzA7YWEF1AKIJyxC7jfmA==",
       "type": "package",
-      "path": "mongodb.driver/2.19.1",
+      "path": "mongodb.driver/2.19.2",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -616,15 +619,15 @@
         "lib/netstandard2.0/MongoDB.Driver.xml",
         "lib/netstandard2.1/MongoDB.Driver.dll",
         "lib/netstandard2.1/MongoDB.Driver.xml",
-        "mongodb.driver.2.19.1.nupkg.sha512",
+        "mongodb.driver.2.19.2.nupkg.sha512",
         "mongodb.driver.nuspec",
         "packageIcon.png"
       ]
     },
-    "MongoDB.Driver.Core/2.19.1": {
-      "sha512": "+T4+vNZHCjp7qoOoNE8hf8VjnwxZttTOHTqv0jibJ4WSnM6lnXZBP4wBOjIKDF3J4aQffvtaZtIt4UWDOV+yAw==",
+    "MongoDB.Driver.Core/2.19.2": {
+      "sha512": "MjZmAZLNCV+d/eW+X1YPNztEtEBosIX8qMFCoQAhJOoHotuJfTePt+Lp8sjxTDTCyaOtLhClIgefy3P9JaxUHw==",
       "type": "package",
-      "path": "mongodb.driver.core/2.19.1",
+      "path": "mongodb.driver.core/2.19.2",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -636,7 +639,7 @@
         "lib/netstandard2.0/MongoDB.Driver.Core.xml",
         "lib/netstandard2.1/MongoDB.Driver.Core.dll",
         "lib/netstandard2.1/MongoDB.Driver.Core.xml",
-        "mongodb.driver.core.2.19.1.nupkg.sha512",
+        "mongodb.driver.core.2.19.2.nupkg.sha512",
         "mongodb.driver.core.nuspec",
         "packageIcon.png"
       ]
@@ -900,7 +903,7 @@
     "net7.0": [
       "Domain >= 1.0.0",
       "Microsoft.Extensions.Configuration >= 7.0.0",
-      "MongoDB.Driver >= 2.19.1"
+      "MongoDB.Driver >= 2.19.2"
     ]
   },
   "packageFolders": {
@@ -958,7 +961,7 @@
           },
           "MongoDB.Driver": {
             "target": "Package",
-            "version": "[2.19.1, )"
+            "version": "[2.19.2, )"
           }
         },
         "imports": [

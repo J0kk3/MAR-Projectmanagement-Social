@@ -9,7 +9,7 @@ import { Project, ProjectStatus, Visibility } from "../../../app/models/project"
 const CreateProjectForm = () =>
 {
     const { projectStore } = useStore();
-    const { selectedProject, closeForm, createProject, updateProject } = projectStore;
+    const { createProject } = projectStore;
 
     const navigate = useNavigate();
 
@@ -34,10 +34,7 @@ const CreateProjectForm = () =>
                 id: kanbanBoardId,
                 projectId: projectId,
                 title: "",
-                tasksToDo: [],
-                tasksInProgress: [],
-                tasksInReview: [],
-                tasksDone: [],
+                tasks: []
             }
         } );
     // Length of "YYYY-MM-DD" is 10
@@ -45,20 +42,8 @@ const CreateProjectForm = () =>
 
     const handleInputChange = ( event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement> ) =>
     {
-        if ( event.target.name === "visibility" )
-        {
-            setProject( { ...project, [ event.target.name ]: Number( event.target.value ) as Visibility } );
-        }
-        else if ( event.target.name === "dueDate" )
-        {
-            setProject( { ...project, [ event.target.name ]: new Date( event.target.value ) } );
-        }
-        else
-        {
-            setProject( { ...project, [ event.target.name ]: event.target.value } );
-        }
+        setProject( { ...project, [ event.target.name ]: event.target.value } );
     };
-
 
     const handleSubmit = ( event: FormEvent<HTMLFormElement> ) =>
     {

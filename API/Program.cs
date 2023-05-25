@@ -4,6 +4,9 @@ using MongoDB.Bson.Serialization.Serializers;
 //Project Namespaces
 using API.Extensions;
 using Persistence;
+using Microsoft.AspNetCore.Mvc;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 BsonSerializer.RegisterSerializer(new GuidSerializer(BsonType.Binary));
 
@@ -13,7 +16,18 @@ var mongodbPw = builder.Configuration["mongodbPw"];
 var mongodbCluster = builder.Configuration["mongodbCluster"];
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        options.JsonSerializerOptions.Converters.Add(new API.ObjectIdConverter());
+    });
+
+builder.Services.Configure<JsonOptions>(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+});
+
 builder.Services.AddApplicationServices(builder.Configuration);
 
 var app = builder.Build();

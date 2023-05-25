@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "83yNV/Ra/2taDk17rCLzGYe7zYON540QYpjfUHiuiuIyS6WV31XTOUQ+ecd7tD/RCpR1DjpJG2B6wuGVf0J3HQ==",
+  "dgSpecHash": "GAWvw3aT3YxzrSLJ2sljplsnBd8o1MjwUpn1EEXWx6p4EQRh/S0yQkuaONNdxx+Q+DksohIm62l1/bxQVXaC2A==",
   "success": true,
   "projectFilePath": "D:\\Repos\\MAR-Projectmanagement-Social\\API\\API.csproj",
   "expectedPackageFiles": [
@@ -24,9 +24,9 @@
     "C:\\Users\\joaki\\.nuget\\packages\\microsoft.netcore.platforms\\5.0.0\\microsoft.netcore.platforms.5.0.0.nupkg.sha512",
     "C:\\Users\\joaki\\.nuget\\packages\\microsoft.openapi\\1.4.3\\microsoft.openapi.1.4.3.nupkg.sha512",
     "C:\\Users\\joaki\\.nuget\\packages\\microsoft.win32.registry\\5.0.0\\microsoft.win32.registry.5.0.0.nupkg.sha512",
-    "C:\\Users\\joaki\\.nuget\\packages\\mongodb.bson\\2.19.1\\mongodb.bson.2.19.1.nupkg.sha512",
-    "C:\\Users\\joaki\\.nuget\\packages\\mongodb.driver\\2.19.1\\mongodb.driver.2.19.1.nupkg.sha512",
-    "C:\\Users\\joaki\\.nuget\\packages\\mongodb.driver.core\\2.19.1\\mongodb.driver.core.2.19.1.nupkg.sha512",
+    "C:\\Users\\joaki\\.nuget\\packages\\mongodb.bson\\2.19.2\\mongodb.bson.2.19.2.nupkg.sha512",
+    "C:\\Users\\joaki\\.nuget\\packages\\mongodb.driver\\2.19.2\\mongodb.driver.2.19.2.nupkg.sha512",
+    "C:\\Users\\joaki\\.nuget\\packages\\mongodb.driver.core\\2.19.2\\mongodb.driver.core.2.19.2.nupkg.sha512",
     "C:\\Users\\joaki\\.nuget\\packages\\mongodb.libmongocrypt\\1.7.0\\mongodb.libmongocrypt.1.7.0.nupkg.sha512",
     "C:\\Users\\joaki\\.nuget\\packages\\sharpcompress\\0.30.1\\sharpcompress.0.30.1.nupkg.sha512",
     "C:\\Users\\joaki\\.nuget\\packages\\snappier\\1.0.0\\snappier.1.0.0.nupkg.sha512",

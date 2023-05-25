@@ -24,6 +24,5 @@ namespace Persistence
         //MongoDB Collections
         public IMongoCollection<Project> Projects => _db.GetCollection<Project>("Projects");
         public IMongoCollection<Notification> Notifications => _db.GetCollection<Notification>("Notifications");
-        public IMongoCollection<ProjectTask> ProjectTasks => _db.GetCollection<ProjectTask>("ProjectTasks");
     }
 }

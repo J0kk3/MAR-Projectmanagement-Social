@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 export enum Visibility
 {
     Public = 0,
@@ -10,9 +11,19 @@ export enum ProjectStatus
     Paused,
 }
 
+export enum TaskStatus
+{
+    ToDo = 0,
+    InProgress = 1,
+    InReview = 2,
+    Done = 3,
+}
+
+type ObjectId = string;
+
 export interface Project
 {
-    id: string;
+    id: ObjectId;
     title: string;
     description: string;
     priority: number;
@@ -23,26 +34,26 @@ export interface Project
     tags: string[];
     visibility: Visibility;
     status: ProjectStatus;
-    kanbanBoardId: string;
+    kanbanBoardId: ObjectId;
     kanbanBoard: KanbanBoard;
 }
 
 export interface KanbanBoard
 {
-    id: string;
-    projectId: string;
+    id: ObjectId;
+    projectId: ObjectId;
     title: string;
-    tasksToDo: Task[];
-    tasksInProgress: Task[];
-    tasksInReview: Task[];
-    tasksDone: Task[];
+    tasks: Task[];
 }
 
 export interface Task
 {
-    id: string;
+    id?: string;
+    projectId: ObjectId;
     name: string;
     description: string;
+    dueDate: Date;
     peopleAssigned: string[];
-    status: "todo" | "inProgress" | "inReview" | "done";
+    status: TaskStatus;
+    taskColumn: string;
 }
