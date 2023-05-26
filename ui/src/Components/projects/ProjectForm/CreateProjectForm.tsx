@@ -1,6 +1,6 @@
 import { useState, ChangeEvent, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { v4 as uuid } from "uuid";
+import ObjectID from "bson-objectid";
 //Stores
 import { useStore } from "../../../app/stores/store";
 //Types & Models
@@ -13,11 +13,8 @@ const CreateProjectForm = () =>
 
     const navigate = useNavigate();
 
-    const projectId = uuid();
-    const kanbanBoardId = uuid();
     const [ project, setProject ] = useState<Project>(
         {
-            id: projectId,
             title: "",
             description: "",
             priority: 0,
@@ -28,15 +25,13 @@ const CreateProjectForm = () =>
             tags: [],
             visibility: Visibility.Public,
             status: ProjectStatus.Active,
-            kanbanBoardId: kanbanBoardId,
             kanbanBoard:
             {
-                id: kanbanBoardId,
-                projectId: projectId,
                 title: "",
-                tasks: []
+                tasks: [],
             }
         } );
+
     // Length of "YYYY-MM-DD" is 10
     const ISO_DATE_LENGTH = 10;
 
@@ -48,8 +43,10 @@ const CreateProjectForm = () =>
     const handleSubmit = ( event: FormEvent<HTMLFormElement> ) =>
     {
         event.preventDefault();
-        createProject( project );
-        console.log( project );
+        const id = new ObjectID();
+        const newProject = { ...project, id: id, kanbanBoard: { ...project.kanbanBoard } };
+        createProject( newProject );
+        console.log( newProject );
         navigate( "/projects" );
     };
 

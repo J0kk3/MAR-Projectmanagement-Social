@@ -1,9 +1,9 @@
 import { useState } from "react";
+import { observer } from "mobx-react-lite";
 //Stores
 import { useStore } from "../../app/stores/store";
 //Models & Types
 import { KanbanBoard, Task, TaskStatus } from "../../app/models/project";
-import { observer } from "mobx-react-lite";
 
 interface Props
 {
@@ -31,7 +31,7 @@ const TaskCreationForm = ( { status, setShowAddTaskForms, showAddTaskForms, setK
         {
             const newTask: Task =
             {
-                projectId: kanbanBoard.projectId,
+                projectId: kanbanBoard.projectId!,
                 name: taskName,
                 description: "",
                 dueDate: new Date(),
@@ -50,10 +50,13 @@ const TaskCreationForm = ( { status, setShowAddTaskForms, showAddTaskForms, setK
                     newTask.id = createdTask.id;
                     setKanbanBoard( { ...kanbanBoard, tasks: [ ...kanbanBoard.tasks, newTask ] } );
                     setAllTasks( [ ...allTasks, newTask ] );
-                    loadKanbanBoard( kanbanBoard.projectId ).then( updatedKanbanBoard =>
+                    if ( kanbanBoard && kanbanBoard.projectId )
                     {
-                        setKanbanBoard( updatedKanbanBoard );
-                    } );
+                        loadKanbanBoard( kanbanBoard.projectId ).then( updatedKanbanBoard =>
+                        {
+                            setKanbanBoard( updatedKanbanBoard );
+                        } );
+                    }
                 }
             } );
         }

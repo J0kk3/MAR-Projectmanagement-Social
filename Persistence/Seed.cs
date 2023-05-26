@@ -34,11 +34,10 @@ namespace Persistence
 
                 Console.WriteLine("Created tasks.");
 
-                var kanbanBoardId = ObjectId.GenerateNewId();
+                // var kanbanBoardId = ObjectId.GenerateNewId();
 
                 var kanbanBoard = new KanbanBoard
                 {
-                    Id = kanbanBoardId,
                     ProjectId = projectId,
                     Title = "Kanban Board Title",
                     Tasks = tasks

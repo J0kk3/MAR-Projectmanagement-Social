@@ -1,4 +1,6 @@
 import { observer } from "mobx-react-lite";
+import ObjectID from "bson-objectid";
+import { v4 as uuid } from "uuid";
 //Stores
 import { useStore } from "../../../app/stores/store";
 //Components
@@ -6,7 +8,7 @@ import ProjectListItem from "../ProjectListItem/ProjectListItem";
 
 interface Props
 {
-    onSelectProject?: ( id: string ) => void;
+    onSelectProject?: ( id: ObjectID ) => void;
 }
 const ProjectList = ( { onSelectProject }: Props ) =>
 {
@@ -18,7 +20,7 @@ const ProjectList = ( { onSelectProject }: Props ) =>
             <h1>Projects</h1>
             <>
                 { projectsByDate.map( project => (
-                    <ProjectListItem key={ project.id } project={ project } onSelectProject={ onSelectProject } />
+                    <ProjectListItem key={ uuid() } project={ project } onSelectProject={ onSelectProject } />
                 ) ) }
             </>
         </div>

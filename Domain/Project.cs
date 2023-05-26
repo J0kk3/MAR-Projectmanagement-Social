@@ -1,5 +1,6 @@
 
 using MongoDB.Bson;
+using MongoDB.Bson.IO;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace Domain
@@ -27,6 +28,7 @@ namespace Domain
     public class Project
     {
         [BsonId]
+        [BsonElement("_id")]
         public ObjectId Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
@@ -38,13 +40,11 @@ namespace Domain
         public IList<string> Tags { get; set; } = new List<string>();
         public Visibility Visibility { get; set; }
         public ProjectStatus Status { get; set; }
-        public Guid KanbanBoardId { get; set; }
         public KanbanBoard kanbanBoard { get; set; }
     }
 
     public class KanbanBoard
     {
-        public ObjectId Id { get; set; }
         public ObjectId ProjectId { get; set; }
         public string Title { get; set; }
         public IList<ProjectTask> Tasks { get; set; }

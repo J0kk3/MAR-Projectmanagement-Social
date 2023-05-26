@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import axios, { AxiosResponse } from "axios";
+import ObjectID from "bson-objectid";
 //Models & Types
 import { KanbanBoard, Project, Task } from "../models/project";
 
@@ -20,10 +21,10 @@ const requests =
 const projects =
 {
     list: () => requests.get<Project[]>( "/projects" ),
-    details: ( id: string ) => requests.get<Project>( `/projects/${ id }` ),
+    details: ( id: ObjectID ) => requests.get<Project>( `/projects/${ id }` ),
     create: ( project: Project ) => requests.post<void>( "/projects", project ),
     update: ( project: Project ) => requests.put<void>( `/projects/${ project.id }`, project ),
-    delete: ( id: string ) => requests.del<void>( `/projects/${ id }` )
+    delete: ( id: ObjectID ) => requests.del<void>( `/projects/${ id }` )
 };
 
 const kanbanBoards =
@@ -33,10 +34,12 @@ const kanbanBoards =
 
 const tasks =
 {
-    list: () => requests.get<Task[]>( "/projects/tasks" ),
-    updateTask: ( task: Task ) => requests.put<void>( `/kanbanBoards/tasks/${ task.id }`, task ),
-    getTask: ( id: string ) => requests.get<Task>( `/tasks/${ id }` ),
-    addTask: ( id: string, task: Task ) => requests.post<Task>( `/projects/${ id }/tasks`, task ),
+    // list: () => requests.get<Task[]>( "/projects/tasks" ),
+    list: ( projectId: ObjectID ) => requests.get<Task[]>( `/projects/${ projectId }/tasks` ),
+    addTask: ( id: ObjectID, task: Task ) => requests.post<Task>( `/projects/${ id }/tasks`, task ),
+    getTask: ( id: ObjectID ) => requests.get<Task>( `/tasks/${ id }` ),
+    updateTaskStatus: ( task: Task ) => requests.put<void>( `/projects/tasks/${ task.id }`, task ),
+    // editTask: ( task: Task ) => requests.put<void>( `/tasks/${ task.id }`, task ),
 };
 
 const agent =

@@ -12,6 +12,7 @@
     "@types/react-beautiful-dnd": "^13.1.4",
     "@types/react-dom": "^18.2.4",
     "axios": "^1.4.0",
+    "bson-objectid": "^2.0.4",
     "mobx": "^6.9.0",
     "mobx-react-lite": "^3.4.3",
     "react": "^18.2.0",

@@ -1,14 +1,9 @@
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization;
-using MongoDB.Bson.Serialization.Serializers;
 //Project Namespaces
 using API.Extensions;
 using Persistence;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
 using System.Text.Json;
-
-BsonSerializer.RegisterSerializer(new GuidSerializer(BsonType.Binary));
 
 var builder = WebApplication.CreateBuilder(args);
 var mongodbUser = builder.Configuration["mongodbUser"];

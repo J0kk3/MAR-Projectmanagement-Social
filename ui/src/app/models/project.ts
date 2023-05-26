@@ -1,4 +1,6 @@
 /* eslint-disable no-magic-numbers */
+import ObjectID from "bson-objectid";
+
 export enum Visibility
 {
     Public = 0,
@@ -19,11 +21,11 @@ export enum TaskStatus
     Done = 3,
 }
 
-type ObjectId = string;
+// type ObjectId = string;
 
 export interface Project
 {
-    id: ObjectId;
+    id?: ObjectID;
     title: string;
     description: string;
     priority: number;
@@ -34,14 +36,13 @@ export interface Project
     tags: string[];
     visibility: Visibility;
     status: ProjectStatus;
-    kanbanBoardId: ObjectId;
     kanbanBoard: KanbanBoard;
 }
 
 export interface KanbanBoard
 {
-    id: ObjectId;
-    projectId: ObjectId;
+    id?: string;
+    projectId?: ObjectID;
     title: string;
     tasks: Task[];
 }
@@ -49,7 +50,7 @@ export interface KanbanBoard
 export interface Task
 {
     id?: string;
-    projectId: ObjectId;
+    projectId: ObjectID;
     name: string;
     description: string;
     dueDate: Date;

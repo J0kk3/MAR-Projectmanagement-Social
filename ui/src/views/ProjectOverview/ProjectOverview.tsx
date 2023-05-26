@@ -1,6 +1,7 @@
-import { ChangeEvent, SyntheticEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
+import ObjectID from "bson-objectid";
 //Types & Models
 import { Project } from "../../app/models/project";
 //Components
@@ -20,6 +21,7 @@ const ProjectOverview = () =>
     //TODO: Discussion or comments section?
 
     const { projectStore } = useStore();
+    const { loadProjects } = projectStore;
 
     const [ localSelectedProject, setLocalSelectedProject ] = useState<Project | undefined>( undefined );
 
@@ -28,8 +30,8 @@ const ProjectOverview = () =>
 
     useEffect( () =>
     {
-        projectStore.loadProjects();
-    }, [ projectStore ] );
+        loadProjects();
+    }, [ loadProjects ] );
 
     const navigate = useNavigate();
 
@@ -38,7 +40,7 @@ const ProjectOverview = () =>
         navigate( "/create-project" );
     };
 
-    const onSelectProject = ( id: string ) =>
+    const onSelectProject = ( id: ObjectID ) =>
     {
         const project = projectStore.projectsByDate.find( project => project.id === id );
         setLocalSelectedProject( project );

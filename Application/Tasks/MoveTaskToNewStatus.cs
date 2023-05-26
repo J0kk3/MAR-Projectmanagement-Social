@@ -46,7 +46,7 @@ namespace Application.Tasks
                 await _ctx.Projects.ReplaceOneAsync(projectFilter, project, cancellationToken: cancellationToken);
 
                 // Convert string to Guid
-                if (!Guid.TryParse(request.UserId, out Guid userId))
+                if (!ObjectId.TryParse(request.UserId, out ObjectId userId))
                 {
                     throw new ArgumentException("Invalid userId value");
                 }

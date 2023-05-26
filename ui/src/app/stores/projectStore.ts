@@ -1,18 +1,18 @@
-import { v4 as uuid } from "uuid";
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { makeAutoObservable, runInAction } from "mobx";
+import ObjectID from "bson-objectid";
 //Models & Types
-import { KanbanBoard, Project, Task } from "../models/project";
+import { Project, Task } from "../models/project";
 //API Agent
 import agent from "../api/agent";
 
 export default class ProjectStore
 {
-    projectRegistry = new Map<string, Project>();
-    kanbanBoardRegistry = new Map<string, KanbanBoard>();
+    projectRegistry = new Map<ObjectID, Project>();
     taskRegistry = new Map<string, Task>();
     selectedProject: Project | undefined = undefined;
     editMode = false;
-    editProjectId: string | null = null;
+    editProjectId: ObjectID | null = null;
     loading = false;
     loadingInitial = true;
 
@@ -31,40 +31,67 @@ export default class ProjectStore
         try
         {
             const projects = await agent.projects.list();
-            projects.forEach( project =>
+
+            runInAction( () =>
             {
-                project.dueDate = new Date( project.dueDate );
-                this.projectRegistry.set( project.id, project );
+                projects.forEach( project =>
+                {
+                    project.dueDate = new Date( project.dueDate );
+                    this.projectRegistry.set( project.id!, project );
+                } );
+                this.setLoadingInitial( false );
             } );
-            this.setLoadingInitial( false );
         }
         catch ( err )
         {
             console.log( err );
-            this.setLoadingInitial( false );
+            runInAction( () =>
+            {
+                this.setLoadingInitial( false );
+            } );
         }
     };
 
-    loadKanbanBoard = async ( id: string ) =>
+    loadKanbanBoard = async ( projectId: ObjectID ) =>
     {
-        try
+        this.loading = true;
+
+        let project = this.projectRegistry.get( projectId );
+        if ( !project && projectId !== undefined )
         {
-            const kanbanBoard = await agent.kanbanBoards.get( id );
-            this.kanbanBoardRegistry.set( kanbanBoard.id, kanbanBoard );
-            return kanbanBoard;
+            try
+            {
+                project = await agent.projects.details( projectId );
+                if ( project )
+                {
+                    project.dueDate = new Date( project.dueDate );
+                    this.projectRegistry.set( project.id!, project );
+                }
+            }
+            catch ( err )
+            {
+                console.log( err );
+            }
+            finally
+            {
+                // stop loading regardless of success or error
+                this.loading = false;
+            }
         }
-        catch ( err )
+        else
         {
-            console.log( err );
+            // stop loading if the project already exists in the registry
+            this.loading = false;
         }
-        return null;
+        return project?.kanbanBoard || null;
     };
 
-    loadTasks = async () =>
+    loadTasks = async ( projectId: ObjectID ) =>
     {
+        this.loading = true;
         try
         {
-            const tasks = await agent.tasks.list();
+            const tasks = await agent.tasks.list( projectId );
             tasks.forEach( task =>
             {
                 if ( task.id !== undefined )
@@ -82,15 +109,25 @@ export default class ProjectStore
         {
             console.log( err );
         }
+        finally
+        {
+            this.loading = false;
+        }
         return [];
     };
 
     updateTaskInKanbanBoard = async ( task: Task ) =>
     {
+        if ( task.projectId === undefined )
+        {
+            console.error( "Task projectId is undefined" );
+            return;
+        }
+
         this.loading = true;
         try
         {
-            await agent.tasks.updateTask( task );
+            await agent.tasks.updateTaskStatus( task );
             runInAction( () =>
             {
                 const project = this.projectRegistry.get( task.projectId );
@@ -98,12 +135,13 @@ export default class ProjectStore
                 {
                     let kanbanBoard = { ...project.kanbanBoard };
                     kanbanBoard.tasks = [ ...kanbanBoard.tasks ];
-                    kanbanBoard = {
+                    kanbanBoard =
+                    {
                         ...kanbanBoard,
                         tasks: kanbanBoard.tasks.map( t => t.id === task.id ? task : t ),
                     };
                     project.kanbanBoard = kanbanBoard;
-                    this.projectRegistry.set( project.id, project );
+                    this.projectRegistry.set( project.id!, project );
                 }
             } );
         }
@@ -115,6 +153,12 @@ export default class ProjectStore
 
     createTaskInKanbanBoard = async ( task: Task ) =>
     {
+        if ( task.projectId === undefined )
+        {
+            console.error( "Task projectId is undefined" );
+            return undefined;
+        }
+
         this.loading = true;
         if ( task.projectId === undefined )
         {
@@ -156,7 +200,7 @@ export default class ProjectStore
         this.loadingInitial = state;
     };
 
-    selectProject = ( id: string ) =>
+    selectProject = ( id: ObjectID ) =>
     {
         this.selectedProject = this.projectRegistry.get( id );
     };
@@ -166,7 +210,7 @@ export default class ProjectStore
         this.selectedProject = undefined;
     };
 
-    openForm = ( id?: string ) =>
+    openForm = ( id?: ObjectID ) =>
     {
         id ? this.selectProject( id ) : this.cancelSelectedProject();
         this.editMode = true;
@@ -187,7 +231,7 @@ export default class ProjectStore
             await agent.projects.create( project );
             runInAction( () =>
             {
-                this.projectRegistry.set( project.id, project );
+                this.projectRegistry.set( project.id!, project );
                 this.editMode = false;
                 this.loading = false;
             } );
@@ -210,7 +254,7 @@ export default class ProjectStore
             await agent.projects.update( project );
             runInAction( () =>
             {
-                this.projectRegistry.set( project.id, project );
+                this.projectRegistry.set( project.id!, project );
                 this.selectedProject = project;
                 this.editMode = false;
                 this.loading = false;
@@ -226,7 +270,7 @@ export default class ProjectStore
         }
     };
 
-    deleteProject = async ( id: string ) =>
+    deleteProject = async ( id: ObjectID ) =>
     {
         this.loading = true;
         try

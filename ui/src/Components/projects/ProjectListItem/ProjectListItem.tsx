@@ -1,7 +1,6 @@
 import { ChangeEvent, SyntheticEvent, useState } from "react";
 import { observer } from "mobx-react-lite";
-//API Agent
-import agent from "../../../app/api/agent";
+import ObjectID from "bson-objectid";
 //Types & Models
 import { Project } from "../../../app/models/project";
 //Stores
@@ -12,7 +11,7 @@ import "./ProjectListItem.scss";
 interface Props
 {
     project: Project;
-    onSelectProject?: ( id: string ) => void;
+    onSelectProject?: ( id: ObjectID ) => void;
 }
 
 const ProjectListItem = ( { project, onSelectProject }: Props ) =>
@@ -29,7 +28,7 @@ const ProjectListItem = ( { project, onSelectProject }: Props ) =>
         setEditedProject( { ...editedProject, [ event.target.name ]: event.target.value } );
     };
 
-    const handleProjectDelete = ( e: SyntheticEvent<HTMLButtonElement>, id: string ) =>
+    const handleProjectDelete = ( e: SyntheticEvent<HTMLButtonElement>, id: ObjectID ) =>
     {
         e.preventDefault();
         e.stopPropagation();
@@ -59,7 +58,7 @@ const ProjectListItem = ( { project, onSelectProject }: Props ) =>
 
     const handleSelect = () =>
     {
-        if ( onSelectProject )
+        if ( onSelectProject && project.id )
         {
             onSelectProject( project.id );
         }
@@ -67,7 +66,7 @@ const ProjectListItem = ( { project, onSelectProject }: Props ) =>
 
 
     return (
-        <div onClick={ handleSelect } className="card details-click" key={ project.id }>
+        <div onClick={ handleSelect } className="card details-click">
             <ul>
                 { editMode && editProjectId === project.id ? (
                     <>
@@ -121,7 +120,7 @@ const ProjectListItem = ( { project, onSelectProject }: Props ) =>
             ) : (
                 <>
                     <button className="button edit" onClick={ handleEdit }>Edit</button>
-                    <button className="button delete" onClick={ ( e ) => handleProjectDelete( e, project.id ) }>Delete</button>
+                    <button className="button delete" onClick={ ( e ) => project.id && handleProjectDelete( e, project.id ) }>Delete</button>
                 </>
             ) }
         </div>
