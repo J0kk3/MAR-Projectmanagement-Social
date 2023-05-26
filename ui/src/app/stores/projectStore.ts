@@ -91,7 +91,7 @@ export default class ProjectStore
         this.loading = true;
         try
         {
-            const tasks = await agent.tasks.list( projectId );
+            const tasks = await agent.tasks.getTasksByProject( projectId );
             tasks.forEach( task =>
             {
                 if ( task.id !== undefined )

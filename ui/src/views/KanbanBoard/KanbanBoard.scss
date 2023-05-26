@@ -1,0 +1,97 @@
+@use "src/GlobalVariables.scss" as vars;
+
+.project-title{
+    color: vars.$light-blue-darker;
+    text-align: center;
+    // text-shadow: 2px 5px 8px vars.$dark-grey-blue;
+    text-shadow:
+        1px 1px 0 vars.$light-blue,
+        -1px -1px 0 vars.$light-blue,
+        1px -1px 0 vars.$light-blue,
+        -1px 1px 0 vars.$light-blue,
+        2px 5px 8px vars.$dark-grey-blue;
+}
+
+.kanban-board {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 2rem;
+    padding: 2rem;
+    background-color: vars.$body-background;
+    color: vars.$dark-blue;
+    min-height: 80vh;
+
+    .kanban-column {
+        border: 1px solid vars.$light-blue;
+        border-radius: 0.5rem;
+        background-color: #fff;
+        box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.16);
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+
+        h3 {
+            color: vars.$dark-grey-blue;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .task-form-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem; // or however much space you want
+        }
+
+        .task {
+            border: 1px solid vars.$light-blue;
+            border-radius: 0.25rem;
+            background-color: #fff;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: move;
+            transition: box-shadow 0.3s ease-in-out;
+
+            &:hover {
+                box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.16);
+            }
+        }
+
+        .task-list {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .add-task-button {
+            width: 6.5rem;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.25rem;
+            background-color: vars.$light-blue;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            align-self: center;
+
+            &:hover {
+                background-color: vars.$light-blue-darker;
+            }
+        }
+        .cancel-button {
+            width: 6.5rem;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.25rem;
+            background-color: vars.$light-blue-darker;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            align-self: center;
+
+            &:hover {
+                background-color: vars.$dark-grey-blue;
+            }
+        }
+    }
+}

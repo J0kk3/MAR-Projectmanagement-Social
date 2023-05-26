@@ -4,6 +4,8 @@ import { observer } from "mobx-react-lite";
 import { useStore } from "../../app/stores/store";
 //Models & Types
 import { KanbanBoard, Task, TaskStatus } from "../../app/models/project";
+//Styles
+import "./TaskCreationForm.scss";
 
 interface Props
 {
@@ -14,9 +16,11 @@ interface Props
     kanbanBoard: KanbanBoard | null;
     setAllTasks: ( tasks: Task[] ) => void;
     allTasks: Task[];
+    showCancelButton: boolean;
+    onCancel: () => void;
 }
 
-const TaskCreationForm = ( { status, setShowAddTaskForms, showAddTaskForms, setKanbanBoard, kanbanBoard, setAllTasks, allTasks }: Props ) =>
+const TaskCreationForm = ( { status, setShowAddTaskForms, showAddTaskForms, setKanbanBoard, kanbanBoard, setAllTasks, allTasks, showCancelButton, onCancel }: Props ) =>
 {
     const { projectStore } = useStore();
     const { createTaskInKanbanBoard, loadKanbanBoard } = projectStore;
@@ -37,7 +41,7 @@ const TaskCreationForm = ( { status, setShowAddTaskForms, showAddTaskForms, setK
                 dueDate: new Date(),
                 peopleAssigned: [],
                 status: status,
-                taskColumn: "",
+                taskColumn: String( status ),
             };
 
             createTaskInKanbanBoard( newTask ).then( ( createdTask ) =>
@@ -64,8 +68,18 @@ const TaskCreationForm = ( { status, setShowAddTaskForms, showAddTaskForms, setK
 
     return (
         <form onSubmit={ handleSubmit }>
-            <input type="text" value={ taskName } onChange={ ( e ) => setTaskName( e.target.value ) } />
-            <button type="submit">Create Task</button>
+            <div className="task-form-container">
+                { showCancelButton &&
+                    <button
+                        className="cancel-button"
+                        onClick={ onCancel }
+                    >
+                        Cancel
+                    </button>
+                }
+                <input className="task-input" type="text" value={ taskName } onChange={ ( e ) => setTaskName( e.target.value ) } />
+                <button className="add-task-button" type="submit">Create Task</button>
+            </div>
         </form>
     );
 };

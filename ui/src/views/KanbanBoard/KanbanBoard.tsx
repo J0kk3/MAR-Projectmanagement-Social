@@ -1,15 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
 import { observer } from "mobx-react-lite";
 import ObjectID from "bson-objectid";
-import { v4 as uuid } from "uuid";
 //Stores
 import { useStore } from "../../app/stores/store";
 //Types & Models
-import { KanbanBoard as KanbanBoardModel, TaskStatus as ProjectTaskStatus, Task } from "../../app/models/project";
+import { KanbanBoard as KanbanBoardModel, Project, TaskStatus as ProjectTaskStatus, Task } from "../../app/models/project";
 //Components
 import TaskCreationForm from "./TaskCreationForm";
+//Styles
+import "./KanbanBoard.scss";
+import agent from "../../app/api/agent";
 
 const taskStatusTitles: { [ key in ProjectTaskStatus ]: string } =
 {
@@ -19,27 +21,36 @@ const taskStatusTitles: { [ key in ProjectTaskStatus ]: string } =
     [ ProjectTaskStatus.Done ]: "Done",
 };
 
-const allTaskStatuses: ProjectTaskStatus[] = Object.values( ProjectTaskStatus ).filter( v => typeof v === "string" ) as ProjectTaskStatus[];
+const allTaskStatuses: ProjectTaskStatus[] = Object.keys( ProjectTaskStatus )
+    .map( key => Number( ProjectTaskStatus[ key as keyof typeof ProjectTaskStatus ] ) )
+    .filter( value => !isNaN( value ) ) as ProjectTaskStatus[];
 
 const KanbanBoard = () =>
 {
     const { id: idString } = useParams<{ id: string; }>();
-    let id: ObjectID | undefined;
-    if ( idString )
+    const id = useMemo( () =>
     {
-        try
+        if ( idString )
         {
-            id = new ObjectID( idString );
+            try
+            {
+                return new ObjectID( idString );
+            }
+            catch ( err )
+            {
+                console.error( `Invalid ID: ${ idString }` );
+                return undefined;
+            }
         }
-        catch ( err )
-        {
-            console.error( `Invalid ID: ${ idString }` );
-        }
-    }
+
+
+        return undefined;
+    }, [ idString ] );
 
     const { projectStore } = useStore();
     const { loadKanbanBoard, updateTaskInKanbanBoard, loadTasks } = projectStore;
 
+    const [ projectName, setProjectName ] = useState( "" );
     const [ isLoading, setIsLoading ] = useState( false );
     const [ kanbanBoard, setKanbanBoard ] = useState<KanbanBoardModel | null>( null );
     const [ showAddTaskForms, setShowAddTaskForms ] = useState<Record<ProjectTaskStatus, boolean>>(
@@ -57,12 +68,20 @@ const KanbanBoard = () =>
         {
             if ( id )
             {
-                setIsLoading(true);
+                setIsLoading( true );
                 const loadedBoard = await loadKanbanBoard( id );
                 setKanbanBoard( loadedBoard );
+
+                if ( loadedBoard && loadedBoard.projectId )
+                {
+                    const project = await agent.projects.details( loadedBoard.projectId );
+                    setProjectName( project.title );
+                }
+
                 const tasks = await loadTasks( id );
+                console.log( "Fetched tasks: ", tasks );
                 setAllTasks( tasks );
-                setIsLoading(false);
+                setIsLoading( false );
             }
         };
         loadBoardAndTasks();
@@ -87,60 +106,82 @@ const KanbanBoard = () =>
 
         if ( task )
         {
-            task.status = Number( destination.droppableId );
-            updateTaskInKanbanBoard( task );
-            setKanbanBoard( { ...kanbanBoard, tasks: [ ...kanbanBoard.tasks ] } );
+            task.taskColumn = destination.droppableId;
+            // Using agent to call the API
+            agent.tasks.updateTaskStatus(
+                {
+                    ...task,
+                    taskColumn: destination.droppableId,
+                } ).then( () =>
+                {
+                    // If successful, update the local state
+                    updateTaskInKanbanBoard( task );
+                    setKanbanBoard( { ...kanbanBoard, tasks: [ ...kanbanBoard.tasks ] } );
+                } ).catch( error =>
+                {
+                    console.log( "An error occurred while moving the task: ", error );
+                } );
         }
     };
 
-    const getTasks = ( status: ProjectTaskStatus ) =>
+    const getTasksByStatus = ( status: ProjectTaskStatus ) =>
     {
-        return allTasks.filter( task => task.status === status );
+        return allTasks.filter( task => task.taskColumn === String( status ) );
     };
 
     return (
         <>
+            <h1 className="project-title">{ projectName }</h1>
             <DragDropContext onDragEnd={ onDragEnd }>
-                { allTaskStatuses.map( status => (
-                    <Droppable droppableId={ String( status ) } key={ String( status ) }>
-                        { ( provided, snapshot ) => (
-                            <div { ...provided.droppableProps } ref={ provided.innerRef }>
-                                <h3>{ taskStatusTitles[ status ] }</h3>
-                                { getTasks( status ).map( ( task, index ) => (
-                                    <Draggable key={ uuid() } draggableId={ task.id || "fallback" } index={ index }>
-                                        { ( provided, snapshot ) => (
-                                            <div
-                                                ref={ provided.innerRef }
-                                                { ...provided.draggableProps }
-                                                { ...provided.dragHandleProps }
-                                            >
-                                                { task.name }
-                                            </div>
-                                        ) }
-                                    </Draggable>
-                                ) ) }
-                                { provided.placeholder }
-                                <button onClick={ () => setShowAddTaskForms( { ...showAddTaskForms, [ status ]: !showAddTaskForms[ status ] } ) }>
-                                    { showAddTaskForms[ status ] ? "Cancel" : "Add Task" }
-                                </button>
-                                { showAddTaskForms[ status ] && (
-                                    <TaskCreationForm
-                                        status={ status }
-                                        setShowAddTaskForms={ setShowAddTaskForms }
-                                        showAddTaskForms={ showAddTaskForms }
-                                        setKanbanBoard={ setKanbanBoard }
-                                        kanbanBoard={ kanbanBoard }
-                                        setAllTasks={ setAllTasks }
-                                        allTasks={ allTasks }
-                                    />
-                                ) }
-                            </div>
-                        ) }
-                    </Droppable>
-                ) ) }
+                <div className="kanban-board">
+                    { allTaskStatuses.map( status => (
+                        <Droppable droppableId={ String( status ) } key={ String( status ) }>
+                            { ( provided, snapshot ) => (
+                                <div className="kanban-column" { ...provided.droppableProps } ref={ provided.innerRef }>
+                                    <h3>{ taskStatusTitles[ status ] }</h3>
+                                    <div className="task-list">
+                                        { getTasksByStatus( status ).map( ( task: Task, index: number ) => (
+                                            <Draggable key={ task.id } draggableId={ task.id || "fallback" } index={ index }>
+                                                { ( provided, snapshot ) => (
+                                                    <div
+                                                        ref={ provided.innerRef }
+                                                        { ...provided.draggableProps }
+                                                        { ...provided.dragHandleProps }
+                                                    >
+                                                        { task.name }
+                                                    </div>
+                                                ) }
+                                            </Draggable>
+                                        ) ) }
+                                        { provided.placeholder }
+                                    </div>
+                                    { !showAddTaskForms[ status ] &&
+                                        <button className="add-task-button" onClick={ () => setShowAddTaskForms( { ...showAddTaskForms, [ status ]: true } ) }>
+                                            Add Task
+                                        </button>
+                                    }
+                                    { showAddTaskForms[ status ] && (
+                                        <TaskCreationForm
+                                            showCancelButton={ true }
+                                            onCancel={ () => setShowAddTaskForms( { ...showAddTaskForms, [ status ]: false } ) }
+                                            status={ status }
+                                            setShowAddTaskForms={ setShowAddTaskForms }
+                                            showAddTaskForms={ showAddTaskForms }
+                                            setKanbanBoard={ setKanbanBoard }
+                                            kanbanBoard={ kanbanBoard }
+                                            setAllTasks={ setAllTasks }
+                                            allTasks={ allTasks }
+                                        />
+                                    ) }
+                                </div>
+                            ) }
+                        </Droppable>
+                    ) ) }
+                </div>
             </DragDropContext>
         </>
     );
 };
+
 
 export default observer( KanbanBoard );
