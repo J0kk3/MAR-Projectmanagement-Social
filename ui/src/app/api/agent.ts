@@ -39,7 +39,8 @@ const tasks =
     addTask: ( id: ObjectID, task: Task ) => requests.post<Task>( `/projects/${ id }/tasks`, task ),
     getTask: ( id: ObjectID ) => requests.get<Task>( `/tasks/${ id }` ),
     getTasksByProject: ( projectId: ObjectID ) => requests.get<Task[]>( `/projects/${ projectId }/tasks` ),
-    updateTaskStatus: ( task: Task ) => requests.put<void>( `/projects/tasks/${ task.id }`, task ),
+    // updateTaskStatus: ( task: Task ) => requests.put<void>( `/projects/tasks/${ task.id }`, task ),
+    updateTaskStatus: ( taskId: string, newStatus: string ) => requests.put<void>( `/projects/tasks/${ taskId }`, { TaskId: taskId, NewStatus: newStatus } )
     // editTask: ( task: Task ) => requests.put<void>( `/tasks/${ task.id }`, task ),
 };
 

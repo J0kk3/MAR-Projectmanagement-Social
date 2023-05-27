@@ -3,15 +3,16 @@ import { useParams } from "react-router-dom";
 import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
 import { observer } from "mobx-react-lite";
 import ObjectID from "bson-objectid";
+//API Agent
+import agent from "../../app/api/agent";
 //Stores
 import { useStore } from "../../app/stores/store";
 //Types & Models
-import { KanbanBoard as KanbanBoardModel, Project, TaskStatus as ProjectTaskStatus, Task } from "../../app/models/project";
+import { KanbanBoard as KanbanBoardModel, TaskStatus as ProjectTaskStatus, Task } from "../../app/models/project";
 //Components
 import TaskCreationForm from "./TaskCreationForm";
 //Styles
 import "./KanbanBoard.scss";
-import agent from "../../app/api/agent";
 
 const taskStatusTitles: { [ key in ProjectTaskStatus ]: string } =
 {
@@ -107,20 +108,27 @@ const KanbanBoard = () =>
         if ( task )
         {
             task.taskColumn = destination.droppableId;
-            // Using agent to call the API
-            agent.tasks.updateTaskStatus(
+            console.log( task );
+            if ( task.id )
+            {
+                agent.tasks.updateTaskStatus(
+                    task.id,
+                    destination.droppableId
+                ).then( () =>
                 {
-                    ...task,
-                    taskColumn: destination.droppableId,
-                } ).then( () =>
-                {
-                    // If successful, update the local state
                     updateTaskInKanbanBoard( task );
                     setKanbanBoard( { ...kanbanBoard, tasks: [ ...kanbanBoard.tasks ] } );
+
+                    // Update allTasks
+                    const updatedAllTasks = allTasks.map( t =>
+                        t.id === task.id ? { ...t, taskColumn: destination.droppableId } : t
+                    );
+                    setAllTasks( updatedAllTasks );
                 } ).catch( error =>
                 {
                     console.log( "An error occurred while moving the task: ", error );
                 } );
+            }
         }
     };
 
@@ -137,17 +145,23 @@ const KanbanBoard = () =>
                     { allTaskStatuses.map( status => (
                         <Droppable droppableId={ String( status ) } key={ String( status ) }>
                             { ( provided, snapshot ) => (
-                                <div className="kanban-column" { ...provided.droppableProps } ref={ provided.innerRef }>
+                                <div
+                                    className={ `kanban-column ${ snapshot.isDraggingOver ? "dragging-over" : "" }` }
+                                    { ...provided.droppableProps }
+                                    ref={ provided.innerRef }
+                                >
                                     <h3>{ taskStatusTitles[ status ] }</h3>
                                     <div className="task-list">
                                         { getTasksByStatus( status ).map( ( task: Task, index: number ) => (
                                             <Draggable key={ task.id } draggableId={ task.id || "fallback" } index={ index }>
                                                 { ( provided, snapshot ) => (
                                                     <div
+                                                        className={ `task ${ snapshot.isDragging ? "is-dragging" : "" }` }
                                                         ref={ provided.innerRef }
                                                         { ...provided.draggableProps }
                                                         { ...provided.dragHandleProps }
                                                     >
+                                                        <hr className="task-divider" />
                                                         { task.name }
                                                     </div>
                                                 ) }

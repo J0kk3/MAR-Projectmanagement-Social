@@ -92,6 +92,8 @@ namespace API.Controllers
                 return BadRequest("Invalid id format");
             }
 
+            Console.WriteLine($"URL id: {objectId}, command.TaskId: {command.TaskId}");
+
             if (command.TaskId != objectId)
             {
                 return BadRequest("TaskId in the command does not match the id in the URL");

@@ -13,7 +13,6 @@ namespace Application.Tasks
         {
             public ObjectId TaskId { get; set; }
             public string NewStatus { get; set; }
-            public string UserId { get; set; }
         }
 
         public class Handler : IRequestHandler<Command>
@@ -44,24 +43,6 @@ namespace Application.Tasks
 
                 // Update the project in the database
                 await _ctx.Projects.ReplaceOneAsync(projectFilter, project, cancellationToken: cancellationToken);
-
-                // Convert string to Guid
-                if (!ObjectId.TryParse(request.UserId, out ObjectId userId))
-                {
-                    throw new ArgumentException("Invalid userId value");
-                }
-
-                // Create a notification
-                var notification = new Notification
-                {
-                    TargetUserId = userId,
-                    Message = $"Task {task.Name} has been moved to {request.NewStatus}",
-                    Time = DateTime.UtcNow,
-                    IsRead = false
-                };
-
-                // Save the notification
-                await _ctx.Notifications.InsertOneAsync(notification, cancellationToken: cancellationToken);
 
                 return Unit.Value;
             }

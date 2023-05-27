@@ -127,7 +127,7 @@ export default class ProjectStore
         this.loading = true;
         try
         {
-            await agent.tasks.updateTaskStatus( task );
+            await agent.tasks.updateTaskStatus( task.id!, task.taskColumn );
             runInAction( () =>
             {
                 const project = this.projectRegistry.get( task.projectId );

@@ -1,15 +1,11 @@
 @use "src/GlobalVariables.scss" as vars;
 
-.project-title{
+.project-title {
     color: vars.$light-blue-darker;
     text-align: center;
     // text-shadow: 2px 5px 8px vars.$dark-grey-blue;
-    text-shadow:
-        1px 1px 0 vars.$light-blue,
-        -1px -1px 0 vars.$light-blue,
-        1px -1px 0 vars.$light-blue,
-        -1px 1px 0 vars.$light-blue,
-        2px 5px 8px vars.$dark-grey-blue;
+    text-shadow: 1px 1px 0 vars.$light-blue, -1px -1px 0 vars.$light-blue, 1px -1px 0 vars.$light-blue,
+        -1px 1px 0 vars.$light-blue, 2px 5px 8px vars.$dark-grey-blue;
 }
 
 .kanban-board {
@@ -31,6 +27,10 @@
         flex-direction: column;
         justify-content: space-between;
 
+        &.dragging-over {
+            background-color: vars.$light-blue;
+        }
+
         h3 {
             color: vars.$dark-grey-blue;
             text-align: center;
@@ -48,14 +48,27 @@
             border-radius: 0.25rem;
             background-color: #fff;
             padding: 1rem;
+            margin: 0.3rem 1.5rem 0.3rem;
             margin-bottom: 1rem;
-            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 0.3rem;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.16);
             cursor: move;
             transition: box-shadow 0.3s ease-in-out;
 
-            &:hover {
-                box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.16);
+            .task-divider {
+                border: 0;
+                height: 1px;
+                background: #b1bbca;
+                margin: 0.1rem 1rem 1.2rem;
             }
+
+            &:hover {
+                box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+            }
+        }
+
+        .is-dragging {
+            box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3) !important;
         }
 
         .task-list {
