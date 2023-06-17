@@ -15,13 +15,11 @@ export enum ProjectStatus
 
 export enum TaskStatus
 {
-    ToDo = 0,
-    InProgress = 1,
-    InReview = 2,
-    Done = 3,
+    ToDo = "ToDo",
+    InProgress = "InProgress",
+    InReview = "InReview",
+    Done = "Done",
 }
-
-// type ObjectId = string;
 
 export interface Project
 {
@@ -49,12 +47,11 @@ export interface KanbanBoard
 
 export interface Task
 {
-    id?: string;
+    id?: ObjectID;
     projectId: ObjectID;
     name: string;
     description: string;
     dueDate: Date;
     peopleAssigned: string[];
     status: TaskStatus;
-    taskColumn: string;
 }

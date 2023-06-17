@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson;
 //Project Namespaces
 using Domain;
-using Application.Projects;
-using MongoDB.Bson;
 using Application.Tasks;
 
 namespace API.Controllers
@@ -61,7 +60,6 @@ namespace API.Controllers
                     DueDate = task.DueDate,
                     Status = task.Status,
                     PeopleAssigned = task.PeopleAssigned,
-                    TaskColumn = task.TaskColumn
                 }
             }));
         }
@@ -72,10 +70,10 @@ namespace API.Controllers
             return await Mediator.Send(new Application.Tasks.List.Query());
         }
 
-        [HttpGet("tasks/{id}")]
-        public async Task<ActionResult<ProjectTask>> GetTask(ObjectId id)
+        [HttpGet("{projectId}/tasks/{taskId}")]
+        public async Task<ActionResult<ProjectTask>> GetTask(ObjectId projectId, ObjectId taskId)
         {
-            return await Mediator.Send(new Application.Tasks.Details.Query { Id = id });
+            return await Mediator.Send(new GetTask.Query { ProjectId = projectId, TaskId = taskId });
         }
 
         [HttpGet("{id}/tasks")]
@@ -102,6 +100,13 @@ namespace API.Controllers
             await Mediator.Send(command);
 
             return NoContent();
+        }
+
+        [HttpPut("{projectId}/tasks/{taskId}/details")]
+        public async Task<IActionResult> EditTask(ObjectId projectId, ObjectId taskId, ProjectTask task)
+        {
+            task.Id = taskId;
+            return Ok(await Mediator.Send(new Application.Tasks.Edit.Command { ProjectId = projectId, TaskId = taskId, Task = task }));
         }
     }
 }

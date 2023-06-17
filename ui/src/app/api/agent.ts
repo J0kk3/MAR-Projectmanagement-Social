@@ -34,14 +34,12 @@ const kanbanBoards =
 
 const tasks =
 {
-    // list: () => requests.get<Task[]>( "/projects/tasks" ),
     list: ( projectId: ObjectID ) => requests.get<Task[]>( `/projects/${ projectId }/tasks` ),
     addTask: ( id: ObjectID, task: Task ) => requests.post<Task>( `/projects/${ id }/tasks`, task ),
-    getTask: ( id: ObjectID ) => requests.get<Task>( `/tasks/${ id }` ),
+    getTask: (projectId: ObjectID, taskId: ObjectID) => requests.get<Task>(`/projects/${projectId}/tasks/${taskId}`),
     getTasksByProject: ( projectId: ObjectID ) => requests.get<Task[]>( `/projects/${ projectId }/tasks` ),
-    // updateTaskStatus: ( task: Task ) => requests.put<void>( `/projects/tasks/${ task.id }`, task ),
-    updateTaskStatus: ( taskId: string, newStatus: string ) => requests.put<void>( `/projects/tasks/${ taskId }`, { TaskId: taskId, NewStatus: newStatus } )
-    // editTask: ( task: Task ) => requests.put<void>( `/tasks/${ task.id }`, task ),
+    updateTaskStatus: ( taskId: string, newStatus: string ) => requests.put<void>( `/projects/tasks/${ taskId }`, { TaskId: taskId, NewStatus: newStatus } ),
+    editTask: ( projectId: ObjectID, taskId: ObjectID, task: Task ) => requests.put<Task>( `/projects/${ projectId }/tasks/${ taskId }/details`, task ),
 };
 
 const agent =

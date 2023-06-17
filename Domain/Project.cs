@@ -1,6 +1,5 @@
 
 using MongoDB.Bson;
-using MongoDB.Bson.IO;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace Domain
@@ -59,6 +58,5 @@ namespace Domain
         public DateTime DueDate { get; set; }
         public TaskStatus Status { get; set; }
         public IList<string> PeopleAssigned { get; set; } = new List<string>();
-        public string TaskColumn { get; set; }
     }
 }

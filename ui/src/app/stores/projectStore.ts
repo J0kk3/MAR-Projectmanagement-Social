@@ -9,12 +9,13 @@ import agent from "../api/agent";
 export default class ProjectStore
 {
     projectRegistry = new Map<ObjectID, Project>();
-    taskRegistry = new Map<string, Task>();
+    taskRegistry = new Map<ObjectID, Task>();
     selectedProject: Project | undefined = undefined;
     editMode = false;
     editProjectId: ObjectID | null = null;
     loading = false;
     loadingInitial = true;
+    lastEditedTask: Task | undefined = undefined;
 
     constructor ()
     {
@@ -127,7 +128,7 @@ export default class ProjectStore
         this.loading = true;
         try
         {
-            await agent.tasks.updateTaskStatus( task.id!, task.taskColumn );
+            await agent.tasks.updateTaskStatus( task.id!.toString(), task.status );
             runInAction( () =>
             {
                 const project = this.projectRegistry.get( task.projectId );
@@ -148,6 +149,38 @@ export default class ProjectStore
         catch ( err )
         {
             console.log( err );
+        }
+    };
+
+    editTask = async ( projectId: ObjectID, taskId: ObjectID, task: Task ) =>
+    {
+        try
+        {
+            const updatedTask = await agent.tasks.editTask( projectId, taskId, task );
+            runInAction( () =>
+            {
+                this.taskRegistry.set( taskId, updatedTask );
+                this.lastEditedTask = updatedTask; // Update the lastEditedTask state
+
+                // also update the task in the kanbanBoard
+                const project = this.projectRegistry.get( projectId );
+                if ( project )
+                {
+                    let kanbanBoard = { ...project.kanbanBoard };
+                    kanbanBoard.tasks = [ ...kanbanBoard.tasks ];
+                    kanbanBoard =
+                    {
+                        ...kanbanBoard,
+                        tasks: kanbanBoard.tasks.map( t => t.id === taskId ? updatedTask : t ),
+                    };
+                    project.kanbanBoard = kanbanBoard;
+                    this.projectRegistry.set( projectId, project );
+                }
+            } );
+        }
+        catch ( error )
+        {
+            console.log( error );
         }
     };
 
@@ -175,6 +208,16 @@ export default class ProjectStore
                 if ( createdTask.id !== undefined )
                 {
                     this.taskRegistry.set( createdTask.id, createdTask );
+
+                    // Update the task in the project's kanbanBoard
+                    const project = this.projectRegistry.get( task.projectId );
+                    if ( project )
+                    {
+                        const kanbanBoard = { ...project.kanbanBoard };
+                        kanbanBoard.tasks = [ ...kanbanBoard.tasks, createdTask ];
+                        project.kanbanBoard = kanbanBoard;
+                        this.projectRegistry.set( project.id!, project );
+                    }
                 }
                 else
                 {

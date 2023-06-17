@@ -4,6 +4,8 @@ import { observer } from "mobx-react-lite";
 import { useStore } from "../../app/stores/store";
 //Models & Types
 import { KanbanBoard, Task, TaskStatus } from "../../app/models/project";
+//Components
+import Modal from "../../Components/Modal/Modal";
 //Styles
 import "./TaskCreationForm.scss";
 
@@ -18,14 +20,20 @@ interface Props
     allTasks: Task[];
     showCancelButton: boolean;
     onCancel: () => void;
+    onTaskCreated: ( task: Task ) => void;
 }
 
-const TaskCreationForm = ( { status, setShowAddTaskForms, showAddTaskForms, setKanbanBoard, kanbanBoard, setAllTasks, allTasks, showCancelButton, onCancel }: Props ) =>
+const TaskCreationForm = ( { allTasks, setAllTasks, status, setShowAddTaskForms, showAddTaskForms, kanbanBoard, onTaskCreated }: Props ) =>
 {
     const { projectStore } = useStore();
     const { createTaskInKanbanBoard, loadKanbanBoard } = projectStore;
 
     const [ taskName, setTaskName ] = useState<string>( "" );
+    const [ isModalOpen, setIsModalOpen ] = useState( false );
+    const [ dueDate, setDueDate ] = useState<Date | null>( null );
+
+    // Length of "YYYY-MM-DD" is 10
+    const ISO_DATE_LENGTH = 10;
 
     const handleSubmit = ( e: React.FormEvent ) =>
     {
@@ -38,49 +46,46 @@ const TaskCreationForm = ( { status, setShowAddTaskForms, showAddTaskForms, setK
                 projectId: kanbanBoard.projectId!,
                 name: taskName,
                 description: "",
-                dueDate: new Date(),
+                dueDate: dueDate || new Date(),
                 peopleAssigned: [],
                 status: status,
-                taskColumn: String( status ),
             };
 
             createTaskInKanbanBoard( newTask ).then( ( createdTask ) =>
             {
                 if ( createdTask )
                 {
+                    // Update the state here
+                    onTaskCreated( { ...newTask, id: createdTask.id } );
+
+                    // Update allTasks
+                    setAllTasks( [ ...allTasks, { ...newTask, id: createdTask.id } ] );
+
                     // After the task is created, hide the form again
                     setShowAddTaskForms( { ...showAddTaskForms, [ status ]: false } );
-                    // And update the kanban board's tasks
-                    newTask.id = createdTask.id;
-                    setKanbanBoard( { ...kanbanBoard, tasks: [ ...kanbanBoard.tasks, newTask ] } );
-                    setAllTasks( [ ...allTasks, newTask ] );
-                    if ( kanbanBoard && kanbanBoard.projectId )
-                    {
-                        loadKanbanBoard( kanbanBoard.projectId ).then( updatedKanbanBoard =>
-                        {
-                            setKanbanBoard( updatedKanbanBoard );
-                        } );
-                    }
                 }
+            } ).catch( err =>
+            {
+                console.log( err );
             } );
         }
     };
 
     return (
-        <form onSubmit={ handleSubmit }>
-            <div className="task-form-container">
-                { showCancelButton &&
-                    <button
-                        className="cancel-button"
-                        onClick={ onCancel }
-                    >
-                        Cancel
-                    </button>
-                }
-                <input className="task-input" type="text" value={ taskName } onChange={ ( e ) => setTaskName( e.target.value ) } />
-                <button className="add-task-button" type="submit">Create Task</button>
-            </div>
-        </form>
+        <>
+            <button onClick={ () => setIsModalOpen( true ) }>Add Task</button>
+
+            <Modal show={ isModalOpen } closeModal={ () => setIsModalOpen( false ) }>
+                <h2>Create a Task</h2>
+                <form onSubmit={ handleSubmit }>
+                    <input className="task-input" type="text" value={ taskName } onChange={ ( e ) => setTaskName( e.target.value ) } />
+
+                    <input className="task-input" type="date" value={ dueDate ? dueDate.toISOString().substring( 0, ISO_DATE_LENGTH ) : "" } onChange={ ( e ) => setDueDate( e.target.value ? new Date( e.target.value ) : null ) } />
+
+                    <button className="add-task-button" type="submit">Create Task</button>
+                </form>
+            </Modal>
+        </>
     );
 };
 

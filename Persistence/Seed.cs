@@ -28,7 +28,6 @@ namespace Persistence
                         DueDate = DateTime.Now.AddMonths(1),
                         PeopleAssigned = new List<string> { "Jocke", "Sabed" },
                         Status = Domain.TaskStatus.ToDo,
-                        TaskColumn = "0"
                     }
                 };
 

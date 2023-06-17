@@ -24,9 +24,12 @@ namespace Application.Tasks
 
             public async Task<ProjectTask> Handle(Query request, CancellationToken cancellationToken)
             {
-                var projects = await _ctx.Projects.Find(_ => true).ToListAsync();
-                var task = projects.SelectMany(p => p.kanbanBoard.Tasks)
-                    .FirstOrDefault(t => t.Id == request.Id);
+                var project = await _ctx.Projects.Find(p => p.kanbanBoard.Tasks.Any(t => t.Id == request.Id)).FirstOrDefaultAsync();
+
+                if (project == null)
+                    throw new Exception("No project found containing the specified task.");
+
+                var task = project.kanbanBoard.Tasks.First(t => t.Id == request.Id);
                 return task;
             }
         }

@@ -15,6 +15,24 @@ namespace Application.Tasks
             public string NewStatus { get; set; }
         }
 
+        public static class TaskStatusMapper
+        {
+            private static readonly Dictionary<string, Domain.TaskStatus> Mapping = new Dictionary<string, Domain.TaskStatus>
+            {
+                {"ToDo", Domain.TaskStatus.ToDo},
+                {"InProgress", Domain.TaskStatus.InProgress},
+                {"InReview", Domain.TaskStatus.InReview},
+                {"Done", Domain.TaskStatus.Done}
+            };
+
+            public static Domain.TaskStatus ConvertStringToTaskStatus(string status)
+            {
+                if (!Mapping.TryGetValue(status, out var taskStatus))
+                    throw new Exception($"Invalid task status: {status}");
+                return taskStatus;
+            }
+        }
+
         public class Handler : IRequestHandler<Command>
         {
             private readonly DataContext _ctx;
@@ -38,8 +56,11 @@ namespace Application.Tasks
 
                 if (task == null) throw new Exception("Task not found");
 
+                // Convert the string to TaskStatus using the mapping
+                var newStatus = TaskStatusMapper.ConvertStringToTaskStatus(request.NewStatus);
+
                 // Set the new TaskColumn
-                task.TaskColumn = request.NewStatus;
+                task.Status = newStatus;
 
                 // Update the project in the database
                 await _ctx.Projects.ReplaceOneAsync(projectFilter, project, cancellationToken: cancellationToken);
