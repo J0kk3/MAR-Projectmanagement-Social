@@ -64,6 +64,12 @@ namespace API.Controllers
             }));
         }
 
+        [HttpDelete("{projectId}/tasks/{taskId}")]
+        public async Task<IActionResult> DeleteTask(ObjectId projectId, ObjectId taskId)
+        {
+            return Ok(await Mediator.Send(new Application.Tasks.Delete.Command { ProjectId = projectId, TaskId = taskId }));
+        }
+
         [HttpGet("tasks")]
         public async Task<ActionResult<List<ProjectTask>>> GetTasks()
         {

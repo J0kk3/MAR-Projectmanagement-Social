@@ -36,10 +36,12 @@ const tasks =
 {
     list: ( projectId: ObjectID ) => requests.get<Task[]>( `/projects/${ projectId }/tasks` ),
     addTask: ( id: ObjectID, task: Task ) => requests.post<Task>( `/projects/${ id }/tasks`, task ),
-    getTask: (projectId: ObjectID, taskId: ObjectID) => requests.get<Task>(`/projects/${projectId}/tasks/${taskId}`),
+    getTask: ( projectId: ObjectID, taskId: ObjectID ) => requests.get<Task>( `/projects/${ projectId }/tasks/${ taskId }` ),
     getTasksByProject: ( projectId: ObjectID ) => requests.get<Task[]>( `/projects/${ projectId }/tasks` ),
     updateTaskStatus: ( taskId: string, newStatus: string ) => requests.put<void>( `/projects/tasks/${ taskId }`, { TaskId: taskId, NewStatus: newStatus } ),
     editTask: ( projectId: ObjectID, taskId: ObjectID, task: Task ) => requests.put<Task>( `/projects/${ projectId }/tasks/${ taskId }/details`, task ),
+    // deleteTask: ( projectId: ObjectID, taskId: ObjectID ) => requests.del<void>( `/projects/${ projectId }/tasks/${ taskId }` ),
+    deleteTask: ( projectId: ObjectID, taskId: ObjectID ) => requests.del<void>( `/projects/${ projectId }/tasks/${ taskId }` ),
 };
 
 const agent =

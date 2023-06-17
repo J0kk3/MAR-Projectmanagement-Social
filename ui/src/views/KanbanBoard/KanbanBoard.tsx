@@ -163,6 +163,38 @@ const KanbanBoard = () =>
             }
         }
     };
+
+    const handleDelete = async ( task: Task ) =>
+    {
+        try
+        {
+            if ( id && task.id )
+            {
+                await agent.tasks.deleteTask( id, task.id );
+
+                // Update local state
+                setAllTasks( allTasks.filter( t => t.id !== task.id ) );
+                if ( kanbanBoard )
+                {
+                    setKanbanBoard( {
+                        ...kanbanBoard,
+                        tasks: kanbanBoard.tasks.filter( t => t.id !== task.id ),
+                    } );
+                }
+
+                // Close the modal
+                closeModal();
+            }
+            else
+            {
+                console.error( "id or task.id is undefined" );
+            }
+        }
+        catch ( err )
+        {
+            console.error( "Failed to delete task:", err );
+        }
+    };
     //#endregion Modal
 
     const reorganizeTasks = () =>
@@ -300,6 +332,7 @@ const KanbanBoard = () =>
                         <p>Due date: { new Date( selectedTask?.dueDate ).toLocaleDateString() }</p>
                         <p>People assigned: { selectedTask.peopleAssigned.join( ", " ) }</p>
                         <p>Status: { selectedTask.status }</p>
+                        <button onClick={ () => handleDelete( selectedTask ) }>Delete Task</button>
                         <button onClick={ () => handleEdit( selectedTask ) }>Edit Task</button>
                     </>
                 }
@@ -339,7 +372,6 @@ const KanbanBoard = () =>
                                                         >
                                                             <hr className="task-divider" />
                                                             <div { ...provided.dragHandleProps }>
-                                                                {/* <div onClick={ () => handleModal( task ) }> */ }
                                                                 <div onClick={ () => openModal( task, ModalContent.TaskDetails ) }>
                                                                     { task.name }
                                                                 </div>
