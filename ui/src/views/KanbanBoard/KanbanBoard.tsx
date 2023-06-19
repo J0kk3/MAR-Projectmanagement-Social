@@ -126,7 +126,7 @@ const KanbanBoard = () =>
             try
             {
                 // Update the task in the server and capture the response
-                const updatedTaskFromServer = await agent.tasks.editTask( updatedTask.projectId, updatedTask.id, updatedTask );
+                const updatedTaskFromServer = await agent.Tasks.editTask( updatedTask.projectId, updatedTask.id, updatedTask );
 
                 // We update the task in the state based on the server response
                 const newTasks = [ ...allTasks ];
@@ -170,7 +170,7 @@ const KanbanBoard = () =>
         {
             if ( id && task.id )
             {
-                await agent.tasks.deleteTask( id, task.id );
+                await agent.Tasks.deleteTask( id, task.id );
 
                 // Update local state
                 setAllTasks( allTasks.filter( t => t.id !== task.id ) );
@@ -219,7 +219,7 @@ const KanbanBoard = () =>
 
                 if ( loadedBoard && loadedBoard.projectId )
                 {
-                    const project = await agent.projects.details( loadedBoard.projectId );
+                    const project = await agent.Projects.details( loadedBoard.projectId );
                     setProjectName( project.title );
                 }
 
@@ -265,7 +265,7 @@ const KanbanBoard = () =>
             {
                 try
                 {
-                    await agent.tasks.updateTaskStatus(
+                    await agent.Tasks.updateTaskStatus(
                         newTask.id.toString(),
                         getTaskStatusFromDroppableIdString( destination.droppableId )
                     );

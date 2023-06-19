@@ -9,6 +9,7 @@ interface LayoutProps
 
 const Layout = ( { children }: LayoutProps ) =>
 {
+
     return (
         <div>
             <NavBar />

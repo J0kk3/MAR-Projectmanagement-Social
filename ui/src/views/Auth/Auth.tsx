@@ -1,8 +1,12 @@
+//Components
+import LoginForm from "./LoginForm";
+
 const Auth = () =>
 {
     return (
         <>
-            <h1>Auth</h1>
+            <h1>Welcome to Project Managment!</h1>
+            <LoginForm />
         </>
     );
 };

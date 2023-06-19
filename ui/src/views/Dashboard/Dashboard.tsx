@@ -9,6 +9,8 @@ const ProjectDashboard = () =>
     const { projectStore } = useStore();
     const { selectedProject, editMode } = projectStore;
 
+    if (projectStore.loadingInitial) return <h1>Loading Dashboard...</h1>;
+
     return (
         //TODO: Implement Notifications/Updates
         //TODO: Implement News Feed

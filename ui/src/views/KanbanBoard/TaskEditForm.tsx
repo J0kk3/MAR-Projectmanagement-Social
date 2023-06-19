@@ -89,12 +89,12 @@ const TaskEditForm = ( { task, onEdit, closeModal, editTask, setEditTask }: Task
         if ( editTask && editTask.projectId && editTask.id )
         {
             console.log( "editTask", editTask );
-            const updatedTask = await agent.tasks.editTask( editTask.projectId, editTask.id, editTask );
+            const updatedTask = await agent.Tasks.editTask( editTask.projectId, editTask.id, editTask );
 
             if ( updatedTask )
             {
                 // re-fetch the task from the server after the edit
-                const fetchedTask = await agent.tasks.getTask( editTask.projectId, editTask.id );
+                const fetchedTask = await agent.Tasks.getTask( editTask.projectId, editTask.id );
 
                 if ( fetchedTask )
                 {

@@ -1,9 +1,14 @@
 import { NavLink, Link } from "react-router-dom";
+import { observer } from "mobx-react-lite";
+//Stores
+import { useStore } from "../../app/stores/store";
 //Styles
 import "./NavBar.scss";
 
 const NavBar = () =>
 {
+    const { userStore: { user, logout } } = useStore();
+
     return (
         <header>
             <section>
@@ -18,10 +23,11 @@ const NavBar = () =>
                     <li><NavLink to="/profile">Profile</NavLink></li>
                     <li><NavLink to="/projects">Projects Overview</NavLink></li>
                     <li><NavLink to="/search">Search</NavLink></li>
+                    <li><button onClick={logout}>Logout</button></li>
                 </ul>
             </nav>
         </header>
     );
 };
 
-export default NavBar;
+export default observer( NavBar );

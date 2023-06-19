@@ -26,7 +26,7 @@ export const routes: RouteObject[] =
                     { path: "profile", element: <Profile /> },
                 ]
         },
-        { path: "*", element: <Navigate replace to="/dashboard" /> },
+        { path: "*", element: <Navigate replace to="/" /> },
     ];
 
 export const Router = createBrowserRouter( routes );
