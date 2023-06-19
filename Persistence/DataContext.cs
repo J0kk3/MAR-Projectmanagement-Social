@@ -10,12 +10,15 @@ namespace Persistence
         readonly IMongoDatabase _db;
         readonly IConfiguration Configuration;
 
+        public string connectionString { get; private set; }
+
         public DataContext(IConfiguration config)
         {
             var mongodbUser = config["mongodbUser"];
             var mongodbPw = config["mongodbPw"];
             var mongodbCluster = config["mongodbCluster"];
-            var connectionString = $"mongodb+srv://{mongodbUser}:{mongodbPw}@{mongodbCluster}.aa0muro.mongodb.net/?retryWrites=true&w=majority";
+
+            connectionString = $"mongodb+srv://{mongodbUser}:{mongodbPw}@{mongodbCluster}.aa0muro.mongodb.net/?retryWrites=true&w=majority";
 
             var client = new MongoClient(connectionString);
             _db = client.GetDatabase("ProjectManagement");
