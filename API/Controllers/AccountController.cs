@@ -11,11 +11,11 @@ namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AccountsController : ControllerBase
+    public class AccountController : ControllerBase
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly TokenService _tokenService;
-        public AccountsController(UserManager<AppUser> userManager, TokenService tokenService)
+        public AccountController(UserManager<AppUser> userManager, TokenService tokenService)
         {
             _tokenService = tokenService;
             _userManager = userManager;
@@ -44,22 +44,24 @@ namespace API.Controllers
         public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
         {
 
-            var userWithSameName = await _userManager.FindByNameAsync(registerDto.UserName);
+            var userWithSameName = await _userManager.FindByNameAsync(registerDto.userName);
             var userWithSameEmail = await _userManager.FindByEmailAsync(registerDto.Email);
 
             if (userWithSameName != null)
             {
-                return BadRequest("Username is already taken");
+                ModelState.AddModelError("username", "Username is already taken");
+                return ValidationProblem();
             }
 
             if (userWithSameEmail != null)
             {
-                return BadRequest("Email is already taken");
+                ModelState.AddModelError("email", "Email is already taken");
+                return ValidationProblem();
             }
 
             var user = new AppUser
             {
-                UserName = registerDto.UserName,
+                UserName = registerDto.userName,
                 Email = registerDto.Email,
             };
 
@@ -87,7 +89,7 @@ namespace API.Controllers
             return new UserDto
             {
                 Id = user.Id,
-                UserName = user.UserName,
+                userName = user.UserName,
                 Image = null,
                 Token = _tokenService.CreateToken(user)
             };

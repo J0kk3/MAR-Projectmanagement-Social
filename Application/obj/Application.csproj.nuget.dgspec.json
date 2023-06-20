@@ -64,6 +64,10 @@
               "target": "Package",
               "version": "[11.1.0, )"
             },
+            "MongoDB.Driver": {
+              "target": "Package",
+              "version": "[2.19.2, )"
+            },
             "System.IdentityModel.Tokens.Jwt": {
               "target": "Package",
               "version": "[6.31.0, )"

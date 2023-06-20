@@ -1,9 +1,9 @@
 import { useState, FormEvent } from "react";
+import { observer } from "mobx-react-lite";
 //Stores
 import { useStore } from "../../app/stores/store";
 //Components
 import TextInput from "../../Components/Form/TextInput";
-import { observer } from "mobx-react-lite";
 import ErrorMessage from "../../Components/Form/ErrorMessage";
 
 const LoginForm = () =>

@@ -11,6 +11,6 @@ namespace API.DTOs
         [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{7,}$", ErrorMessage = "Password must be at least 7 characters and contain at least one uppercase letter, one lowercase letter, one digit and one special character.")]
         public string Password { get; set; }
         [Required]
-        public string UserName { get; set; }
+        public string userName { get; set; }
     }
 }

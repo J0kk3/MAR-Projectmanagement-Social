@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using MongoDB.Bson;
 //Project Namespaces
 using Domain;
@@ -44,7 +45,7 @@ namespace API.Controllers
             return Ok(await Mediator.Send(new Application.Projects.Delete.Command { Id = id }));
         }
 
-         // Get the Kanban board of a specific project by its ObjectId.
+        // Get the Kanban board of a specific project by its ObjectId.
         [HttpGet("{id}/kanbanBoard")]
         public async Task<ActionResult<KanbanBoard>> GetKanbanBoard(ObjectId id)
         {
@@ -53,7 +54,7 @@ namespace API.Controllers
             return Ok(project.kanbanBoard);
         }
 
-         // Create a new task in a specific project by its ObjectId.
+        // Create a new task in a specific project by its ObjectId.
         [HttpPost("{id}/tasks")]
         public async Task<IActionResult> CreateTask(ObjectId id, ProjectTask task)
         {
@@ -99,7 +100,7 @@ namespace API.Controllers
             return await Mediator.Send(new Application.Tasks.ListByProject.Query { ProjectId = id });
         }
 
-         // Update the status of a specific task by its ObjectId.
+        // Update the status of a specific task by its ObjectId.
         [HttpPut("tasks/{id}")]
         public async Task<IActionResult> UpdateTaskStatus(string id, [FromBody] MoveTaskToNewStatus.Command command)
         {
@@ -120,7 +121,7 @@ namespace API.Controllers
             return NoContent();
         }
 
-         // Edit a specific task from a specific project, both by their ObjectId.
+        // Edit a specific task from a specific project, both by their ObjectId.
         [HttpPut("{projectId}/tasks/{taskId}/details")]
         public async Task<IActionResult> EditTask(ObjectId projectId, ObjectId taskId, ProjectTask task)
         {

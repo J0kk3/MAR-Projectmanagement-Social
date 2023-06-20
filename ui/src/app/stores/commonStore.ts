@@ -13,24 +13,15 @@ export default class CommonStore
             () => this.token,
             token =>
             {
-                if ( token )
-                {
-                    localStorage.setItem( "jwt", token );
-                }
-                else
-                {
-                    localStorage.removeItem( "jwt" );
-                }
+                if ( token ) localStorage.setItem( "jwt", token );
+                else localStorage.removeItem( "jwt" );
             }
         );
     }
 
     setToken = ( token: string | null ) =>
     {
-        if ( token )
-        {
-            this.token = token;
-        }
+        this.token = token;
     };
 
     setAppLoaded = () =>

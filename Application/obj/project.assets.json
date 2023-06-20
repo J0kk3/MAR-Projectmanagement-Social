@@ -2128,6 +2128,7 @@
       "AutoMapper.Extensions.Microsoft.DependencyInjection >= 12.0.1",
       "Domain >= 1.0.0",
       "MediatR.Extensions.Microsoft.DependencyInjection >= 11.1.0",
+      "MongoDB.Driver >= 2.19.2",
       "Persistence >= 1.0.0",
       "System.IdentityModel.Tokens.Jwt >= 6.31.0"
     ]
@@ -2195,6 +2196,10 @@
           "MediatR.Extensions.Microsoft.DependencyInjection": {
             "target": "Package",
             "version": "[11.1.0, )"
+          },
+          "MongoDB.Driver": {
+            "target": "Package",
+            "version": "[2.19.2, )"
           },
           "System.IdentityModel.Tokens.Jwt": {
             "target": "Package",

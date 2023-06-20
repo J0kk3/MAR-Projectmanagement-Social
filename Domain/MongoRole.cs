@@ -1,11 +1,18 @@
 using AspNetCore.Identity.MongoDbCore.Models;
+using MongoDB.Bson;
 using MongoDbGenericRepository.Attributes;
 
 namespace Domain
 {
     [CollectionName("Roles")]
-    public class MongoRole : MongoIdentityRole<string>
+    public class MongoRole : MongoIdentityRole<ObjectId>
     {
-        // Add additional properties here if needed
+        public MongoRole() : base()
+        {
+        }
+
+        public MongoRole(string roleName) : base(roleName)
+        {
+        }
     }
 }

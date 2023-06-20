@@ -9,6 +9,8 @@ const NavBar = () =>
 {
     const { userStore: { user, logout } } = useStore();
 
+    if ( !user ) return null;
+
     return (
         <header>
             <section>
@@ -23,7 +25,7 @@ const NavBar = () =>
                     <li><NavLink to="/profile">Profile</NavLink></li>
                     <li><NavLink to="/projects">Projects Overview</NavLink></li>
                     <li><NavLink to="/search">Search</NavLink></li>
-                    <li><button onClick={logout}>Logout</button></li>
+                    <li><button onClick={ logout }>Logout</button></li>
                 </ul>
             </nav>
         </header>

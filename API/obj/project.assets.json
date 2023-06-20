@@ -945,6 +945,7 @@
           "AutoMapper.Extensions.Microsoft.DependencyInjection": "12.0.1",
           "Domain": "1.0.0",
           "MediatR.Extensions.Microsoft.DependencyInjection": "11.1.0",
+          "MongoDB.Driver": "2.19.2",
           "Persistence": "1.0.0",
           "System.IdentityModel.Tokens.Jwt": "6.31.0"
         },
@@ -2704,6 +2705,7 @@
       "AspNetCore.Identity.MongoDbCore >= 3.1.2",
       "Microsoft.AspNetCore.Authentication.JwtBearer >= 7.0.7",
       "Microsoft.AspNetCore.OpenApi >= 7.0.5",
+      "MongoDB.Driver >= 2.19.2",
       "Swashbuckle.AspNetCore >= 6.4.0",
       "System.IdentityModel.Tokens.Jwt >= 6.31.0"
     ]
@@ -2769,6 +2771,10 @@
           "Microsoft.AspNetCore.OpenApi": {
             "target": "Package",
             "version": "[7.0.5, )"
+          },
+          "MongoDB.Driver": {
+            "target": "Package",
+            "version": "[2.19.2, )"
           },
           "Swashbuckle.AspNetCore": {
             "target": "Package",

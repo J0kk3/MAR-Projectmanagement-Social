@@ -1,9 +1,11 @@
+using MongoDB.Bson;
+
 namespace API.DTOs
 {
     public class UserDto
     {
-        public string Id { get; set; }
-        public string UserName { get; set; }
+        public ObjectId Id { get; set; }
+        public string userName { get; set; }
         public string Token { get; set; }
         public string Image { get; set; }
     }

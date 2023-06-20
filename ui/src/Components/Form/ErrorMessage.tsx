@@ -1,5 +1,6 @@
 interface Errors
 {
+    username?: string;
     email?: string;
     password?: string;
 }
@@ -11,7 +12,7 @@ interface Props
 
 const ErrorMessage = ( { errors }: Props ) =>
 {
-    if ( !errors.email && !errors.password )
+    if ( !errors.email && !errors.password && !errors.username )
     {
         return null;
     }
@@ -20,6 +21,7 @@ const ErrorMessage = ( { errors }: Props ) =>
         <div>
             { errors.email && <div>{ errors.email }</div> }
             { errors.password && <div>{ errors.password }</div> }
+            { errors.username && <div>{ errors.username }</div> }
         </div>
     );
 };

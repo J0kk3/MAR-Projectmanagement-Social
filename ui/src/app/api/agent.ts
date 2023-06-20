@@ -20,9 +20,6 @@ axios.interceptors.request.use( config =>
     if ( token && config.headers ) config.headers.Authorization = `Bearer ${ token }`;
 
     return config;
-}, error =>
-{
-    return Promise.reject( error );
 } );
 
 const requests =

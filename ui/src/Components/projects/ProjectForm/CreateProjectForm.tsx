@@ -1,6 +1,7 @@
 import { useState, ChangeEvent, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import ObjectID from "bson-objectid";
+import { observer } from "mobx-react-lite";
 //Stores
 import { useStore } from "../../../app/stores/store";
 //Types & Models
@@ -98,4 +99,4 @@ const CreateProjectForm = () =>
     );
 };
 
-export default CreateProjectForm;
+export default observer(CreateProjectForm);

@@ -16,17 +16,15 @@ namespace Persistence
                 {
                     new AppUser
                     {
-                        Id = ObjectId.GenerateNewId().ToString(),
-                        DisplayName = "Jocke",
-                        UserName = "jocke",
+                        Id = ObjectId.GenerateNewId(),
+                        UserName  = "jocke",
                         Email = "test@testsson.com",
                         Bio = "I'm a test user",
                     },
                     new AppUser
                     {
-                        Id = ObjectId.GenerateNewId().ToString(),
-                        DisplayName = "Sabed",
-                        UserName = "sabed",
+                        Id = ObjectId.GenerateNewId(),
+                        UserName = "Sabed",
                         Email = "sabed@cowork.com",
                         Bio = "I'm a test user",
                     }
@@ -61,8 +59,6 @@ namespace Persistence
                 };
 
                 Console.WriteLine("Created tasks.");
-
-                // var kanbanBoardId = ObjectId.GenerateNewId();
 
                 var kanbanBoard = new KanbanBoard
                 {

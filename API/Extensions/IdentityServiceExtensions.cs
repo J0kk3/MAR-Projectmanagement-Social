@@ -2,6 +2,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Identity;
+using MongoDB.Bson;
 //project namespaces
 using Domain;
 using Persistence;
@@ -25,41 +26,28 @@ namespace API.Extensions
                 opt.Password.RequireLowercase = true;
                 opt.User.RequireUniqueEmail = true;
             })
-                .AddMongoDbStores<AppUser, MongoRole, string>(ctx.connectionString, "Users")
-                .AddDefaultTokenProviders();
+            .AddMongoDbStores<AppUser, MongoRole, ObjectId>(ctx.connectionString, "Users")
+            .AddDefaultTokenProviders();
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"]));
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(opt =>
+            services.AddAuthentication(opt =>
+            {
+                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    opt.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = key,
-                        ValidateIssuer = false,
-                        ValidateAudience = false,
-                        ValidateLifetime = true,
-                        ClockSkew = TimeSpan.Zero //Default 5minute window is removed
-                    };
-
-                    opt.Events = new JwtBearerEvents
-                    {
-                        OnMessageReceived = context =>
-                        {
-                            var accessToken = context.Request.Query["access_token"];
-
-                            var path = context.HttpContext.Request.Path;
-
-                            if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/chat"))
-                            {
-                                context.Token = accessToken;
-                            }
-
-                            return Task.CompletedTask;
-                        }
-                    };
-                });
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = key,
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
+                };
+            });
 
             services.AddScoped<TokenService>();
 
