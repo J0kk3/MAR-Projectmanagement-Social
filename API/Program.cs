@@ -1,9 +1,13 @@
+using System.Text.Json.Serialization;
+using System.Text.Json;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 //Project Namespaces
 using API.Extensions;
 using Persistence;
-using Microsoft.AspNetCore.Mvc;
-using System.Text.Json.Serialization;
-using System.Text.Json;
+using Domain;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 var mongodbUser = builder.Configuration["mongodbUser"];
@@ -11,11 +15,15 @@ var mongodbPw = builder.Configuration["mongodbPw"];
 var mongodbCluster = builder.Configuration["mongodbCluster"];
 
 // Add services to the container.
-builder.Services.AddControllers()
-    .AddJsonOptions(options =>
+builder.Services.AddControllers(opt =>
+{
+    var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+    opt.Filters.Add(new AuthorizeFilter(policy));
+})
+    .AddJsonOptions(opt =>
     {
-        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-        options.JsonSerializerOptions.Converters.Add(new API.ObjectIdConverter());
+        opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        opt.JsonSerializerOptions.Converters.Add(new API.ObjectIdConverter());
     });
 
 builder.Services.Configure<JsonOptions>(options =>
@@ -24,6 +32,7 @@ builder.Services.Configure<JsonOptions>(options =>
 });
 
 builder.Services.AddApplicationServices(builder.Configuration);
+builder.Services.AddIdentityServices(builder.Configuration);
 
 var app = builder.Build();
 
@@ -36,8 +45,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("CorsPolicy");
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
@@ -48,7 +58,8 @@ var services = scope.ServiceProvider;
 try
 {
     var ctx = services.GetRequiredService<DataContext>();
-    await Seed.SeedData(ctx);
+    var userManager = services.GetRequiredService<UserManager<AppUser>>();
+    await Seed.SeedData(ctx, userManager);
 }
 catch (Exception ex)
 {

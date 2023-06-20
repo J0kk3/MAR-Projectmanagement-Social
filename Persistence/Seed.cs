@@ -2,13 +2,40 @@ using MongoDB.Driver;
 //Project Namespaces
 using Domain;
 using MongoDB.Bson;
+using Microsoft.AspNetCore.Identity;
 
 namespace Persistence
 {
     public class Seed
     {
-        public static async Task SeedData(DataContext ctx)
+        public static async Task SeedData(DataContext ctx, UserManager<AppUser> userManager)
         {
+            if (!userManager.Users.Any())
+            {
+                var users = new List<AppUser>
+                {
+                    new AppUser
+                    {
+                        Id = ObjectId.GenerateNewId(),
+                        UserName  = "jocke",
+                        Email = "test@testsson.com",
+                        Bio = "I'm a test user",
+                    },
+                    new AppUser
+                    {
+                        Id = ObjectId.GenerateNewId(),
+                        UserName = "Sabed",
+                        Email = "sabed@cowork.com",
+                        Bio = "I'm a test user",
+                    }
+                };
+
+                foreach (var user in users)
+                {
+                    await userManager.CreateAsync(user, "Pa$$w0rd!");
+                }
+            };
+
             try
             {
                 if (await ctx.Projects.CountDocumentsAsync(_ => true) > 0) return;
@@ -32,8 +59,6 @@ namespace Persistence
                 };
 
                 Console.WriteLine("Created tasks.");
-
-                // var kanbanBoardId = ObjectId.GenerateNewId();
 
                 var kanbanBoard = new KanbanBoard
                 {

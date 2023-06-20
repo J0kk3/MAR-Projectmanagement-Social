@@ -6,8 +6,10 @@ import "./Dashboard.scss";
 
 const ProjectDashboard = () =>
 {
-    const { projectStore } = useStore();
-    const { selectedProject, editMode } = projectStore;
+    const { projectStore, commonStore } = useStore();
+    // const { selectedProject, editMode } = projectStore;
+
+    if ( !commonStore.appLoaded ) return <h1>Loading Dashboard...</h1>;
 
     return (
         //TODO: Implement Notifications/Updates

@@ -31,7 +31,7 @@ export default class ProjectStore
     {
         try
         {
-            const projects = await agent.projects.list();
+            const projects = await agent.Projects.list();
 
             runInAction( () =>
             {
@@ -62,7 +62,7 @@ export default class ProjectStore
         {
             try
             {
-                project = await agent.projects.details( projectId );
+                project = await agent.Projects.details( projectId );
                 if ( project )
                 {
                     project.dueDate = new Date( project.dueDate );
@@ -92,7 +92,7 @@ export default class ProjectStore
         this.loading = true;
         try
         {
-            const tasks = await agent.tasks.getTasksByProject( projectId );
+            const tasks = await agent.Tasks.getTasksByProject( projectId );
             tasks.forEach( task =>
             {
                 if ( task.id !== undefined )
@@ -128,7 +128,7 @@ export default class ProjectStore
         this.loading = true;
         try
         {
-            await agent.tasks.updateTaskStatus( task.id!.toString(), task.status );
+            await agent.Tasks.updateTaskStatus( task.id!.toString(), task.status );
             runInAction( () =>
             {
                 const project = this.projectRegistry.get( task.projectId );
@@ -156,7 +156,7 @@ export default class ProjectStore
     {
         try
         {
-            const updatedTask = await agent.tasks.editTask( projectId, taskId, task );
+            const updatedTask = await agent.Tasks.editTask( projectId, taskId, task );
             runInAction( () =>
             {
                 this.taskRegistry.set( taskId, updatedTask );
@@ -201,7 +201,7 @@ export default class ProjectStore
         }
         try
         {
-            const createdTask = await agent.tasks.addTask( task.projectId, task );
+            const createdTask = await agent.Tasks.addTask( task.projectId, task );
             runInAction( () =>
             {
                 console.log( "Created task: ", createdTask );
@@ -271,7 +271,7 @@ export default class ProjectStore
         this.loading = true;
         try
         {
-            await agent.projects.create( project );
+            await agent.Projects.create( project );
             runInAction( () =>
             {
                 this.projectRegistry.set( project.id!, project );
@@ -294,7 +294,7 @@ export default class ProjectStore
         this.loading = true;
         try
         {
-            await agent.projects.update( project );
+            await agent.Projects.update( project );
             runInAction( () =>
             {
                 this.projectRegistry.set( project.id!, project );
@@ -318,7 +318,7 @@ export default class ProjectStore
         this.loading = true;
         try
         {
-            await agent.projects.delete( id );
+            await agent.Projects.delete( id );
             runInAction( () =>
             {
                 this.projectRegistry.delete( id );

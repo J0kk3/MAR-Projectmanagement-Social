@@ -1,14 +1,26 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import axios, { AxiosResponse } from "axios";
 import ObjectID from "bson-objectid";
+//Stores
+import { store } from "../stores/store";
 //Models & Types
 import { KanbanBoard, Project, Task } from "../models/project";
+import { User, UserFormValues } from "../models/user";
 
 //all requests that goes to the api
 
 axios.defaults.baseURL = "http://localhost:5000/api";
 
 const responseBody = <T> ( response: AxiosResponse<T> ) => response.data;
+
+axios.interceptors.request.use( config =>
+{
+    const token = store.commonStore.token;
+
+    if ( token && config.headers ) config.headers.Authorization = `Bearer ${ token }`;
+
+    return config;
+} );
 
 const requests =
 {
@@ -18,7 +30,7 @@ const requests =
     del: <T> ( url: string ) => axios.delete<T>( url ).then( responseBody )
 };
 
-const projects =
+const Projects =
 {
     list: () => requests.get<Project[]>( "/projects" ),
     details: ( id: ObjectID ) => requests.get<Project>( `/projects/${ id }` ),
@@ -27,26 +39,35 @@ const projects =
     delete: ( id: ObjectID ) => requests.del<void>( `/projects/${ id }` )
 };
 
-const kanbanBoards =
+const KanbanBoards =
 {
     get: ( projectId: string ) => requests.get<KanbanBoard>( `/projects/${ projectId }/kanbanBoard` ),
 };
 
-const tasks =
+const Tasks =
 {
     list: ( projectId: ObjectID ) => requests.get<Task[]>( `/projects/${ projectId }/tasks` ),
     addTask: ( id: ObjectID, task: Task ) => requests.post<Task>( `/projects/${ id }/tasks`, task ),
-    getTask: (projectId: ObjectID, taskId: ObjectID) => requests.get<Task>(`/projects/${projectId}/tasks/${taskId}`),
+    getTask: ( projectId: ObjectID, taskId: ObjectID ) => requests.get<Task>( `/projects/${ projectId }/tasks/${ taskId }` ),
     getTasksByProject: ( projectId: ObjectID ) => requests.get<Task[]>( `/projects/${ projectId }/tasks` ),
     updateTaskStatus: ( taskId: string, newStatus: string ) => requests.put<void>( `/projects/tasks/${ taskId }`, { TaskId: taskId, NewStatus: newStatus } ),
     editTask: ( projectId: ObjectID, taskId: ObjectID, task: Task ) => requests.put<Task>( `/projects/${ projectId }/tasks/${ taskId }/details`, task ),
+    deleteTask: ( projectId: ObjectID, taskId: ObjectID ) => requests.del<void>( `/projects/${ projectId }/tasks/${ taskId }` ),
+};
+
+const Account =
+{
+    current: () => requests.get<User>( "/account" ),
+    login: ( user: UserFormValues ) => requests.post<User>( "/account/login", user ),
+    register: ( user: UserFormValues ) => requests.post<User>( "/account/register", user )
 };
 
 const agent =
 {
-    projects,
-    kanbanBoards,
-    tasks
+    Projects,
+    KanbanBoards,
+    Tasks,
+    Account
 };
 
 export default agent;

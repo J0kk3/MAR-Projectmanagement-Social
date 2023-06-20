@@ -1,8 +1,10 @@
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 //Project Namespaces
 using Application.Core;
 using Application.Projects;
 using Persistence;
+using Domain;
 
 namespace API.Extensions
 {
@@ -11,10 +13,14 @@ namespace API.Extensions
         public static IServiceCollection AddApplicationServices(this IServiceCollection services,
             IConfiguration config)
         {
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
+
             services.AddSingleton<DataContext>();
+            services.AddSingleton<IPasswordHasher<AppUser>, PasswordHasher<AppUser>>();
+
+            var ctx = services.BuildServiceProvider().GetService<DataContext>();
+
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy", policy =>

@@ -1,4 +1,6 @@
 import { createBrowserRouter, Navigate, RouteObject } from "react-router-dom";
+//Auth
+import RequireAuth from "./RequireAuth";
 //layout
 import App from "../../layout/App";
 //pages
@@ -17,16 +19,22 @@ export const routes: RouteObject[] =
             element: <App />,
             children:
                 [
-                    { path: "", element: <Auth /> },
-                    { path: "dashboard", element: <Dashboard /> },
-                    { path: "projects", element: <ProjectOverview /> },
-                    { path: "kanbanboard/:id", element: <KanbanBoard /> },
-                    { path: "create-project", element: <CreateProjectForm /> },
-                    { path: "search", element: <Search /> },
-                    { path: "profile", element: <Profile /> },
+                    { path: "/", element: <Navigate to="/auth" replace /> },
+                    { path: "auth", element: <Auth /> },
+                    {
+                        element: <RequireAuth />, children:
+                            [
+                                { path: "dashboard", element: <Dashboard /> },
+                                { path: "projects", element: <ProjectOverview /> },
+                                { path: "kanbanboard/:id", element: <KanbanBoard /> },
+                                { path: "create-project", element: <CreateProjectForm /> },
+                                { path: "search", element: <Search /> },
+                                { path: "profile", element: <Profile /> },
+                            ]
+                    }
                 ]
         },
-        { path: "*", element: <Navigate replace to="/dashboard" /> },
+        { path: "*", element: <Navigate replace to="/auth" /> },
     ];
 
 export const Router = createBrowserRouter( routes );
