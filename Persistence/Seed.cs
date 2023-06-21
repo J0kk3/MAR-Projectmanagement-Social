@@ -44,16 +44,19 @@ namespace Persistence
 
                 var projectId = ObjectId.GenerateNewId();
 
+                var jockeId = ObjectId.GenerateNewId();
+                var sabedId = ObjectId.GenerateNewId();
+
                 var tasks = new List<ProjectTask>
                 {
                     new ProjectTask
                     {
-                        Id = ObjectId.GenerateNewId(),
+                        Id = jockeId,
                         ProjectId = projectId,
                         Name = "ToDo Task 0",
                         Description = "ToDo Task 0 Description",
                         DueDate = DateTime.Now.AddMonths(1),
-                        PeopleAssigned = new List<string> { "Jocke", "Sabed" },
+                        PeopleAssigned = new List<ObjectId> { jockeId, sabedId },
                         Status = Domain.TaskStatus.ToDo,
                     }
                 };
@@ -75,8 +78,8 @@ namespace Persistence
                         Title = "Project 0",
                         Description = "Project 0 Description",
                         Priority = 3,
-                        Owner = "Jocke",
-                        Collaborators = new List<string> { "Sabed" },
+                        OwnerId = jockeId,
+                        CollaboratorIds = new List<ObjectId> { sabedId },
                         DueDate = DateTime.Now.AddMonths(7),
                         Category = "Project 0 Category",
                         Tags = new List<string> { "Project 0 Tag 1", "Project 0 Tag 2" },

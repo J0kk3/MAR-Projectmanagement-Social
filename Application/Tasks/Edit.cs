@@ -44,6 +44,14 @@ namespace Application.Tasks
 
                 await _ctx.Projects.ReplaceOneAsync(p => p.Id == project.Id, project);
 
+                // Update the users who are assigned this task
+                foreach (var userId in request.Task.PeopleAssigned)
+                {
+                    var filter = Builders<AppUser>.Filter.Eq(u => u.Id, userId);
+                    var update = Builders<AppUser>.Update.Push(u => u.TaskIds, request.Task.Id);
+                    await _ctx.Users.UpdateOneAsync(filter, update, cancellationToken: cancellationToken);
+                }
+
                 return task;
             }
         }

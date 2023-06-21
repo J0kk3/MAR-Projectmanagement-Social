@@ -33,6 +33,8 @@ namespace API.Extensions
             //Locate all the mapping profiles in the Application project
             services.AddAutoMapper(typeof(MappingProfiles).Assembly);
 
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
+
             return services;
         }
     }

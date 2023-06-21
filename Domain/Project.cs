@@ -32,8 +32,8 @@ namespace Domain
         public string Title { get; set; }
         public string Description { get; set; }
         public int Priority { get; set; }
-        public string Owner { get; set; }
-        public IList<string> Collaborators { get; set; }
+        public ObjectId OwnerId { get; set; }
+        public IList<ObjectId> CollaboratorIds { get; set; } = new List<ObjectId>();
         public DateTime DueDate { get; set; }
         public string Category { get; set; }
         public IList<string> Tags { get; set; } = new List<string>();
@@ -57,6 +57,6 @@ namespace Domain
         public string Description { get; set; }
         public DateTime DueDate { get; set; }
         public TaskStatus Status { get; set; }
-        public IList<string> PeopleAssigned { get; set; } = new List<string>();
+        public IList<ObjectId> PeopleAssigned { get; set; } = new List<ObjectId>();
     }
 }
