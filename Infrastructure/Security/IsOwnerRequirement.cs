@@ -29,8 +29,19 @@ namespace Infrastructure.Security
 
             if (userId == null) return;
 
-            var projectId = _httpContextAccessor.HttpContext?.Request.RouteValues
-                .SingleOrDefault(x => x.Key == "id").Value?.ToString();
+            var path = _httpContextAccessor.HttpContext.Request.Path.Value.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+
+            string projectId = null;
+            for (int i = 0; i < path.Length; i++)
+            {
+                if (path[i].Equals("projects", StringComparison.OrdinalIgnoreCase) && i < path.Length - 1)
+                {
+                    projectId = path[i + 1];
+                    break;
+                }
+            }
+
+            if (projectId == null) return;
 
             var project = await _ctx.Projects.Find(p => p.Id == new ObjectId(projectId)).SingleOrDefaultAsync();
 
