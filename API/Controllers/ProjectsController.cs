@@ -4,6 +4,7 @@ using MongoDB.Bson;
 //Project Namespaces
 using Domain;
 using Application.Tasks;
+using Application.DTOs;
 
 namespace API.Controllers
 {
@@ -11,7 +12,7 @@ namespace API.Controllers
     {
         // Get all projects.
         [HttpGet]
-        public async Task<ActionResult<List<Project>>> GetProjects()
+        public async Task<ActionResult<List<ProjectDto>>> GetProjects()
         {
             return await Mediator.Send(new Application.Projects.List.Query());
         }
@@ -31,6 +32,7 @@ namespace API.Controllers
         }
 
         // Edit an existing project by its ObjectId.
+        [Authorize(Policy = "IsOwner")]
         [HttpPut("{id}")]
         public async Task<IActionResult> EditProject(ObjectId id, Project project)
         {
@@ -39,6 +41,7 @@ namespace API.Controllers
         }
 
         // Delete a specific project by its ObjectId.
+        [Authorize(Policy = "IsOwner")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProject(ObjectId id)
         {
@@ -73,6 +76,7 @@ namespace API.Controllers
         }
 
         // Delete a specific task from a specific project, both by their ObjectId.
+        [Authorize(Policy = "IsOwner")]
         [HttpDelete("{projectId}/tasks/{taskId}")]
         public async Task<IActionResult> DeleteTask(ObjectId projectId, ObjectId taskId)
         {
@@ -101,6 +105,7 @@ namespace API.Controllers
         }
 
         // Update the status of a specific task by its ObjectId.
+        [Authorize(Policy = "IsOwner")]
         [HttpPut("tasks/{id}")]
         public async Task<IActionResult> UpdateTaskStatus(string id, [FromBody] MoveTaskToNewStatus.Command command)
         {
@@ -122,11 +127,20 @@ namespace API.Controllers
         }
 
         // Edit a specific task from a specific project, both by their ObjectId.
+        [Authorize(Policy = "IsOwner")]
         [HttpPut("{projectId}/tasks/{taskId}/details")]
         public async Task<IActionResult> EditTask(ObjectId projectId, ObjectId taskId, ProjectTask task)
         {
             task.Id = taskId;
             return Ok(await Mediator.Send(new Application.Tasks.Edit.Command { ProjectId = projectId, TaskId = taskId, Task = task }));
+        }
+
+        // Edit the people assigned to a specific task from a specific project, both by their ObjectId.
+        [Authorize(Policy = "IsOwner")]
+        [HttpPost("{projectId}/tasks/{taskId}/peopleAssigned")]
+        public async Task<IActionResult> EditPeopleAssigned(ObjectId projectId, ObjectId taskId, [FromBody] List<ObjectId> peopleAssignedIds)
+        {
+            return Ok(await Mediator.Send(new Application.Tasks.UpdatePeopleAssigned.Command { ProjectId = projectId, TaskId = taskId, PeopleAssignedIds = peopleAssignedIds }));
         }
     }
 }

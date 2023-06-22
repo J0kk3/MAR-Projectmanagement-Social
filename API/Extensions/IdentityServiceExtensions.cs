@@ -2,11 +2,13 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 using MongoDB.Bson;
 //project namespaces
 using Domain;
 using Persistence;
 using API.Services;
+using Infrastructure.Security;
 
 namespace API.Extensions
 {
@@ -48,6 +50,16 @@ namespace API.Extensions
                     ClockSkew = TimeSpan.Zero
                 };
             });
+
+            services.AddAuthorization(opt =>
+            {
+                opt.AddPolicy("IsOwner", policy =>
+                {
+                    policy.Requirements.Add(new IsOwnerRequirement());
+                });
+            });
+
+            services.AddTransient<IAuthorizationHandler, IsOwnerRequirementHandler>();
 
             services.AddScoped<TokenService>();
 

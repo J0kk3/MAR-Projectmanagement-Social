@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Application.Profiles;
 using Microsoft.AspNetCore.Http;
 
 public interface ICurrentUserService

@@ -156,6 +156,24 @@
           "Microsoft.AspNetCore.App"
         ]
       },
+      "Microsoft.AspNetCore.Authorization/7.0.7": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNetCore.Metadata": "7.0.7",
+          "Microsoft.Extensions.Logging.Abstractions": "7.0.1",
+          "Microsoft.Extensions.Options": "7.0.1"
+        },
+        "compile": {
+          "lib/net7.0/Microsoft.AspNetCore.Authorization.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net7.0/Microsoft.AspNetCore.Authorization.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Microsoft.AspNetCore.Cryptography.Internal/3.1.12": {
         "type": "package",
         "compile": {
@@ -234,6 +252,19 @@
         },
         "runtime": {
           "lib/netstandard2.0/Microsoft.AspNetCore.Http.Features.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Microsoft.AspNetCore.Metadata/7.0.7": {
+        "type": "package",
+        "compile": {
+          "lib/net7.0/Microsoft.AspNetCore.Metadata.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net7.0/Microsoft.AspNetCore.Metadata.dll": {
             "related": ".xml"
           }
         }
@@ -452,17 +483,20 @@
           }
         }
       },
-      "Microsoft.Extensions.Logging.Abstractions/3.1.12": {
+      "Microsoft.Extensions.Logging.Abstractions/7.0.1": {
         "type": "package",
         "compile": {
-          "lib/netstandard2.0/Microsoft.Extensions.Logging.Abstractions.dll": {
+          "lib/net7.0/Microsoft.Extensions.Logging.Abstractions.dll": {
             "related": ".xml"
           }
         },
         "runtime": {
-          "lib/netstandard2.0/Microsoft.Extensions.Logging.Abstractions.dll": {
+          "lib/net7.0/Microsoft.Extensions.Logging.Abstractions.dll": {
             "related": ".xml"
           }
+        },
+        "build": {
+          "buildTransitive/net6.0/Microsoft.Extensions.Logging.Abstractions.targets": {}
         }
       },
       "Microsoft.Extensions.ObjectPool/2.2.0": {
@@ -478,21 +512,24 @@
           }
         }
       },
-      "Microsoft.Extensions.Options/6.0.0": {
+      "Microsoft.Extensions.Options/7.0.1": {
         "type": "package",
         "dependencies": {
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "6.0.0",
-          "Microsoft.Extensions.Primitives": "6.0.0"
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "7.0.0",
+          "Microsoft.Extensions.Primitives": "7.0.0"
         },
         "compile": {
-          "lib/netstandard2.1/Microsoft.Extensions.Options.dll": {
+          "lib/net7.0/Microsoft.Extensions.Options.dll": {
             "related": ".xml"
           }
         },
         "runtime": {
-          "lib/netstandard2.1/Microsoft.Extensions.Options.dll": {
+          "lib/net7.0/Microsoft.Extensions.Options.dll": {
             "related": ".xml"
           }
+        },
+        "build": {
+          "buildTransitive/net6.0/_._": {}
         }
       },
       "Microsoft.Extensions.Primitives/7.0.0": {
@@ -682,7 +719,7 @@
           }
         }
       },
-      "MongoDB.Bson/2.19.2": {
+      "MongoDB.Bson/2.20.0": {
         "type": "package",
         "dependencies": {
           "System.Runtime.CompilerServices.Unsafe": "5.0.0"
@@ -698,13 +735,13 @@
           }
         }
       },
-      "MongoDB.Driver/2.19.2": {
+      "MongoDB.Driver/2.20.0": {
         "type": "package",
         "dependencies": {
           "Microsoft.Extensions.Logging.Abstractions": "2.0.0",
-          "MongoDB.Bson": "2.19.2",
-          "MongoDB.Driver.Core": "2.19.2",
-          "MongoDB.Libmongocrypt": "1.7.0"
+          "MongoDB.Bson": "2.20.0",
+          "MongoDB.Driver.Core": "2.20.0",
+          "MongoDB.Libmongocrypt": "1.8.0"
         },
         "compile": {
           "lib/netstandard2.1/MongoDB.Driver.dll": {
@@ -717,14 +754,14 @@
           }
         }
       },
-      "MongoDB.Driver.Core/2.19.2": {
+      "MongoDB.Driver.Core/2.20.0": {
         "type": "package",
         "dependencies": {
           "AWSSDK.SecurityToken": "3.7.100.14",
           "DnsClient": "1.6.1",
           "Microsoft.Extensions.Logging.Abstractions": "2.0.0",
-          "MongoDB.Bson": "2.19.2",
-          "MongoDB.Libmongocrypt": "1.7.0",
+          "MongoDB.Bson": "2.20.0",
+          "MongoDB.Libmongocrypt": "1.8.0",
           "SharpCompress": "0.30.1",
           "Snappier": "1.0.0",
           "System.Buffers": "4.5.1",
@@ -741,7 +778,7 @@
           }
         }
       },
-      "MongoDB.Libmongocrypt/1.7.0": {
+      "MongoDB.Libmongocrypt/1.8.0": {
         "type": "package",
         "compile": {
           "lib/netstandard2.1/MongoDB.Libmongocrypt.dll": {}
@@ -1046,7 +1083,7 @@
           "Domain": "1.0.0",
           "MediatR.Extensions.Microsoft.DependencyInjection": "11.1.0",
           "Microsoft.AspNetCore.Http": "2.2.2",
-          "MongoDB.Driver": "2.19.2",
+          "MongoDB.Driver": "2.20.0",
           "Persistence": "1.0.0",
           "System.IdentityModel.Tokens.Jwt": "6.31.0"
         },
@@ -1062,7 +1099,7 @@
         "framework": ".NETCoreApp,Version=v7.0",
         "dependencies": {
           "AspNetCore.Identity.MongoDbCore": "3.1.2",
-          "MongoDB.Driver": "2.19.2"
+          "MongoDB.Driver": "2.20.0"
         },
         "compile": {
           "bin/placeholder/Domain.dll": {}
@@ -1071,6 +1108,24 @@
           "bin/placeholder/Domain.dll": {}
         }
       },
+      "Infrastructure/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v7.0",
+        "dependencies": {
+          "Application": "1.0.0",
+          "Microsoft.AspNetCore.Authorization": "7.0.7",
+          "MongoDB.Driver": "2.20.0"
+        },
+        "compile": {
+          "bin/placeholder/Infrastructure.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Infrastructure.dll": {}
+        },
+        "frameworkReferences": [
+          "Microsoft.AspNetCore.App"
+        ]
+      },
       "Persistence/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v7.0",
@@ -1078,7 +1133,7 @@
           "AspNetCore.Identity.MongoDbCore": "3.1.2",
           "Domain": "1.0.0",
           "Microsoft.Extensions.Configuration": "7.0.0",
-          "MongoDB.Driver": "2.19.2"
+          "MongoDB.Driver": "2.20.0"
         },
         "compile": {
           "bin/placeholder/Persistence.dll": {}
@@ -1268,6 +1323,25 @@
         "microsoft.aspnetcore.authentication.jwtbearer.nuspec"
       ]
     },
+    "Microsoft.AspNetCore.Authorization/7.0.7": {
+      "sha512": "1w7+mJU4atTeHqd2P53WrAsSnifm/YV8/nDWL16QyfGRTQiyezvQKMbM3qof9QPGeqMfjQPbaphaIYDSqYPAig==",
+      "type": "package",
+      "path": "microsoft.aspnetcore.authorization/7.0.7",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/net462/Microsoft.AspNetCore.Authorization.dll",
+        "lib/net462/Microsoft.AspNetCore.Authorization.xml",
+        "lib/net7.0/Microsoft.AspNetCore.Authorization.dll",
+        "lib/net7.0/Microsoft.AspNetCore.Authorization.xml",
+        "lib/netstandard2.0/Microsoft.AspNetCore.Authorization.dll",
+        "lib/netstandard2.0/Microsoft.AspNetCore.Authorization.xml",
+        "microsoft.aspnetcore.authorization.7.0.7.nupkg.sha512",
+        "microsoft.aspnetcore.authorization.nuspec"
+      ]
+    },
     "Microsoft.AspNetCore.Cryptography.Internal/3.1.12": {
       "sha512": "9V7Acx9lFw2KA23FOqH4TH5wQzZN/px/ovmRWBb8I3rf9arZ/cKniwRmRNrwgmShtQXhu1t124rrl1du2ueODA==",
       "type": "package",
@@ -1341,6 +1415,25 @@
         "lib/netstandard2.0/Microsoft.AspNetCore.Http.Features.xml",
         "microsoft.aspnetcore.http.features.2.2.0.nupkg.sha512",
         "microsoft.aspnetcore.http.features.nuspec"
+      ]
+    },
+    "Microsoft.AspNetCore.Metadata/7.0.7": {
+      "sha512": "cbSFS7rnPIrwIpTO71AHxF+ToTHvvN6Yq0NzoAeGhf3m6eKO1eyeVv/p9YKp/9zSr3udA5uGYTp/ycaVGV3p5w==",
+      "type": "package",
+      "path": "microsoft.aspnetcore.metadata/7.0.7",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/net462/Microsoft.AspNetCore.Metadata.dll",
+        "lib/net462/Microsoft.AspNetCore.Metadata.xml",
+        "lib/net7.0/Microsoft.AspNetCore.Metadata.dll",
+        "lib/net7.0/Microsoft.AspNetCore.Metadata.xml",
+        "lib/netstandard2.0/Microsoft.AspNetCore.Metadata.dll",
+        "lib/netstandard2.0/Microsoft.AspNetCore.Metadata.xml",
+        "microsoft.aspnetcore.metadata.7.0.7.nupkg.sha512",
+        "microsoft.aspnetcore.metadata.nuspec"
       ]
     },
     "Microsoft.AspNetCore.OpenApi/7.0.5": {
@@ -1856,18 +1949,74 @@
         "microsoft.extensions.logging.nuspec"
       ]
     },
-    "Microsoft.Extensions.Logging.Abstractions/3.1.12": {
-      "sha512": "Ixi6qAF3sr1FjPntVamRCMcnrCPx6l0G8VxtVshEk4n8lGs0Hj62jmt/xJ4mHrxR5ST0T49ERT2HsJcv6z+wGw==",
+    "Microsoft.Extensions.Logging.Abstractions/7.0.1": {
+      "sha512": "pkeBFx0vqMW/A3aUVHh7MPu3WkBhaVlezhSZeb1c9XD0vUReYH1TLFSy5MxJgZfmz5LZzYoErMorlYZiwpOoNA==",
       "type": "package",
-      "path": "microsoft.extensions.logging.abstractions/3.1.12",
+      "path": "microsoft.extensions.logging.abstractions/7.0.1",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "Icon.png",
+        "LICENSE.TXT",
+        "THIRD-PARTY-NOTICES.TXT",
+        "analyzers/dotnet/roslyn3.11/cs/Microsoft.Extensions.Logging.Generators.dll",
+        "analyzers/dotnet/roslyn3.11/cs/cs/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn3.11/cs/de/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn3.11/cs/es/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn3.11/cs/fr/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn3.11/cs/it/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn3.11/cs/ja/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn3.11/cs/ko/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn3.11/cs/pl/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn3.11/cs/pt-BR/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn3.11/cs/ru/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn3.11/cs/tr/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn3.11/cs/zh-Hans/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn3.11/cs/zh-Hant/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn4.0/cs/Microsoft.Extensions.Logging.Generators.dll",
+        "analyzers/dotnet/roslyn4.0/cs/cs/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn4.0/cs/de/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn4.0/cs/es/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn4.0/cs/fr/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn4.0/cs/it/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn4.0/cs/ja/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn4.0/cs/ko/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn4.0/cs/pl/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn4.0/cs/pt-BR/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn4.0/cs/ru/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn4.0/cs/tr/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn4.0/cs/zh-Hans/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn4.0/cs/zh-Hant/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn4.4/cs/Microsoft.Extensions.Logging.Generators.dll",
+        "analyzers/dotnet/roslyn4.4/cs/cs/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn4.4/cs/de/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn4.4/cs/es/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn4.4/cs/fr/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn4.4/cs/it/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn4.4/cs/ja/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn4.4/cs/ko/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn4.4/cs/pl/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn4.4/cs/pt-BR/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn4.4/cs/ru/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn4.4/cs/tr/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn4.4/cs/zh-Hans/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn4.4/cs/zh-Hant/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "buildTransitive/net461/Microsoft.Extensions.Logging.Abstractions.targets",
+        "buildTransitive/net462/Microsoft.Extensions.Logging.Abstractions.targets",
+        "buildTransitive/net6.0/Microsoft.Extensions.Logging.Abstractions.targets",
+        "buildTransitive/netcoreapp2.0/Microsoft.Extensions.Logging.Abstractions.targets",
+        "buildTransitive/netstandard2.0/Microsoft.Extensions.Logging.Abstractions.targets",
+        "lib/net462/Microsoft.Extensions.Logging.Abstractions.dll",
+        "lib/net462/Microsoft.Extensions.Logging.Abstractions.xml",
+        "lib/net6.0/Microsoft.Extensions.Logging.Abstractions.dll",
+        "lib/net6.0/Microsoft.Extensions.Logging.Abstractions.xml",
+        "lib/net7.0/Microsoft.Extensions.Logging.Abstractions.dll",
+        "lib/net7.0/Microsoft.Extensions.Logging.Abstractions.xml",
         "lib/netstandard2.0/Microsoft.Extensions.Logging.Abstractions.dll",
         "lib/netstandard2.0/Microsoft.Extensions.Logging.Abstractions.xml",
-        "microsoft.extensions.logging.abstractions.3.1.12.nupkg.sha512",
-        "microsoft.extensions.logging.abstractions.nuspec"
+        "microsoft.extensions.logging.abstractions.7.0.1.nupkg.sha512",
+        "microsoft.extensions.logging.abstractions.nuspec",
+        "useSharedDesignerContext.txt"
       ]
     },
     "Microsoft.Extensions.ObjectPool/2.2.0": {
@@ -1883,23 +2032,31 @@
         "microsoft.extensions.objectpool.nuspec"
       ]
     },
-    "Microsoft.Extensions.Options/6.0.0": {
-      "sha512": "dzXN0+V1AyjOe2xcJ86Qbo233KHuLEY0njf/P2Kw8SfJU+d45HNS2ctJdnEnrWbM9Ye2eFgaC5Mj9otRMU6IsQ==",
+    "Microsoft.Extensions.Options/7.0.1": {
+      "sha512": "pZRDYdN1FpepOIfHU62QoBQ6zdAoTvnjxFfqAzEd9Jhb2dfhA5i6jeTdgGgcgTWFRC7oT0+3XrbQu4LjvgX1Nw==",
       "type": "package",
-      "path": "microsoft.extensions.options/6.0.0",
+      "path": "microsoft.extensions.options/7.0.1",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "Icon.png",
         "LICENSE.TXT",
         "THIRD-PARTY-NOTICES.TXT",
-        "lib/net461/Microsoft.Extensions.Options.dll",
-        "lib/net461/Microsoft.Extensions.Options.xml",
+        "buildTransitive/net461/Microsoft.Extensions.Options.targets",
+        "buildTransitive/net462/_._",
+        "buildTransitive/net6.0/_._",
+        "buildTransitive/netcoreapp2.0/Microsoft.Extensions.Options.targets",
+        "lib/net462/Microsoft.Extensions.Options.dll",
+        "lib/net462/Microsoft.Extensions.Options.xml",
+        "lib/net6.0/Microsoft.Extensions.Options.dll",
+        "lib/net6.0/Microsoft.Extensions.Options.xml",
+        "lib/net7.0/Microsoft.Extensions.Options.dll",
+        "lib/net7.0/Microsoft.Extensions.Options.xml",
         "lib/netstandard2.0/Microsoft.Extensions.Options.dll",
         "lib/netstandard2.0/Microsoft.Extensions.Options.xml",
         "lib/netstandard2.1/Microsoft.Extensions.Options.dll",
         "lib/netstandard2.1/Microsoft.Extensions.Options.xml",
-        "microsoft.extensions.options.6.0.0.nupkg.sha512",
+        "microsoft.extensions.options.7.0.1.nupkg.sha512",
         "microsoft.extensions.options.nuspec",
         "useSharedDesignerContext.txt"
       ]
@@ -2165,52 +2322,52 @@
         "version.txt"
       ]
     },
-    "MongoDB.Bson/2.19.2": {
-      "sha512": "YpwSLKillPRj+BYEZU0dFgVHdCuj7uGIkLcyEc5a9zwJQYMbZkAc2CRVzobnDY9HMSCtyefXnkrz9CQ6C91KQA==",
+    "MongoDB.Bson/2.20.0": {
+      "sha512": "IXgb+uGslHBgy+JjfwepO06Vmq5itprTPJJtQotAhLMjmuDvbA7pfAs/2hTfqYbR39l7eli5bIwA3zqZHUkVlQ==",
       "type": "package",
-      "path": "mongodb.bson/2.19.2",
+      "path": "mongodb.bson/2.20.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "License.txt",
+        "LICENSE.md",
         "lib/net472/MongoDB.Bson.dll",
         "lib/net472/MongoDB.Bson.xml",
         "lib/netstandard2.0/MongoDB.Bson.dll",
         "lib/netstandard2.0/MongoDB.Bson.xml",
         "lib/netstandard2.1/MongoDB.Bson.dll",
         "lib/netstandard2.1/MongoDB.Bson.xml",
-        "mongodb.bson.2.19.2.nupkg.sha512",
+        "mongodb.bson.2.20.0.nupkg.sha512",
         "mongodb.bson.nuspec",
         "packageIcon.png"
       ]
     },
-    "MongoDB.Driver/2.19.2": {
-      "sha512": "xT2VA1KmjzxXQYuA8VbnM3r+DVVjja6ntD7YjesxkODAX3GkQLSgLLH+tS7R0uy/zZzA7YWEF1AKIJyxC7jfmA==",
+    "MongoDB.Driver/2.20.0": {
+      "sha512": "pAxVtrIRTTuQG3xMBF3NfWumXqf/JT0i7eEzp06k4zin8zj1sroX0J/i/qzJ9JjHQMh3BSsQ4E209G5S6zkxrg==",
       "type": "package",
-      "path": "mongodb.driver/2.19.2",
+      "path": "mongodb.driver/2.20.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "License.txt",
+        "LICENSE.md",
         "lib/net472/MongoDB.Driver.dll",
         "lib/net472/MongoDB.Driver.xml",
         "lib/netstandard2.0/MongoDB.Driver.dll",
         "lib/netstandard2.0/MongoDB.Driver.xml",
         "lib/netstandard2.1/MongoDB.Driver.dll",
         "lib/netstandard2.1/MongoDB.Driver.xml",
-        "mongodb.driver.2.19.2.nupkg.sha512",
+        "mongodb.driver.2.20.0.nupkg.sha512",
         "mongodb.driver.nuspec",
         "packageIcon.png"
       ]
     },
-    "MongoDB.Driver.Core/2.19.2": {
-      "sha512": "MjZmAZLNCV+d/eW+X1YPNztEtEBosIX8qMFCoQAhJOoHotuJfTePt+Lp8sjxTDTCyaOtLhClIgefy3P9JaxUHw==",
+    "MongoDB.Driver.Core/2.20.0": {
+      "sha512": "YIRUQnl/aHjZbvwoVHhlUi5ofoZs/6HRllpxZrSseB52IJPmhYclppApAUb/TETIx7mPxcoZgHVVQKnwYQQCVg==",
       "type": "package",
-      "path": "mongodb.driver.core/2.19.2",
+      "path": "mongodb.driver.core/2.20.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "License.txt",
+        "LICENSE.md",
         "THIRD-PARTY-NOTICES",
         "lib/net472/MongoDB.Driver.Core.dll",
         "lib/net472/MongoDB.Driver.Core.xml",
@@ -2218,15 +2375,15 @@
         "lib/netstandard2.0/MongoDB.Driver.Core.xml",
         "lib/netstandard2.1/MongoDB.Driver.Core.dll",
         "lib/netstandard2.1/MongoDB.Driver.Core.xml",
-        "mongodb.driver.core.2.19.2.nupkg.sha512",
+        "mongodb.driver.core.2.20.0.nupkg.sha512",
         "mongodb.driver.core.nuspec",
         "packageIcon.png"
       ]
     },
-    "MongoDB.Libmongocrypt/1.7.0": {
-      "sha512": "p9+peTZX63nGHskOLhvhfBtrknxNg1RzXepE07rPozuCGz27bMjCcQyvn2YByg0L3YEcNWdTmI4BlnG/5RF+5Q==",
+    "MongoDB.Libmongocrypt/1.8.0": {
+      "sha512": "fgNw8Dxpkq7mpoaAYes8cfnPRzvFIoB8oL9GPXwi3op/rONftl0WAeg4akRLcxfoVuUvuUO2wGoVBr3JzJ7Svw==",
       "type": "package",
-      "path": "mongodb.libmongocrypt/1.7.0",
+      "path": "mongodb.libmongocrypt/1.8.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -2247,7 +2404,7 @@
         "lib/net472/MongoDB.Libmongocrypt.dll",
         "lib/netstandard2.0/MongoDB.Libmongocrypt.dll",
         "lib/netstandard2.1/MongoDB.Libmongocrypt.dll",
-        "mongodb.libmongocrypt.1.7.0.nupkg.sha512",
+        "mongodb.libmongocrypt.1.8.0.nupkg.sha512",
         "mongodb.libmongocrypt.nuspec",
         "runtimes/linux/native/libmongocrypt.so",
         "runtimes/osx/native/libmongocrypt.dylib",
@@ -2872,6 +3029,11 @@
       "path": "../Domain/Domain.csproj",
       "msbuildProject": "../Domain/Domain.csproj"
     },
+    "Infrastructure/1.0.0": {
+      "type": "project",
+      "path": "../Infrastructure/Infrastructure.csproj",
+      "msbuildProject": "../Infrastructure/Infrastructure.csproj"
+    },
     "Persistence/1.0.0": {
       "type": "project",
       "path": "../Persistence/Persistence.csproj",
@@ -2882,10 +3044,10 @@
     "net7.0": [
       "Application >= 1.0.0",
       "AspNetCore.Identity.MongoDbCore >= 3.1.2",
+      "Infrastructure >= 1.0.0",
       "Microsoft.AspNetCore.Authentication.JwtBearer >= 7.0.7",
-      "Microsoft.AspNetCore.Http >= 2.2.2",
       "Microsoft.AspNetCore.OpenApi >= 7.0.5",
-      "MongoDB.Driver >= 2.19.2",
+      "MongoDB.Driver >= 2.20.0",
       "Swashbuckle.AspNetCore >= 6.4.0",
       "System.IdentityModel.Tokens.Jwt >= 6.31.0"
     ]
@@ -2897,11 +3059,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "d:\\Repos\\MAR-Projectmanagement-Social\\API\\API.csproj",
+      "projectUniqueName": "D:\\Repos\\MAR-Projectmanagement-Social\\API\\API.csproj",
       "projectName": "API",
-      "projectPath": "d:\\Repos\\MAR-Projectmanagement-Social\\API\\API.csproj",
+      "projectPath": "D:\\Repos\\MAR-Projectmanagement-Social\\API\\API.csproj",
       "packagesPath": "C:\\Users\\joaki\\.nuget\\packages\\",
-      "outputPath": "d:\\Repos\\MAR-Projectmanagement-Social\\API\\obj\\",
+      "outputPath": "D:\\Repos\\MAR-Projectmanagement-Social\\API\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -2915,14 +3077,20 @@
         "net7.0"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\dotnet\\library-packs": {},
+        "C:\\Program Files\\dotnet\\sdk\\7.0.302\\Sdks\\Microsoft.NET.Sdk.Web\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net7.0": {
           "targetAlias": "net7.0",
           "projectReferences": {
-            "d:\\Repos\\MAR-Projectmanagement-Social\\Application\\Application.csproj": {
-              "projectPath": "d:\\Repos\\MAR-Projectmanagement-Social\\Application\\Application.csproj"
+            "D:\\Repos\\MAR-Projectmanagement-Social\\Application\\Application.csproj": {
+              "projectPath": "D:\\Repos\\MAR-Projectmanagement-Social\\Application\\Application.csproj"
+            },
+            "D:\\Repos\\MAR-Projectmanagement-Social\\Infrastructure\\Infrastructure.csproj": {
+              "projectPath": "D:\\Repos\\MAR-Projectmanagement-Social\\Infrastructure\\Infrastructure.csproj"
             }
           }
         }
@@ -2945,17 +3113,13 @@
             "target": "Package",
             "version": "[7.0.7, )"
           },
-          "Microsoft.AspNetCore.Http": {
-            "target": "Package",
-            "version": "[2.2.2, )"
-          },
           "Microsoft.AspNetCore.OpenApi": {
             "target": "Package",
             "version": "[7.0.5, )"
           },
           "MongoDB.Driver": {
             "target": "Package",
-            "version": "[2.19.2, )"
+            "version": "[2.20.0, )"
           },
           "Swashbuckle.AspNetCore": {
             "target": "Package",

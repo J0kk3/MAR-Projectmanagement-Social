@@ -5,6 +5,8 @@ using Application.Core;
 using Application.Projects;
 using Persistence;
 using Domain;
+using Application.Interfaces;
+using Infrastructure.Security;
 
 namespace API.Extensions
 {
@@ -34,6 +36,7 @@ namespace API.Extensions
             services.AddAutoMapper(typeof(MappingProfiles).Assembly);
 
             services.AddScoped<ICurrentUserService, CurrentUserService>();
+            services.AddScoped<IUserProfileService, UserProfileService>();
 
             return services;
         }

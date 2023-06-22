@@ -51,7 +51,7 @@
             },
             "MongoDB.Driver": {
               "target": "Package",
-              "version": "[2.19.2, )"
+              "version": "[2.20.0, )"
             }
           },
           "imports": [
@@ -129,7 +129,7 @@
             },
             "MongoDB.Driver": {
               "target": "Package",
-              "version": "[2.19.2, )"
+              "version": "[2.20.0, )"
             }
           },
           "imports": [
