@@ -1,12 +1,12 @@
 //Project Namespaces
 using Domain;
-using Application.Profiles;
+using MongoDB.Bson;
 
 namespace Application.DTOs
 {
     public class ProjectDto
     {
-        public string Id { get; set; }
+        public ObjectId Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public int Priority { get; set; }
@@ -17,5 +17,6 @@ namespace Application.DTOs
         public IList<string> Tags { get; set; }
         public Visibility Visibility { get; set; }
         public ProjectStatus Status { get; set; }
+        public KanbanBoardDto KanbanBoard { get; set; }
     }
 }

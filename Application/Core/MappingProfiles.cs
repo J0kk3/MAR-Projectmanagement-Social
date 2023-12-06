@@ -10,14 +10,15 @@ namespace Application.Core
         public MappingProfiles()
         {
             CreateMap<Project, Project>();
-            CreateMap<Project, ProjectDto>()
-                //Ignore these fields because they are manually set
-                .ForMember(d => d.Owner, o => o.Ignore())
-                .ForMember(d => d.Collaborators, o => o.Ignore());
             CreateMap<ProjectCollaborator, Profiles.Profile>()
                 .ForMember(d => d.userName, o => o.MapFrom(s => s.AppUser.UserName))
                 .ForMember(d => d.Bio, o => o.MapFrom(s => s.AppUser.Bio));
-                // .ForMember(d => d.Image, o => o.MapFrom(s => s.Image));
+            CreateMap<KanbanBoard, KanbanBoardDto>();
+            CreateMap<ProjectTask, ProjectTaskDto>();
+            CreateMap<Project, ProjectDto>()
+                .ForMember(d => d.Owner, o => o.MapFrom<OwnerResolver>())
+                .ForMember(d => d.Collaborators, o => o.Ignore())
+                .ForMember(d => d.KanbanBoard, o => o.MapFrom(s => s.kanbanBoard));
         }
     }
 }

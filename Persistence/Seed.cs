@@ -17,7 +17,8 @@ namespace Persistence
                     new AppUser
                     {
                         Id = ObjectId.GenerateNewId(),
-                        UserName  = "jocke",
+                        UserName  = "Jocke",
+                        UserNameLower = "jocke",
                         Email = "test@testsson.com",
                         Bio = "I'm a test user",
                     },
@@ -25,6 +26,7 @@ namespace Persistence
                     {
                         Id = ObjectId.GenerateNewId(),
                         UserName = "Sabed",
+                        UserNameLower = "sabed",
                         Email = "sabed@cowork.com",
                         Bio = "I'm a test user",
                     }
@@ -44,15 +46,16 @@ namespace Persistence
 
                 var projectId = ObjectId.GenerateNewId();
 
-                var jockeId = ObjectId.GenerateNewId();
-                var sabedId = ObjectId.GenerateNewId();
+                var jockeId = userManager.Users.First(u => u.UserNameLower == "jocke").Id;
+                var sabedId = userManager.Users.First(u => u.UserNameLower == "sabed").Id;
 
                 var tasks = new List<ProjectTask>
                 {
                     new ProjectTask
                     {
-                        Id = jockeId,
+                        Id = ObjectId.GenerateNewId(),
                         ProjectId = projectId,
+                        OwnerId = jockeId,
                         Name = "ToDo Task 0",
                         Description = "ToDo Task 0 Description",
                         DueDate = DateTime.Now.AddMonths(1),

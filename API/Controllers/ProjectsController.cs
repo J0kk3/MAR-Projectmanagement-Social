@@ -105,18 +105,17 @@ namespace API.Controllers
         }
 
         // Update the status of a specific task by its ObjectId.
-        [Authorize(Policy = "IsOwner")]
         [HttpPut("tasks/{id}")]
-        public async Task<IActionResult> UpdateTaskStatus(string id, [FromBody] MoveTaskToNewStatus.Command command)
+        public async Task<IActionResult> UpdateTaskStatus(ObjectId id, [FromBody] MoveTaskToNewStatus.Command command)
         {
-            if (!ObjectId.TryParse(id, out ObjectId objectId))
-            {
-                return BadRequest("Invalid id format");
-            }
+            // if (!ObjectId.TryParse(id, out ObjectId objectId))
+            // {
+            //     return BadRequest("Invalid id format");
+            // }
 
-            Console.WriteLine($"URL id: {objectId}, command.TaskId: {command.TaskId}");
+            Console.WriteLine($"URL id: {id}, command.TaskId: {command.TaskId}");
 
-            if (command.TaskId != objectId)
+            if (command.TaskId != id)
             {
                 return BadRequest("TaskId in the command does not match the id in the URL");
             }

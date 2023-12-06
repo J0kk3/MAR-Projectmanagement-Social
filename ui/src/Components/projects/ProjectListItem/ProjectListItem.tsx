@@ -3,10 +3,26 @@ import { observer } from "mobx-react-lite";
 import ObjectID from "bson-objectid";
 //Types & Models
 import { Project } from "../../../app/models/project";
+import { Profile } from "../../../app/models/profile";
 //Stores
+import agent from "../../../app/api/agent";
 import { useStore } from "../../../app/stores/store";
+//Components
+import CollaboratorSelection from "../ProjectForm/CollaboratorSelection";
 //Styles
 import "./ProjectListItem.scss";
+
+type OptionType =
+    {
+        label: string;
+        value: string;
+    };
+
+const profileToOptionType = ( profile: Profile ): OptionType => (
+    {
+        label: profile.userName,
+        value: profile.id.toString(), // convert the id to string
+    } );
 
 interface Props
 {
@@ -16,10 +32,12 @@ interface Props
 
 const ProjectListItem = ( { project, onSelectProject }: Props ) =>
 {
-    const { projectStore } = useStore();
+    const { projectStore, commonStore } = useStore();
     const { deleteProject, openForm, closeForm, editMode, editProjectId, loadProjects, updateProject } = projectStore;
+    const { appLoaded } = commonStore;
 
     const [ editedProject, setEditedProject ] = useState<Project>( { ...project } );
+
 
     const ISO_DATE_LENGTH = 10; //YYYY-MM-DD is 10 characters long
 
@@ -64,6 +82,32 @@ const ProjectListItem = ( { project, onSelectProject }: Props ) =>
         }
     };
 
+    const handleCollaboratorsChange = async ( newCollaborators: readonly OptionType[] | null | undefined ) =>
+    {
+        if ( newCollaborators )
+        {
+            const collaboratorProfiles: Profile[] = await Promise.all( newCollaborators.map( async ( collab ) =>
+            {
+                return await agent.Account.getUserDetails( collab.value );
+            } ) );
+            setEditedProject( { ...editedProject, collaborators: collaboratorProfiles } );
+        }
+        else
+        {
+            setEditedProject( { ...editedProject, collaborators: [] } );
+        }
+    };
+
+    const loadOptions = async ( inputValue: string ): Promise<OptionType[]> =>
+    {
+        const profiles: Profile[] = await agent.Account.search( inputValue );
+        return profiles.map( profileToOptionType );
+    };
+
+    if ( !appLoaded )
+    {
+        return <div>Loading Projects...</div>;
+    }
 
     return (
         <div onClick={ handleSelect } className="card details-click">
@@ -80,10 +124,14 @@ const ProjectListItem = ( { project, onSelectProject }: Props ) =>
                             <input className="input-field" name="priority" value={ editedProject.priority } onChange={ handleInputChange } />
                         </li>
                         <li>
-                            <input className="input-field" name="owner" value={ editedProject.owner } onChange={ handleInputChange } />
+                            <p className="display-field">{ "Owner: " + editedProject.owner }</p>
                         </li>
                         <li>
-                            <input className="input-field" name="collaborators" value={ editedProject.collaborators } onChange={ handleInputChange } />
+                            <CollaboratorSelection
+                                value={ editedProject.collaborators.map( profileToOptionType ) }
+                                onChange={ handleCollaboratorsChange }
+                                loadOptions={ loadOptions }
+                            />
                         </li>
                         <li>
                             <input className="input-field" name="dueDate" value={ editedProject.dueDate.toISOString() } onChange={ handleInputChange } />
@@ -103,8 +151,8 @@ const ProjectListItem = ( { project, onSelectProject }: Props ) =>
                         <li>{ "Title: " + project.title }</li>
                         <li>{ "Description: " + project.description }</li>
                         <li>{ "Priority: " + project.priority }</li>
-                        <li>{ "Owner: " + project.owner }</li>
-                        <li>{ "Collaborators: " + project.collaborators }</li>
+                        <li>{ "Owner: " + ( project.owner ? project.owner.userName : "No owner assigned" ) }</li>
+                        <li> { "Collaborators: " + ( project.collaborators ? project.collaborators.map( c => c.userName ).join( ", " ) : "None" ) } </li>
                         <li>{ "Due date: " + project.dueDate.toISOString().slice( 0, ISO_DATE_LENGTH ) }</li>
                         <li>{ "Category: " + project.category }</li>
                         <li>{ "Tags: " + project.tags }</li>

@@ -35,12 +35,14 @@ namespace Application.Projects
                     return null;
                 }
 
+                var authenticatedUserIdAsObjectId = ObjectId.Parse(authenticatedUserId);
+
                 // Create a filter to find the project with the matching id where the authenticated user is the owner or a collaborator
                 var filter = Builders<Project>.Filter.And(
                     Builders<Project>.Filter.Eq(doc => doc.Id, request.Id),
                     Builders<Project>.Filter.Or(
-                        Builders<Project>.Filter.Eq(doc => doc.OwnerId.ToString(), authenticatedUserId),
-                        Builders<Project>.Filter.AnyEq(doc => doc.CollaboratorIds.Select(id => id.ToString()), authenticatedUserId)
+                        Builders<Project>.Filter.Eq(doc => doc.OwnerId, authenticatedUserIdAsObjectId),
+                        Builders<Project>.Filter.AnyIn(doc => doc.CollaboratorIds, new List<ObjectId> { authenticatedUserIdAsObjectId })
                     )
                 );
 

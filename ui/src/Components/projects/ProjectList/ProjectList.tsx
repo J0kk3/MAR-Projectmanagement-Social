@@ -20,7 +20,7 @@ const ProjectList = ( { onSelectProject }: Props ) =>
             <h1>Projects</h1>
             <>
                 { projectsByDate.map( project => (
-                    <ProjectListItem key={ uuid() } project={ project } onSelectProject={ onSelectProject } />
+                    <ProjectListItem key={ project.id!.toString() } project={ project } onSelectProject={ onSelectProject } />
                 ) ) }
             </>
         </div>

@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using MongoDB.Bson;
 using MongoDB.Driver;
 //Project Namespaces
@@ -29,25 +30,45 @@ namespace Infrastructure.Security
 
             if (userId == null) return;
 
-            var path = _httpContextAccessor.HttpContext.Request.Path.Value.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+            // var routeValues = _httpContextAccessor.HttpContext.Request.RouteValues;
 
-            string projectId = null;
-            for (int i = 0; i < path.Length; i++)
-            {
-                if (path[i].Equals("projects", StringComparison.OrdinalIgnoreCase) && i < path.Length - 1)
-                {
-                    projectId = path[i + 1];
-                    break;
-                }
-            }
+            // var projectId = _httpContextAccessor.HttpContext?.Request.RouteValues
+            //     .SingleOrDefault(x => x.Key == "id").Value?.ToString();
+            var routeValuesFeature = _httpContextAccessor.HttpContext.Features.Get<IRouteValuesFeature>();
+            var routeValues = routeValuesFeature.RouteValues;
+
+            var projectId = routeValues.SingleOrDefault(x => x.Key == "id").Value?.ToString();
+
 
             if (projectId == null) return;
+            if (!ObjectId.TryParse(projectId, out ObjectId validId)) return;
 
-            var project = await _ctx.Projects.Find(p => p.Id == new ObjectId(projectId)).SingleOrDefaultAsync();
+            var project = await _ctx.Projects.Find(p => p.Id == validId).SingleOrDefaultAsync();
 
             if (project == null) return;
 
             if (project.OwnerId.ToString() == userId) context.Succeed(requirement);
         }
+        // protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, IsOwnerRequirement requirement)
+        // {
+        //     var userId = context.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        //     if (userId == null) return;
+
+        //     var features = _httpContextAccessor.HttpContext.Features;
+        //     var routeValuesFeature = features.Get<IRouteValuesFeature>();
+        //     var routeValues = routeValuesFeature.RouteValues;
+
+        //     var projectId = routeValues.SingleOrDefault(x => x.Key == "id").Value?.ToString();
+
+        //     if (projectId == null) return;
+        //     if (!ObjectId.TryParse(projectId, out ObjectId validId)) return;
+
+        //     var project = await _ctx.Projects.Find(p => p.Id == validId).SingleOrDefaultAsync();
+
+        //     if (project == null) return;
+
+        //     if (project.OwnerId.ToString() == userId) context.Succeed(requirement);
+        // }
     }
 }

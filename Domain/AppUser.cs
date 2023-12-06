@@ -7,6 +7,7 @@ namespace Domain
     [CollectionName("Users")]
     public class AppUser : MongoIdentityUser<ObjectId>
     {
+        public string UserNameLower { get; set; }
         public string Bio { get; set; }
         public ICollection<ObjectId> ProjectIds { get; set; } = new List<ObjectId>();
         public ICollection<ObjectId> TaskIds { get; set; } = new List<ObjectId>();

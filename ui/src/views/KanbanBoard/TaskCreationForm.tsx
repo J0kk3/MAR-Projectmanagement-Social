@@ -25,8 +25,9 @@ interface Props
 
 const TaskCreationForm = ( { allTasks, setAllTasks, status, setShowAddTaskForms, showAddTaskForms, kanbanBoard, onTaskCreated }: Props ) =>
 {
-    const { projectStore } = useStore();
+    const { projectStore, userStore } = useStore();
     const { createTaskInKanbanBoard, loadKanbanBoard } = projectStore;
+    const { user } = userStore;
 
     const [ taskName, setTaskName ] = useState<string>( "" );
     const [ isModalOpen, setIsModalOpen ] = useState( false );
@@ -45,6 +46,7 @@ const TaskCreationForm = ( { allTasks, setAllTasks, status, setShowAddTaskForms,
             {
                 projectId: kanbanBoard.projectId!,
                 name: taskName,
+                ownerId: user!.id,
                 description: "",
                 dueDate: dueDate || new Date(),
                 peopleAssigned: [],

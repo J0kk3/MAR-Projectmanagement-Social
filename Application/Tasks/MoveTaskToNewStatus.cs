@@ -4,6 +4,8 @@ using MongoDB.Bson;
 //Project Namespaces
 using Domain;
 using Persistence;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace Application.Tasks
 {
@@ -36,10 +38,12 @@ namespace Application.Tasks
         public class Handler : IRequestHandler<Command>
         {
             private readonly DataContext _ctx;
+            private readonly IHttpContextAccessor _httpContextAccessor;
 
-            public Handler(DataContext ctx)
+            public Handler(DataContext ctx, IHttpContextAccessor httpContextAccessor)
             {
                 _ctx = ctx;
+                _httpContextAccessor = httpContextAccessor;
             }
 
             public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
@@ -51,10 +55,18 @@ namespace Application.Tasks
 
                 if (project == null) throw new Exception("Task not found");
 
+                var currentUserId = new ObjectId(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
                 // Find the task
                 var task = project.kanbanBoard.Tasks.FirstOrDefault(t => t.Id == request.TaskId);
 
                 if (task == null) throw new Exception("Task not found");
+
+                // Check if the current user is the owner of the task
+                if (currentUserId != task.OwnerId)
+                {
+                    throw new Exception("Forbidden");
+                }
 
                 // Convert the string to TaskStatus using the mapping
                 var newStatus = TaskStatusMapper.ConvertStringToTaskStatus(request.NewStatus);

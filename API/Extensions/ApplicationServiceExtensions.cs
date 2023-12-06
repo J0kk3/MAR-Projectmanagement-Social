@@ -18,7 +18,8 @@ namespace API.Extensions
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
 
-            services.AddSingleton<DataContext>();
+            // services.AddSingleton<DataContext>();
+            services.AddScoped<DataContext>();
             services.AddSingleton<IPasswordHasher<AppUser>, PasswordHasher<AppUser>>();
 
             var ctx = services.BuildServiceProvider().GetService<DataContext>();
@@ -34,7 +35,7 @@ namespace API.Extensions
             services.AddMediatR(typeof(List.Handler));
             //Locate all the mapping profiles in the Application project
             services.AddAutoMapper(typeof(MappingProfiles).Assembly);
-
+            services.AddHttpContextAccessor();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped<IUserProfileService, UserProfileService>();
 

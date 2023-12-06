@@ -6,6 +6,7 @@ import { store } from "../stores/store";
 //Models & Types
 import { KanbanBoard, Project, Task } from "../models/project";
 import { User, UserFormValues } from "../models/user";
+import { Profile } from "../models/profile";
 
 //all requests that goes to the api
 
@@ -50,16 +51,25 @@ const Tasks =
     addTask: ( id: ObjectID, task: Task ) => requests.post<Task>( `/projects/${ id }/tasks`, task ),
     getTask: ( projectId: ObjectID, taskId: ObjectID ) => requests.get<Task>( `/projects/${ projectId }/tasks/${ taskId }` ),
     getTasksByProject: ( projectId: ObjectID ) => requests.get<Task[]>( `/projects/${ projectId }/tasks` ),
-    updateTaskStatus: ( taskId: string, newStatus: string ) => requests.put<void>( `/projects/tasks/${ taskId }`, { TaskId: taskId, NewStatus: newStatus } ),
-    editTask: ( projectId: ObjectID, taskId: ObjectID, task: Task ) => requests.put<Task>( `/projects/${ projectId }/tasks/${ taskId }/details`, task ),
-    deleteTask: ( projectId: ObjectID, taskId: ObjectID ) => requests.del<void>( `/projects/${ projectId }/tasks/${ taskId }` ),
+    updateTaskStatus: ( taskId: ObjectID, newStatus: string ) => requests.put<void>( `/projects/tasks/${ taskId }`, { TaskId: taskId, NewStatus: newStatus } ),
+    editPeopleAssigned: ( projectId: ObjectID, taskId: ObjectID, peopleAssignedIds: ObjectID[] ) => requests.post<void>( `/projects/${ projectId }/tasks/${ taskId }/peopleAssigned`, peopleAssignedIds ),
+    // editTask: ( projectId: ObjectID, taskId: ObjectID, task: Task ) => requests.put<Task>( `/projects/${ projectId }/tasks/${ taskId }/details`, task ),
+    // deleteTask: ( projectId: ObjectID, taskId: ObjectID ) => requests.del<void>( `/projects/${ projectId }/tasks/${ taskId }` ),
+    editTask: ( userId: string, projectId: ObjectID, taskId: ObjectID, task: Task ) =>
+        requests.put<Task>( `/projects/${ projectId }/tasks/${ taskId }/details?userId=${ userId }`, task ),
+
+    deleteTask: ( userId: string, projectId: ObjectID, taskId: ObjectID ) =>
+        requests.del<void>( `/projects/${ projectId }/tasks/${ taskId }?userId=${ userId }` ),
+
 };
 
 const Account =
 {
     current: () => requests.get<User>( "/account" ),
     login: ( user: UserFormValues ) => requests.post<User>( "/account/login", user ),
-    register: ( user: UserFormValues ) => requests.post<User>( "/account/register", user )
+    register: ( user: UserFormValues ) => requests.post<User>( "/account/register", user ),
+    search: ( query: string ) => requests.get<Profile[]>( `/account/search/${ query }` ),
+    getUserDetails: ( id: string ) => requests.get<Profile>( `/account/user/${ id }` ),
 };
 
 const agent =

@@ -28,7 +28,7 @@ namespace API.Extensions
                 opt.Password.RequireLowercase = true;
                 opt.User.RequireUniqueEmail = true;
             })
-            .AddMongoDbStores<AppUser, MongoRole, ObjectId>(ctx.connectionString, "Users")
+            .AddMongoDbStores<AppUser, MongoRole, ObjectId>(ctx.connectionString, "ProjectManagement")
             .AddDefaultTokenProviders();
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"]));
