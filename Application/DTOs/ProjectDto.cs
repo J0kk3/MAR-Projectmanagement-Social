@@ -18,5 +18,6 @@ namespace Application.DTOs
         public Visibility Visibility { get; set; }
         public ProjectStatus Status { get; set; }
         public KanbanBoardDto KanbanBoard { get; set; }
+        public ICollection<ProjectTaskDto> Tasks { get; set; }
     }
 }

@@ -6,6 +6,6 @@ namespace Application.DTOs
     {
         public ObjectId ProjectId { get; set; }
         public string Title { get; set; }
-        public ICollection<ProjectTaskDto> Tasks { get; set; }
+        // public ICollection<ProjectTaskDto> Tasks { get; set; }
     }
 }

@@ -76,11 +76,17 @@ namespace API.Controllers
         }
 
         // Delete a specific task from a specific project, both by their ObjectId.
-        [Authorize(Policy = "IsOwner")]
         [HttpDelete("{projectId}/tasks/{taskId}")]
-        public async Task<IActionResult> DeleteTask(ObjectId projectId, ObjectId taskId)
+        public async Task<IActionResult> DeleteTask(ObjectId projectId, ObjectId taskId, [FromQuery] string userId)
         {
-            return Ok(await Mediator.Send(new Application.Tasks.Delete.Command { ProjectId = projectId, TaskId = taskId }));
+            // Convert string userId to ObjectId
+            if (!ObjectId.TryParse(userId, out ObjectId objectUserId))
+            {
+                return BadRequest("Invalid user ID.");
+            }
+            // Pass objectUserId in the command
+            return Ok(await Mediator.Send(new Application.Tasks.Delete.Command
+            { ProjectId = projectId, TaskId = taskId, UserId = objectUserId }));
         }
 
         // Get all tasks across all projects.
