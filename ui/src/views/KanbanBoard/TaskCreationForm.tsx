@@ -20,14 +20,13 @@ interface Props
     allTasks: Task[];
     showCancelButton: boolean;
     onCancel: () => void;
-    onTaskCreated: ( task: Task ) => void;
 }
 
-const TaskCreationForm = ( { allTasks, setAllTasks, status, setShowAddTaskForms, showAddTaskForms, kanbanBoard, onTaskCreated }: Props ) =>
+const TaskCreationForm = ( { allTasks, setAllTasks, status, setShowAddTaskForms, showAddTaskForms, kanbanBoard }: Props ) =>
 {
     const { projectStore, userStore } = useStore();
     const { createTaskInKanbanBoard, loadKanbanBoard } = projectStore;
-    const { user } = userStore;
+    const { userId } = userStore;
 
     const [ taskName, setTaskName ] = useState<string>( "" );
     const [ isModalOpen, setIsModalOpen ] = useState( false );
@@ -40,13 +39,13 @@ const TaskCreationForm = ( { allTasks, setAllTasks, status, setShowAddTaskForms,
     {
         e.preventDefault();
 
-        if ( kanbanBoard )
+        if ( kanbanBoard && userId )
         {
             const newTask: Task =
             {
                 projectId: kanbanBoard.projectId!,
                 name: taskName,
-                ownerId: user!.id,
+                ownerId: userId,
                 description: "",
                 dueDate: dueDate || new Date(),
                 peopleAssigned: [],
@@ -57,9 +56,6 @@ const TaskCreationForm = ( { allTasks, setAllTasks, status, setShowAddTaskForms,
             {
                 if ( createdTask )
                 {
-                    // Update the state here
-                    onTaskCreated( { ...newTask, id: createdTask.id } );
-
                     // Update allTasks
                     setAllTasks( [ ...allTasks, { ...newTask, id: createdTask.id } ] );
 
@@ -70,6 +66,10 @@ const TaskCreationForm = ( { allTasks, setAllTasks, status, setShowAddTaskForms,
             {
                 console.log( err );
             } );
+        }
+        else
+        {
+            console.error("Cannot create task: UserID is null");
         }
     };
 

@@ -35,7 +35,6 @@ export default class UserStore
                 this.user = user;
                 this.userId = user.id;
             } );
-
             Router.navigate( "/dashboard" );
         }
         catch ( err )

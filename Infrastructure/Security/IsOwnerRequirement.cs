@@ -39,7 +39,6 @@ namespace Infrastructure.Security
 
             var projectId = routeValues.SingleOrDefault(x => x.Key == "id").Value?.ToString();
 
-
             if (projectId == null) return;
             if (!ObjectId.TryParse(projectId, out ObjectId validId)) return;
 

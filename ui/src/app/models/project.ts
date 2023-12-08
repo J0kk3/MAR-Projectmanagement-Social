@@ -51,7 +51,7 @@ export interface Task
 {
     id?: ObjectID;
     projectId: ObjectID;
-    ownerId: ObjectID;
+    ownerId: ObjectID | null;
     name: string;
     description: string;
     dueDate: Date;

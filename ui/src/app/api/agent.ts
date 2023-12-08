@@ -57,10 +57,8 @@ const Tasks =
     // deleteTask: ( projectId: ObjectID, taskId: ObjectID ) => requests.del<void>( `/projects/${ projectId }/tasks/${ taskId }` ),
     editTask: ( userId: string, projectId: ObjectID, taskId: ObjectID, task: Task ) =>
         requests.put<Task>( `/projects/${ projectId }/tasks/${ taskId }/details?userId=${ userId }`, task ),
-
     deleteTask: ( userId: string, projectId: ObjectID, taskId: ObjectID ) =>
         requests.del<void>( `/projects/${ projectId }/tasks/${ taskId }?userId=${ userId }` ),
-
 };
 
 const Account =

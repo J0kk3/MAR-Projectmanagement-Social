@@ -106,7 +106,6 @@ const KanbanBoard = () =>
             {
                 // Update the task in the server and capture the response
                 const { id: userId } = user;
-                // const updatedTaskFromServer = await agent.Tasks.editTask( updatedTask.projectId, updatedTask.id, updatedTask );
                 const updatedTaskFromServer = await agent.Tasks.editTask( userId.toString(), updatedTask.projectId, updatedTask.id, updatedTask );
 
                 console.log( "Updated task from server: ", updatedTaskFromServer );
@@ -128,8 +127,6 @@ const KanbanBoard = () =>
                     const updatedKanbanBoardTitle = kanbanBoard.title;
 
                     console.log( "Updated Kanban board tasks: ", updatedKanbanBoardTasks );
-
-                    // setAllTasks( newTasks.map( task => ( { ...task } ) ) ); // Create a new object for each task
 
                     setKanbanBoard(
                         {
@@ -165,10 +162,11 @@ const KanbanBoard = () =>
                 setAllTasks( allTasks.filter( t => t.id !== task.id ) );
                 if ( kanbanBoard )
                 {
-                    setKanbanBoard( {
-                        ...kanbanBoard,
-                        tasks: kanbanBoard.tasks.filter( t => t.id !== task.id ),
-                    } );
+                    setKanbanBoard(
+                        {
+                            ...kanbanBoard,
+                            tasks: kanbanBoard.tasks.filter( t => t.id !== task.id ),
+                        } );
                 }
 
                 // Close the modal
@@ -204,7 +202,7 @@ const KanbanBoard = () =>
             {
                 setIsLoading( true );
                 console.log( "Before loadKanbanBoard" );
-                const loadedBoard = await loadKanbanBoard( id! );
+                const loadedBoard = await loadKanbanBoard( id );
                 console.log( "After loadKanbanBoard", loadedBoard );
                 setKanbanBoard( loadedBoard );
 
@@ -215,7 +213,7 @@ const KanbanBoard = () =>
                 }
 
                 console.log( "Before loadTasks" );
-                const tasks = await loadTasks( id! );
+                const tasks = await loadTasks( id );
                 console.log( "After loadTasks", tasks );
                 setAllTasks( tasks );
                 setIsLoading( false );
@@ -346,7 +344,6 @@ const KanbanBoard = () =>
                             setAllTasks={ setAllTasks }
                             openModal={ openModal }
                             key={ status }
-                            onTaskCreated={ createTaskInKanbanBoard }
                         />
                     ) ) }
                 </div>

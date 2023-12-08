@@ -108,11 +108,6 @@ namespace API.Controllers
         [HttpPut("tasks/{id}")]
         public async Task<IActionResult> UpdateTaskStatus(ObjectId id, [FromBody] MoveTaskToNewStatus.Command command)
         {
-            // if (!ObjectId.TryParse(id, out ObjectId objectId))
-            // {
-            //     return BadRequest("Invalid id format");
-            // }
-
             Console.WriteLine($"URL id: {id}, command.TaskId: {command.TaskId}");
 
             if (command.TaskId != id)

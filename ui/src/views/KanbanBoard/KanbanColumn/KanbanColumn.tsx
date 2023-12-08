@@ -19,7 +19,6 @@ interface Props
     setKanbanBoard: ( kanbanBoard: KanbanBoard | null ) => void;
     allTasks: Task[];
     setAllTasks: ( allTasks: Task[] ) => void;
-    onTaskCreated: ( task: Task ) => Promise<Task | undefined>;
     openModal: ( task: Task | null, content: ModalContent ) => void;
 }
 
@@ -34,26 +33,8 @@ const KanbanColumn = ( {
     allTasks,
     setAllTasks,
     openModal,
-    onTaskCreated
 }: Props ) =>
 {
-
-    const handleTaskCreated = async ( task: Task ) =>
-    {
-        try
-        {
-            const createdTask = await onTaskCreated( task );
-            if ( createdTask )
-            {
-                // handle any post-creation logic here, if necessary
-            }
-        }
-         catch ( error )
-        {
-            // handle errors here
-        }
-    };
-
     return (
         <Droppable key={ status } droppableId={ getTaskStatusFromDroppableId( status ) }>
             { ( provided, snapshot ) => (
@@ -77,7 +58,6 @@ const KanbanColumn = ( {
                             kanbanBoard={ kanbanBoard }
                             setAllTasks={ setAllTasks }
                             allTasks={ allTasks }
-                            onTaskCreated={ handleTaskCreated }
                         />
                 </div>
             ) }
