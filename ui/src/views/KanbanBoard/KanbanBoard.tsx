@@ -210,12 +210,10 @@ const KanbanBoard = () =>
     {
         const loadBoardAndTasks = async () =>
         {
-            if ( id )
+            if (id && id.toString() !== "000000000000000000000000")
             {
                 setIsLoading( true );
-                console.log( "Before loadKanbanBoard" );
                 const loadedBoard = await loadKanbanBoard( id );
-                console.log( "After loadKanbanBoard", loadedBoard );
                 setKanbanBoard( loadedBoard );
 
                 if ( loadedBoard && loadedBoard.projectId )
@@ -224,9 +222,7 @@ const KanbanBoard = () =>
                     setProjectName( project.title );
                 }
 
-                console.log( "Before loadTasks" );
                 const tasks = await loadTasks( id );
-                console.log( "After loadTasks", tasks );
                 setAllTasks( tasks );
                 setIsLoading( false );
             }
@@ -363,6 +359,11 @@ const KanbanBoard = () =>
             console.error( "Kanban board ID is undefined." );
         }
     };
+
+    if ( !kanbanBoard )
+    {
+        return <div>Loading...</div>;
+    }
 
     return (
         <>

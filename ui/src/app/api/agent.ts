@@ -35,7 +35,7 @@ const Projects =
 {
     list: () => requests.get<Project[]>( "/projects" ),
     details: ( id: ObjectID ) => requests.get<Project>( `/projects/${ id }` ),
-    create: ( project: Project ) => requests.post<void>( "/projects", project ),
+    create: ( project: Project ) => requests.post<Project>( "/projects", project ),
     update: ( project: Project ) => requests.put<void>( `/projects/${ project.id }`, project ),
     delete: ( id: ObjectID ) => requests.del<void>( `/projects/${ id }` )
 };

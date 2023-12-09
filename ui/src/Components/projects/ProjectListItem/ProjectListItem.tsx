@@ -41,9 +41,17 @@ const ProjectListItem = ( { project, onSelectProject }: Props ) =>
 
     const ISO_DATE_LENGTH = 10; //YYYY-MM-DD is 10 characters long
 
+    // const handleInputChange = ( event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement> ) =>
+    // {
+    //     setEditedProject( { ...editedProject, [ event.target.name ]: event.target.value } );
+    // };
     const handleInputChange = ( event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement> ) =>
     {
-        setEditedProject( { ...editedProject, [ event.target.name ]: event.target.value } );
+        // Exclude 'owner' from being updated directly
+        if ( event.target.name !== "owner" )
+        {
+            setEditedProject( { ...editedProject, [ event.target.name ]: event.target.value } );
+        }
     };
 
     const handleProjectDelete = ( e: SyntheticEvent<HTMLButtonElement>, id: ObjectID ) =>
@@ -124,7 +132,7 @@ const ProjectListItem = ( { project, onSelectProject }: Props ) =>
                             <input className="input-field" name="priority" value={ editedProject.priority } onChange={ handleInputChange } />
                         </li>
                         <li>
-                            <p className="display-field">{ "Owner: " + editedProject.owner }</p>
+                            <p className="display-field">{ "Owner: " + ( editedProject.owner ? editedProject.owner.userName : "No owner assigned" ) }</p>
                         </li>
                         <li>
                             <CollaboratorSelection

@@ -134,14 +134,12 @@ export default class ProjectStore
                 if ( project )
                 {
                     let kanbanBoard = { ...project.kanbanBoard };
-                    console.log("Kanban Board before: ", kanbanBoard);
                     kanbanBoard.tasks = [ ...kanbanBoard.tasks ];
                     kanbanBoard =
                     {
                         ...kanbanBoard,
                         tasks: kanbanBoard.tasks.map( t => t.id === task.id ? task : t ),
                     };
-                    console.log("Kanban Board after: ", kanbanBoard);
                     project.kanbanBoard = kanbanBoard;
                     this.projectRegistry.set( project.id!, project );
                 }

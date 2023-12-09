@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Identity;
 using AutoMapper;
 //Project Namespaces
 using Application.DTOs;
-using Application.Profiles;
 using Domain;
 
 public class OwnerResolver : IValueResolver<Project, ProjectDto, Application.Profiles.Profile>
@@ -16,7 +15,13 @@ public class OwnerResolver : IValueResolver<Project, ProjectDto, Application.Pro
 
     public Application.Profiles.Profile Resolve(Project source, ProjectDto destination, Application.Profiles.Profile destMember, ResolutionContext context)
     {
-        var user = _userManager.FindByIdAsync(source.OwnerId.ToString()).Result;
+        var user = _userManager.FindByIdAsync(source.OwnerId.ToString()).ConfigureAwait(false).GetAwaiter().GetResult();
+
+        if (user == null)
+        {
+            // Handle the case when the user is not found
+            return null;
+        }
 
         return new Application.Profiles.Profile
         {

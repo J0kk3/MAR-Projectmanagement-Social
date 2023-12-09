@@ -79,7 +79,6 @@ const ProjectOverview = () =>
                         <p>{ localSelectedProject.priority }</p>
                         <p>{ localSelectedProject.owner ? localSelectedProject.owner.userName : "No owner assigned" }</p>
                         <h3>Collaborators:</h3>
-                        {/* <ProjectAssignee assignees={ localSelectedProject.collaborators } /> */}
                         <ProjectAssignee assignees={filterValidAssignees(localSelectedProject.collaborators)} />
                         <p>{ localSelectedProject.dueDate.toISOString().slice( 0, ISO_DATE_LENGTH ) }</p>
                         <p>{ localSelectedProject.category }</p>

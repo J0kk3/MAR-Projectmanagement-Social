@@ -59,10 +59,6 @@ const CreateProjectForm = () =>
     // Length of "YYYY-MM-DD" is 10
     const ISO_DATE_LENGTH = 10;
 
-    // const handleInputChange = ( event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement> ) =>
-    // {
-    //     setProject( { ...project, [ event.target.name ]: event.target.value } );
-    // };
     const handleInputChange = ( event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement> ) =>
     {
         if ( event.target.name === "dueDate" )
@@ -80,14 +76,38 @@ const CreateProjectForm = () =>
         }
     };
 
-    const handleSubmit = ( event: FormEvent<HTMLFormElement> ) =>
+    const handleSubmit = async ( event: FormEvent<HTMLFormElement> ) =>
     {
         event.preventDefault();
-        const id = new ObjectID();
-        const newProject = { ...project, id: id, kanbanBoard: { ...project.kanbanBoard } };
-        createProject( newProject );
-        console.log( newProject );
-        navigate( "/projects" );
+
+        // const newProject = { ...project, kanbanBoard: { ...project.kanbanBoard } };
+        // const newProject = { ...project, owner: user!.id, kanbanBoard: { ...project.kanbanBoard } };
+
+        // Extract ownerId from the user profile and other project properties
+        const ownerId = user!.id;
+        const projectData =
+        {
+            ...project,
+            ownerId,
+            kanbanBoard: { ...project.kanbanBoard },
+        };
+
+        try
+        {
+            // Create project using API call
+            await createProject( projectData );
+            console.log( "Project created successfully:", projectData );
+
+            // Re-fetch projects list
+            await projectStore.loadProjects();
+
+            // After creating the project, fetch its details
+            navigate( "/projects" );
+        }
+        catch ( error )
+        {
+            console.error( "Failed to create project:", error );
+        }
     };
 
     const loadOptions = async ( inputValue: string ) =>
