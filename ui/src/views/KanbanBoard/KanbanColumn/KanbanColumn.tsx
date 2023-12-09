@@ -22,6 +22,7 @@ interface Props
     setDragDropKey: ( key: number ) => void;
     dragDropKey: number;
     openModal: ( task: Task | null, content: ModalContent ) => void;
+    onTaskCreated: ( task: Task ) => void;
 }
 
 const KanbanColumn = ( {
@@ -37,6 +38,7 @@ const KanbanColumn = ( {
     openModal,
     setDragDropKey,
     dragDropKey,
+    onTaskCreated,
 }: Props ) =>
 {
     return (
@@ -52,19 +54,20 @@ const KanbanColumn = ( {
                         <TaskList status={ status } getTasksByStatus={ getTasksByStatus } openModal={ openModal } />
                     </div>
                     { provided.placeholder }
-                        <TaskCreationForm
-                            showCancelButton={ true }
-                            onCancel={ () => setShowAddTaskForms( { ...showAddTaskForms, [ status ]: false } ) }
-                            status={ status }
-                            setShowAddTaskForms={ setShowAddTaskForms }
-                            showAddTaskForms={ showAddTaskForms }
-                            setKanbanBoard={ setKanbanBoard }
-                            kanbanBoard={ kanbanBoard }
-                            setAllTasks={ setAllTasks }
-                            setDragDropKey={ setDragDropKey }
-                            dragDropKey={ dragDropKey }
-                            allTasks={ allTasks }
-                        />
+                    <TaskCreationForm
+                        showCancelButton={ true }
+                        onCancel={ () => setShowAddTaskForms( { ...showAddTaskForms, [ status ]: false } ) }
+                        status={ status }
+                        setShowAddTaskForms={ setShowAddTaskForms }
+                        showAddTaskForms={ showAddTaskForms }
+                        setKanbanBoard={ setKanbanBoard }
+                        kanbanBoard={ kanbanBoard }
+                        setAllTasks={ setAllTasks }
+                        setDragDropKey={ setDragDropKey }
+                        dragDropKey={ dragDropKey }
+                        onTaskCreated={ onTaskCreated }
+                        allTasks={ allTasks }
+                    />
                 </div>
             ) }
         </Droppable>

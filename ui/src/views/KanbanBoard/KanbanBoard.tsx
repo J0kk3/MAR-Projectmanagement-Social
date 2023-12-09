@@ -256,6 +256,8 @@ const KanbanBoard = () =>
         }
     }, [ allTasks, selectedTask ] );
 
+
+
     if ( !kanbanBoard )
     {
         return <div>Loading...</div>;
@@ -311,6 +313,8 @@ const KanbanBoard = () =>
         }
     };
 
+
+
     const getTasksByStatus = ( status: TaskStatus ) =>
     {
         return allTasks.filter( task => task.status ? task.status === status : false );
@@ -333,6 +337,32 @@ const KanbanBoard = () =>
 
         return status;
     }
+
+    const handleTaskCreated = async ( newTask: Task ) =>
+    {
+        setAllTasks( [ ...allTasks, newTask ] );
+        setDragDropKey( prevKey => prevKey + 1 );
+        if ( id )
+        {
+            try
+            {
+                const updatedBoard = await loadKanbanBoard( id );
+                if ( updatedBoard )
+                {
+                    setKanbanBoard( updatedBoard );
+                    setAllTasks( updatedBoard.tasks );
+                }
+            }
+            catch ( error )
+            {
+                console.error( "Failed to reload Kanban board:", error );
+            }
+        }
+        else
+        {
+            console.error( "Kanban board ID is undefined." );
+        }
+    };
 
     return (
         <>
@@ -370,6 +400,7 @@ const KanbanBoard = () =>
                             key={ status }
                             setDragDropKey={ setDragDropKey }
                             dragDropKey={ dragDropKey }
+                            onTaskCreated={ handleTaskCreated }
                         />
                     ) ) }
                 </div>
