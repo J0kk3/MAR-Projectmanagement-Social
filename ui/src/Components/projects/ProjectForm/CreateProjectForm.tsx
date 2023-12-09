@@ -59,9 +59,25 @@ const CreateProjectForm = () =>
     // Length of "YYYY-MM-DD" is 10
     const ISO_DATE_LENGTH = 10;
 
+    // const handleInputChange = ( event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement> ) =>
+    // {
+    //     setProject( { ...project, [ event.target.name ]: event.target.value } );
+    // };
     const handleInputChange = ( event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement> ) =>
     {
-        setProject( { ...project, [ event.target.name ]: event.target.value } );
+        if ( event.target.name === "dueDate" )
+        {
+            const newDate = new Date( event.target.value );
+            if ( !isNaN( newDate.getTime() ) )
+            {
+                // Check if the date is valid
+                setProject( { ...project, dueDate: newDate } );
+            }
+        }
+        else
+        {
+            setProject( { ...project, [ event.target.name ]: event.target.value } );
+        }
     };
 
     const handleSubmit = ( event: FormEvent<HTMLFormElement> ) =>
@@ -146,7 +162,7 @@ const CreateProjectForm = () =>
                 </label>
                 <label>
                     Due date:
-                    <input name="dueDate" type="date" value={ project.dueDate.toISOString().slice( 0, ISO_DATE_LENGTH ) } onChange={ handleInputChange } />
+                    <input name="dueDate" type="date" value={ project.dueDate instanceof Date ? project.dueDate.toISOString().slice( 0, ISO_DATE_LENGTH ) : "" } onChange={ handleInputChange } />
                 </label>
                 <label>
                     Category:
@@ -160,7 +176,7 @@ const CreateProjectForm = () =>
                     Visibility:
                     <select name="visibility" value={ project.visibility } onChange={ handleInputChange }>
                         <option value={ Visibility.Public }>{ Visibility[ Visibility.Public ] }</option>
-                        <option value={ Visibility.Private}>{ Visibility[ Visibility.Private] }</option>
+                        <option value={ Visibility.Private }>{ Visibility[ Visibility.Private ] }</option>
                     </select>
                 </label>
                 <button type="submit">Create Project</button>
