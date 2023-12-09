@@ -19,6 +19,8 @@ interface Props
     setKanbanBoard: ( kanbanBoard: KanbanBoard | null ) => void;
     allTasks: Task[];
     setAllTasks: ( allTasks: Task[] ) => void;
+    setDragDropKey: ( key: number ) => void;
+    dragDropKey: number;
     openModal: ( task: Task | null, content: ModalContent ) => void;
 }
 
@@ -33,6 +35,8 @@ const KanbanColumn = ( {
     allTasks,
     setAllTasks,
     openModal,
+    setDragDropKey,
+    dragDropKey,
 }: Props ) =>
 {
     return (
@@ -57,6 +61,8 @@ const KanbanColumn = ( {
                             setKanbanBoard={ setKanbanBoard }
                             kanbanBoard={ kanbanBoard }
                             setAllTasks={ setAllTasks }
+                            setDragDropKey={ setDragDropKey }
+                            dragDropKey={ dragDropKey }
                             allTasks={ allTasks }
                         />
                 </div>

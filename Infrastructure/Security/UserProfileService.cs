@@ -10,7 +10,7 @@ namespace Infrastructure.Security
 {
     public class UserProfileService : IUserProfileService
     {
-        private readonly DataContext _ctx;
+        readonly DataContext _ctx;
 
         public UserProfileService(DataContext ctx)
         {

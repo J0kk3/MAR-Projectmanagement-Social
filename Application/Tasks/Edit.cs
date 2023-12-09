@@ -13,12 +13,13 @@ namespace Application.Tasks
         {
             public ObjectId ProjectId { get; set; }
             public ObjectId TaskId { get; set; }
+            public ObjectId UserId { get; set; }
             public ProjectTask Task { get; set; }
         }
 
         public class Handler : IRequestHandler<Command, ProjectTask>
         {
-            private readonly DataContext _ctx;
+            readonly DataContext _ctx;
 
             public Handler(DataContext ctx)
             {
@@ -34,6 +35,12 @@ namespace Application.Tasks
                 var task = project.kanbanBoard.Tasks.First(t => t.Id == request.TaskId);
                 if (task == null)
                     throw new Exception("Task not found in the project");
+
+                // Check if the user is authorized to edit the task
+                if (task.OwnerId != request.UserId)
+                {
+                    throw new Exception("Forbidden: User is not authorized to edit this task.");
+                }
 
                 // update the task with the provided details
                 task.Name = request.Task.Name;

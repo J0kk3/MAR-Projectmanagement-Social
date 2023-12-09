@@ -108,14 +108,24 @@ const TaskEditForm = ( { task, onEdit, closeModal, editTask, setEditTask }: Task
 
             const userId = user?.id;
 
-            // const updatedTask = await agent.Tasks.editTask( editTask.projectId, editTask.id, editTask );
             if ( !userId )
             {
                 console.log( "User ID is undefined" );
                 return;
             }
+            if ( !( editTask.dueDate instanceof Date ) )
+            {
+                console.error( "Due date is not a valid date object." );
+                return;
+            }
 
-            const updatedTask = await agent.Tasks.editTask( userId.toString(), editTask.projectId, editTask.id, editTask );
+            const updatedTaskData = (
+                {
+                    ...editTask,
+                    peopleAssigned: editTask.peopleAssigned
+                } );
+
+            const updatedTask = await agent.Tasks.editTask( userId.toString(), editTask.projectId, editTask.id, updatedTaskData );
 
             if ( updatedTask )
             {
@@ -137,6 +147,20 @@ const TaskEditForm = ( { task, onEdit, closeModal, editTask, setEditTask }: Task
         closeModal();
     };
 
+    const handleRemoveUser = ( userId: string ) =>
+    {
+        // Filter out the user to be removed
+        const updatedUsers = assignedUsers.filter( user => user.value !== userId );
+        setAssignedUsers( updatedUsers );
+
+        // Update editTask state if editTask is available
+        if ( editTask )
+        {
+            const updatedPeopleAssigned = editTask.peopleAssigned.filter( id => id.toString() !== userId );
+            setEditTask( { ...editTask, peopleAssigned: updatedPeopleAssigned } );
+        }
+    };
+
     const handleChange = ( event: ChangeEvent<HTMLInputElement> ) =>
     {
         const { name, value } = event.target;
@@ -148,11 +172,15 @@ const TaskEditForm = ( { task, onEdit, closeModal, editTask, setEditTask }: Task
 
     const loadOptions = async ( inputValue: string ): Promise<OptionType[]> =>
     {
-        const response = await agent.Account.search( inputValue );
-        return response.map( profile => ( {
-            label: profile.userName,
-            value: profile.id.toString(),
-        } ) );
+        if ( inputValue.trim().length > 0 )
+        {
+            const response = await agent.Account.search( inputValue );
+            return response.map( profile => ( {
+                label: profile.userName,
+                value: profile.id.toString(),
+            } ) );
+        }
+        return [];
     };
 
     return (
@@ -169,10 +197,17 @@ const TaskEditForm = ( { task, onEdit, closeModal, editTask, setEditTask }: Task
                     </label>
                     <label>
                         Due Date:
-                        <input type="date" value={ editTask.dueDate.toISOString().split( "T" )[ 0 ] } onChange={ handleDateChange } />
+                        <input type="date" value={ editTask && editTask.dueDate instanceof Date ? editTask.dueDate.toISOString().split( "T" )[ 0 ] : "" } onChange={ handleDateChange } />
                     </label>
                     <label>
                         People Assigned:
+                        <div>
+                            { assignedUsers.map( user => (
+                                <p key={ user.value } onClick={ () => handleRemoveUser( user.value ) }>
+                                    { user.label } (Click to remove)
+                                </p>
+                            ) ) }
+                        </div>
                         <AsyncSelect
                             isMulti
                             cacheOptions

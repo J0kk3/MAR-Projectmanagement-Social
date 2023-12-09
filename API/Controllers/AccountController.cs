@@ -16,9 +16,9 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class AccountController : ControllerBase
     {
-        private readonly UserManager<AppUser> _userManager;
-        private readonly TokenService _tokenService;
-        private readonly IUserProfileService _userProfileService;
+        readonly UserManager<AppUser> _userManager;
+        readonly TokenService _tokenService;
+        readonly IUserProfileService _userProfileService;
         public AccountController(UserManager<AppUser> userManager, TokenService tokenService, IUserProfileService userProfileService)
         {
             _userProfileService = userProfileService;
@@ -89,7 +89,7 @@ namespace API.Controllers
             return CreateUserObject(user);
         }
 
-        private UserDto CreateUserObject(AppUser user)
+        UserDto CreateUserObject(AppUser user)
         {
             return new UserDto
             {

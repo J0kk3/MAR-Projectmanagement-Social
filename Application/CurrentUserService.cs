@@ -5,7 +5,7 @@ namespace Application
 {
     public class CurrentUserService : ICurrentUserService
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        readonly IHttpContextAccessor _httpContextAccessor;
 
         public CurrentUserService(IHttpContextAccessor httpContextAccessor)
         {

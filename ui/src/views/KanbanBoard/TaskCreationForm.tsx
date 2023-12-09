@@ -19,10 +19,12 @@ interface Props
     setAllTasks: ( tasks: Task[] ) => void;
     allTasks: Task[];
     showCancelButton: boolean;
+    setDragDropKey: ( key: number ) => void;
+    dragDropKey: number;
     onCancel: () => void;
 }
 
-const TaskCreationForm = ( { allTasks, setAllTasks, status, setShowAddTaskForms, showAddTaskForms, kanbanBoard }: Props ) =>
+const TaskCreationForm = ( { allTasks, setAllTasks, status, setShowAddTaskForms, showAddTaskForms, kanbanBoard, setDragDropKey, dragDropKey }: Props ) =>
 {
     const { projectStore, userStore } = useStore();
     const { createTaskInKanbanBoard, loadKanbanBoard } = projectStore;
@@ -56,20 +58,22 @@ const TaskCreationForm = ( { allTasks, setAllTasks, status, setShowAddTaskForms,
             {
                 if ( createdTask )
                 {
-                    // Update allTasks
+                    // Update allTasks and other state
                     setAllTasks( [ ...allTasks, { ...newTask, id: createdTask.id } ] );
+                    setDragDropKey( dragDropKey + 1 );
 
-                    // After the task is created, hide the form again
+                    // After the task is created, hide the form
                     setShowAddTaskForms( { ...showAddTaskForms, [ status ]: false } );
+                    setIsModalOpen( false );
                 }
-            } ).catch( err =>
+            } ).catch( ( err ) =>
             {
                 console.log( err );
             } );
         }
         else
         {
-            console.error("Cannot create task: UserID is null");
+            console.error( "Cannot create task: UserID is null" );
         }
     };
 

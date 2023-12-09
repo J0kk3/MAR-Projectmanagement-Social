@@ -16,8 +16,8 @@ namespace Application.Projects
 
         public class Handler : IRequestHandler<Query, Project>
         {
-            private readonly DataContext _ctx;
-            private readonly ICurrentUserService _currentUserService;
+            readonly DataContext _ctx;
+            readonly ICurrentUserService _currentUserService;
 
             public Handler(DataContext ctx, ICurrentUserService currentUserService)
             {

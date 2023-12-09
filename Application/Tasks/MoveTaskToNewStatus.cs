@@ -19,7 +19,7 @@ namespace Application.Tasks
 
         public static class TaskStatusMapper
         {
-            private static readonly Dictionary<string, Domain.TaskStatus> Mapping = new Dictionary<string, Domain.TaskStatus>
+            static readonly Dictionary<string, Domain.TaskStatus> Mapping = new Dictionary<string, Domain.TaskStatus>
             {
                 {"ToDo", Domain.TaskStatus.ToDo},
                 {"InProgress", Domain.TaskStatus.InProgress},
@@ -37,8 +37,8 @@ namespace Application.Tasks
 
         public class Handler : IRequestHandler<Command>
         {
-            private readonly DataContext _ctx;
-            private readonly IHttpContextAccessor _httpContextAccessor;
+            readonly DataContext _ctx;
+            readonly IHttpContextAccessor _httpContextAccessor;
 
             public Handler(DataContext ctx, IHttpContextAccessor httpContextAccessor)
             {

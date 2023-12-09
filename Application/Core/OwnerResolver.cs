@@ -7,7 +7,7 @@ using Domain;
 
 public class OwnerResolver : IValueResolver<Project, ProjectDto, Application.Profiles.Profile>
 {
-    private readonly UserManager<AppUser> _userManager;
+    readonly UserManager<AppUser> _userManager;
 
     public OwnerResolver(UserManager<AppUser> userManager)
     {

@@ -5,6 +5,8 @@ using Application.Core;
 using Application.Interfaces;
 using Persistence;
 using MongoDB.Driver;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace Application.Tasks
 {
@@ -19,12 +21,14 @@ namespace Application.Tasks
 
         public class Handler : IRequestHandler<Command, Result<Unit>>
         {
-            private readonly DataContext _ctx;
-            private readonly IUserProfileService _userProfileService;
-            public Handler(DataContext ctx, IUserProfileService userProfileService)
+            readonly DataContext _ctx;
+            readonly IHttpContextAccessor _httpContextAccessor;
+            readonly IUserProfileService _userProfileService;
+            public Handler(DataContext ctx, IUserProfileService userProfileService, IHttpContextAccessor httpContextAccessor)
             {
                 _userProfileService = userProfileService;
                 _ctx = ctx;
+                _httpContextAccessor = httpContextAccessor;
             }
 
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
@@ -35,6 +39,12 @@ namespace Application.Tasks
                 // Locate the task within the project
                 var task = project.kanbanBoard.Tasks.FirstOrDefault(t => t.Id == request.TaskId);
                 if (task == null) return Result<Unit>.Failure("Task not found");
+
+                var userId = _httpContextAccessor.HttpContext.User?.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (userId == null) return Result<Unit>.Failure("User not found");
+
+                bool isAuthorized = project.OwnerId.ToString() == userId || project.CollaboratorIds.Any(c => c.ToString() == userId);
+                if (!isAuthorized) return Result<Unit>.Failure("Not authorized to update task");
 
                 // Update the people assigned to this task
                 task.PeopleAssigned = request.PeopleAssignedIds ?? new List<ObjectId>();

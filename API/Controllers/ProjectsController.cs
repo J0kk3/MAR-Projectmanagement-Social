@@ -127,16 +127,26 @@ namespace API.Controllers
         }
 
         // Edit a specific task from a specific project, both by their ObjectId.
-        [Authorize(Policy = "IsOwner")]
         [HttpPut("{projectId}/tasks/{taskId}/details")]
-        public async Task<IActionResult> EditTask(ObjectId projectId, ObjectId taskId, ProjectTask task)
+        public async Task<IActionResult> EditTask(ObjectId projectId, ObjectId taskId, ProjectTask task, [FromQuery] string userId)
         {
+            // Convert string userId to ObjectId
+            if (!ObjectId.TryParse(userId, out ObjectId objectUserId))
+            {
+                return BadRequest("Invalid user ID.");
+            }
+
             task.Id = taskId;
-            return Ok(await Mediator.Send(new Application.Tasks.Edit.Command { ProjectId = projectId, TaskId = taskId, Task = task }));
+            return Ok(await Mediator.Send(new Application.Tasks.Edit.Command
+            {
+                ProjectId = projectId,
+                TaskId = taskId,
+                Task = task,
+                UserId = objectUserId
+            }));
         }
 
         // Edit the people assigned to a specific task from a specific project, both by their ObjectId.
-        [Authorize(Policy = "IsOwner")]
         [HttpPost("{projectId}/tasks/{taskId}/peopleAssigned")]
         public async Task<IActionResult> EditPeopleAssigned(ObjectId projectId, ObjectId taskId, [FromBody] List<ObjectId> peopleAssignedIds)
         {

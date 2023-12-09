@@ -15,9 +15,9 @@ namespace Application.Projects
 
         public class Handler : IRequestHandler<Query, List<ProjectDto>>
         {
-            private readonly DataContext _ctx;
-            private readonly IMapper _mapper;
-            private readonly IUserProfileService _profileService;
+            readonly DataContext _ctx;
+            readonly IMapper _mapper;
+            readonly IUserProfileService _profileService;
 
             public Handler(DataContext ctx, IMapper mapper, IUserProfileService profileService)
             {

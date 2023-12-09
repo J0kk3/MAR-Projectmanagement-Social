@@ -160,7 +160,7 @@ const CreateProjectForm = () =>
                     Visibility:
                     <select name="visibility" value={ project.visibility } onChange={ handleInputChange }>
                         <option value={ Visibility.Public }>{ Visibility[ Visibility.Public ] }</option>
-                        <option value={ Visibility.Private }>{ Visibility[ Visibility.Private ] }</option>
+                        <option value={ Visibility.Private}>{ Visibility[ Visibility.Private] }</option>
                     </select>
                 </label>
                 <button type="submit">Create Project</button>

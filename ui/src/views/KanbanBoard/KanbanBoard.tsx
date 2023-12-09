@@ -58,6 +58,9 @@ const KanbanBoard = () =>
         } );
     const [ allTasks, setAllTasks ] = useState<Task[]>( [] );
     const [ editTask, setEditTask ] = useState<Task>();
+    const [ dragDropKey, setDragDropKey ] = useState<number>( 0 );
+
+
 
     const TaskStatusStrings: { [ key in TaskStatus ]: string } =
     {
@@ -112,12 +115,15 @@ const KanbanBoard = () =>
 
                 // We update the task in the state based on the server response
                 const newTasks = [ ...allTasks ];
-                const taskIndex = newTasks.findIndex( task => task.id === updatedTaskFromServer.id ); // find index of updated task
+                // Find index of updated task
+                const taskIndex = newTasks.findIndex( task => task.id === updatedTaskFromServer.id );
 
                 if ( taskIndex !== -1 )
                 {
-                    newTasks[ taskIndex ] = updatedTaskFromServer; // replace old task with updated task
-                    setAllTasks( newTasks ); // set the new state
+                    // Replace old task with updated task
+                    newTasks[ taskIndex ] = updatedTaskFromServer;
+                    // Set the new state
+                    setAllTasks( newTasks );
                     reorganizeTasks();
 
                     // Update the kanbanBoard state as well
@@ -127,6 +133,12 @@ const KanbanBoard = () =>
                     const updatedKanbanBoardTitle = kanbanBoard.title;
 
                     console.log( "Updated Kanban board tasks: ", updatedKanbanBoardTasks );
+
+                    // Update the task in the local state
+                    const updatedTasks = allTasks.map( task =>
+                        task.id === updatedTask.id ? updatedTask : task
+                    );
+                    setAllTasks( updatedTasks );
 
                     setKanbanBoard(
                         {
@@ -232,6 +244,18 @@ const KanbanBoard = () =>
         }
     }, [ lastEditedTask ] );
 
+    useEffect( () =>
+    {
+        if ( selectedTask )
+        {
+            const updatedTask = allTasks.find( t => t.id === selectedTask.id );
+            if ( updatedTask )
+            {
+                setSelectedTask( updatedTask );
+            }
+        }
+    }, [ allTasks, selectedTask ] );
+
     if ( !kanbanBoard )
     {
         return <div>Loading...</div>;
@@ -329,7 +353,7 @@ const KanbanBoard = () =>
             </Modal>
 
             <h1 className="project-title">{ projectName }</h1>
-            <DragDropContext onDragEnd={ onDragEnd }>
+            <DragDropContext onDragEnd={ onDragEnd } key={ dragDropKey }>
                 <div className="kanban-board">
                     { allTaskStatuses.map( ( status ) => (
                         <KanbanColumn
@@ -344,6 +368,8 @@ const KanbanBoard = () =>
                             setAllTasks={ setAllTasks }
                             openModal={ openModal }
                             key={ status }
+                            setDragDropKey={ setDragDropKey }
+                            dragDropKey={ dragDropKey }
                         />
                     ) ) }
                 </div>

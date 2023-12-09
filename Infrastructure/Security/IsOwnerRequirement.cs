@@ -15,8 +15,8 @@ namespace Infrastructure.Security
 
     public class IsOwnerRequirementHandler : AuthorizationHandler<IsOwnerRequirement>
     {
-        private readonly DataContext _ctx;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        readonly DataContext _ctx;
+        readonly IHttpContextAccessor _httpContextAccessor;
 
         public IsOwnerRequirementHandler(DataContext ctx, IHttpContextAccessor httpContextAccessor)
         {
