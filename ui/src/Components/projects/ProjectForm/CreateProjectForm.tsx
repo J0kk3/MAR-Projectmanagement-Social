@@ -1,16 +1,30 @@
-import { useState, ChangeEvent, FormEvent } from "react";
+import { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ObjectID from "bson-objectid";
 import { observer } from "mobx-react-lite";
 //Stores
 import { useStore } from "../../../app/stores/store";
+import agent from "../../../app/api/agent";
 //Types & Models
 import { Project, ProjectStatus, Visibility } from "../../../app/models/project";
+import { Profile } from "../../../app/models/profile";
+//Components
+import CollaboratorSelection from "./CollaboratorSelection";
+
+type OptionType =
+    {
+        label: string;
+        value: string;
+    };
+
 
 const CreateProjectForm = () =>
 {
-    const { projectStore } = useStore();
+    const { projectStore, userStore } = useStore();
     const { createProject } = projectStore;
+    const { user, getUser } = userStore;
+    const [ collaborators, setCollaborators ] = useState<Profile[]>( [] );
+
 
     const navigate = useNavigate();
 
@@ -19,7 +33,11 @@ const CreateProjectForm = () =>
             title: "",
             description: "",
             priority: 0,
-            owner: "",
+            owner:
+            {
+                id: user!.id!,
+                userName: user!.userName!
+            },
             collaborators: [],
             dueDate: new Date(),
             category: "",
@@ -33,22 +51,76 @@ const CreateProjectForm = () =>
             }
         } );
 
+    useEffect( () =>
+    {
+        getUser();
+    }, [ getUser ] );
+
     // Length of "YYYY-MM-DD" is 10
     const ISO_DATE_LENGTH = 10;
 
     const handleInputChange = ( event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement> ) =>
     {
-        setProject( { ...project, [ event.target.name ]: event.target.value } );
+        if ( event.target.name === "dueDate" )
+        {
+            const newDate = new Date( event.target.value );
+            if ( !isNaN( newDate.getTime() ) )
+            {
+                // Check if the date is valid
+                setProject( { ...project, dueDate: newDate } );
+            }
+        }
+        else
+        {
+            setProject( { ...project, [ event.target.name ]: event.target.value } );
+        }
     };
 
-    const handleSubmit = ( event: FormEvent<HTMLFormElement> ) =>
+    const handleSubmit = async ( event: FormEvent<HTMLFormElement> ) =>
     {
         event.preventDefault();
-        const id = new ObjectID();
-        const newProject = { ...project, id: id, kanbanBoard: { ...project.kanbanBoard } };
-        createProject( newProject );
-        console.log( newProject );
-        navigate( "/projects" );
+
+        // const newProject = { ...project, kanbanBoard: { ...project.kanbanBoard } };
+        // const newProject = { ...project, owner: user!.id, kanbanBoard: { ...project.kanbanBoard } };
+
+        // Extract ownerId from the user profile and other project properties
+        const ownerId = user!.id;
+        const projectData =
+        {
+            ...project,
+            ownerId,
+            kanbanBoard: { ...project.kanbanBoard },
+        };
+
+        try
+        {
+            // Create project using API call
+            await createProject( projectData );
+            console.log( "Project created successfully:", projectData );
+
+            // Re-fetch projects list
+            await projectStore.loadProjects();
+
+            // After creating the project, fetch its details
+            navigate( "/projects" );
+        }
+        catch ( error )
+        {
+            console.error( "Failed to create project:", error );
+        }
+    };
+
+    const loadOptions = async ( inputValue: string ) =>
+    {
+        const response: Profile[] = await agent.Account.search( inputValue );
+
+        const options: OptionType[] = response.map( profile => (
+            {
+                label: profile.userName,
+                value: profile.id.toString(),
+            } ) );
+
+        return options;
     };
 
     return (
@@ -68,15 +140,49 @@ const CreateProjectForm = () =>
                 </label>
                 <label>
                     Owner:
-                    <input name="owner" type="text" value={ project.owner } onChange={ handleInputChange } />
+                    <p>{ "Owner: " + user!.userName.toString() }</p>
                 </label>
                 <label>
                     Collaborators:
-                    <input name="collaborators" type="text" value={ project.collaborators.join( ", " ) } onChange={ ( e ) => setProject( { ...project, collaborators: e.target.value.split( ", " ) } ) } />
+                    <CollaboratorSelection
+                        loadOptions={ loadOptions }
+                        onChange={ async ( selected ) =>
+                        {
+                            if ( selected )
+                            {
+                                // Fetch the complete Profile data for the selected collaborators
+                                const selectedProfiles = await Promise.all(
+                                    selected.map( ( option ) => agent.Account.getUserDetails( option.value ) )
+                                );
+
+                                // update state
+                                setCollaborators( selectedProfiles );
+
+                                setProject(
+                                    {
+                                        ...project,
+                                        collaborators: selectedProfiles,
+                                    } );
+                            }
+                            else
+                            {
+                                // update state
+                                setCollaborators( [] );
+
+                                setProject( { ...project, collaborators: [] } );
+                            }
+                        } }
+                        value={ project.collaborators.map( ( collab: any ) =>
+                        (
+                            {
+                                label: collab.userName,
+                                value: collab.id.toString(),
+                            } ) ) }
+                    />
                 </label>
                 <label>
                     Due date:
-                    <input name="dueDate" type="date" value={ project.dueDate.toISOString().slice( 0, ISO_DATE_LENGTH ) } onChange={ handleInputChange } />
+                    <input name="dueDate" type="date" value={ project.dueDate instanceof Date ? project.dueDate.toISOString().slice( 0, ISO_DATE_LENGTH ) : "" } onChange={ handleInputChange } />
                 </label>
                 <label>
                     Category:
@@ -99,4 +205,4 @@ const CreateProjectForm = () =>
     );
 };
 
-export default observer(CreateProjectForm);
+export default observer( CreateProjectForm );

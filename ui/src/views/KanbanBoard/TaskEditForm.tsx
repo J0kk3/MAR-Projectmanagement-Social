@@ -1,11 +1,15 @@
 import { ChangeEvent, FormEvent, useEffect, SyntheticEvent, useState } from "react";
+import AsyncSelect from "react-select/async";
+import { ActionMeta, MultiValue } from "react-select";
 //API Agent
 import agent from "../../app/api/agent";
 //Types & Models
-import { Task, TaskStatus } from "../../app/models/project";
+import { Task } from "../../app/models/project";
 import { TaskStatusMap, TaskStatusMapInverse } from "../../app/models/enumsMap";
+import ObjectID from "bson-objectid";
 //Stores
 import { observer } from "mobx-react-lite";
+import { useStore } from "../../app/stores/store";
 
 type TaskEditFormProps =
     {
@@ -16,22 +20,15 @@ type TaskEditFormProps =
         setEditTask: ( task: Task | undefined ) => void;
     };
 
+type OptionType = { label: string; value: string; };
+
 const TaskEditForm = ( { task, onEdit, closeModal, editTask, setEditTask }: TaskEditFormProps ) =>
 {
+    const { userStore } = useStore();
+    const { user } = userStore;
 
     const [ isUpdated, setIsUpdated ] = useState( false );
-
-    const stringToTaskStatus = ( status: string ): TaskStatus =>
-    {
-        switch ( status )
-        {
-            case "ToDo": return TaskStatus.ToDo;
-            case "InProgress": return TaskStatus.InProgress;
-            case "InReview": return TaskStatus.InReview;
-            case "Done": return TaskStatus.Done;
-            default: throw new Error( "Invalid TaskStatus: " + status );
-        }
-    };
+    const [ assignedUsers, setAssignedUsers ] = useState<{ label: string, value: string; }[]>( [] );
 
     useEffect( () =>
     {
@@ -46,6 +43,18 @@ const TaskEditForm = ( { task, onEdit, closeModal, editTask, setEditTask }: Task
         }
     }, [ task, setEditTask, isUpdated ] );
 
+    useEffect( () =>
+    {
+        const fetchAssignedUsers = async () =>
+        {
+            const users = await Promise.all(
+                task.peopleAssigned.map( id => agent.Account.getUserDetails( id.toString() ) )
+            );
+            setAssignedUsers( users.map( user => ( { label: user.userName, value: user.id.toString() } ) ) );
+        };
+        fetchAssignedUsers();
+    }, [ task ] );
+
     const handleDateChange = ( event: ChangeEvent<HTMLInputElement> ) =>
     {
         if ( editTask )
@@ -54,17 +63,24 @@ const TaskEditForm = ( { task, onEdit, closeModal, editTask, setEditTask }: Task
         }
     };
 
-    const handlePeopleAssignedChange = ( event: React.ChangeEvent<HTMLInputElement> ) =>
+    const handlePeopleAssignedChange = async (
+        newValue: MultiValue<OptionType>,
+        _: ActionMeta<OptionType>
+    ) =>
     {
-        const people = event.target.value.split( "," ).map( person => person.trim() );
-        if ( editTask )
+        const peopleAssignedIds = newValue.map( option => new ObjectID( option.value ) );
+        if ( editTask && editTask.projectId && editTask.id )
         {
-            const updatedTask =
+            try
             {
-                ...editTask,
-                peopleAssigned: people
-            };
-            setEditTask( updatedTask );
+                await agent.Tasks.editPeopleAssigned( editTask.projectId, editTask.id, peopleAssignedIds );
+                const updatedTask = { ...editTask, peopleAssigned: peopleAssignedIds };
+                setEditTask( updatedTask );
+            }
+            catch ( error )
+            {
+                console.log( "handlePeopleAssignedChange: ", error );
+            }
         }
     };
 
@@ -89,7 +105,27 @@ const TaskEditForm = ( { task, onEdit, closeModal, editTask, setEditTask }: Task
         if ( editTask && editTask.projectId && editTask.id )
         {
             console.log( "editTask", editTask );
-            const updatedTask = await agent.Tasks.editTask( editTask.projectId, editTask.id, editTask );
+
+            const userId = user?.id;
+
+            if ( !userId )
+            {
+                console.log( "User ID is undefined" );
+                return;
+            }
+            if ( !( editTask.dueDate instanceof Date ) )
+            {
+                console.error( "Due date is not a valid date object." );
+                return;
+            }
+
+            const updatedTaskData = (
+                {
+                    ...editTask,
+                    peopleAssigned: editTask.peopleAssigned
+                } );
+
+            const updatedTask = await agent.Tasks.editTask( userId.toString(), editTask.projectId, editTask.id, updatedTaskData );
 
             if ( updatedTask )
             {
@@ -111,6 +147,20 @@ const TaskEditForm = ( { task, onEdit, closeModal, editTask, setEditTask }: Task
         closeModal();
     };
 
+    const handleRemoveUser = ( userId: string ) =>
+    {
+        // Filter out the user to be removed
+        const updatedUsers = assignedUsers.filter( user => user.value !== userId );
+        setAssignedUsers( updatedUsers );
+
+        // Update editTask state if editTask is available
+        if ( editTask )
+        {
+            const updatedPeopleAssigned = editTask.peopleAssigned.filter( id => id.toString() !== userId );
+            setEditTask( { ...editTask, peopleAssigned: updatedPeopleAssigned } );
+        }
+    };
+
     const handleChange = ( event: ChangeEvent<HTMLInputElement> ) =>
     {
         const { name, value } = event.target;
@@ -118,6 +168,19 @@ const TaskEditForm = ( { task, onEdit, closeModal, editTask, setEditTask }: Task
         {
             setEditTask( { ...editTask, [ name ]: value } );
         }
+    };
+
+    const loadOptions = async ( inputValue: string ): Promise<OptionType[]> =>
+    {
+        if ( inputValue.trim().length > 0 )
+        {
+            const response = await agent.Account.search( inputValue );
+            return response.map( profile => ( {
+                label: profile.userName,
+                value: profile.id.toString(),
+            } ) );
+        }
+        return [];
     };
 
     return (
@@ -134,13 +197,23 @@ const TaskEditForm = ( { task, onEdit, closeModal, editTask, setEditTask }: Task
                     </label>
                     <label>
                         Due Date:
-                        <input type="date" value={ editTask.dueDate.toISOString().split( "T" )[ 0 ] } onChange={ handleDateChange } />
+                        <input type="date" value={ editTask && editTask.dueDate instanceof Date ? editTask.dueDate.toISOString().split( "T" )[ 0 ] : "" } onChange={ handleDateChange } />
                     </label>
                     <label>
                         People Assigned:
-                        <input
-                            type="text"
-                            value={ editTask.peopleAssigned.join( ", " ) }
+                        <div>
+                            { assignedUsers.map( user => (
+                                <p key={ user.value } onClick={ () => handleRemoveUser( user.value ) }>
+                                    { user.label } (Click to remove)
+                                </p>
+                            ) ) }
+                        </div>
+                        <AsyncSelect
+                            isMulti
+                            cacheOptions
+                            defaultOptions
+                            loadOptions={ loadOptions }
+                            defaultValue={ assignedUsers }
                             onChange={ handlePeopleAssignedChange }
                         />
                     </label>

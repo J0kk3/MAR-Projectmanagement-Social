@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Authorization;
 using Domain;
 using API.DTOs;
 using API.Services;
+using Application.Profiles;
+using Infrastructure.Security;
+using Application.Interfaces;
 
 namespace API.Controllers
 {
@@ -13,10 +16,12 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class AccountController : ControllerBase
     {
-        private readonly UserManager<AppUser> _userManager;
-        private readonly TokenService _tokenService;
-        public AccountController(UserManager<AppUser> userManager, TokenService tokenService)
+        readonly UserManager<AppUser> _userManager;
+        readonly TokenService _tokenService;
+        readonly IUserProfileService _userProfileService;
+        public AccountController(UserManager<AppUser> userManager, TokenService tokenService, IUserProfileService userProfileService)
         {
+            _userProfileService = userProfileService;
             _tokenService = tokenService;
             _userManager = userManager;
         }
@@ -84,7 +89,7 @@ namespace API.Controllers
             return CreateUserObject(user);
         }
 
-        private UserDto CreateUserObject(AppUser user)
+        UserDto CreateUserObject(AppUser user)
         {
             return new UserDto
             {
@@ -93,6 +98,18 @@ namespace API.Controllers
                 Image = null,
                 Token = _tokenService.CreateToken(user)
             };
+        }
+
+        [HttpGet("search/{query}")]
+        public async Task<ActionResult<List<Profile>>> SearchProfiles(string query)
+        {
+            return await _userProfileService.SearchProfiles(query);
+        }
+
+        [HttpGet("user/{id}")]
+        public async Task<ActionResult<Profile>> GetUserById(string id)
+        {
+            return await _userProfileService.GetProfileById(id);
         }
     }
 }

@@ -7,8 +7,10 @@ import { Project } from "../../app/models/project";
 //Components
 import ProjectList from "../../Components/projects/ProjectList/ProjectList";
 import { useStore } from "../../app/stores/store";
+import ProjectAssignee from "../KanbanBoard/ProjectAssignee";
 //Styles
 import "./ProjectOverview.scss";
+import { Profile } from "../../app/models/profile";
 
 const ProjectOverview = () =>
 {
@@ -42,7 +44,7 @@ const ProjectOverview = () =>
 
     const onSelectProject = ( id: ObjectID ) =>
     {
-        const project = projectStore.projectsByDate.find( project => project.id === id );
+        const project = projectStore.projectsByDate.find( project => project.id && project.id.toString() === id.toString() );
         setLocalSelectedProject( project );
     };
 
@@ -50,6 +52,12 @@ const ProjectOverview = () =>
     {
         setLocalSelectedProject( undefined );
     };
+
+    const filterValidAssignees = ( collaborators: Profile[] | undefined ) =>
+    {
+        return ( collaborators || [] ).filter( assignee => assignee && typeof assignee.userName === "string" );
+    };
+
 
     return (
         <div className="project-overview">
@@ -69,8 +77,9 @@ const ProjectOverview = () =>
                         <h2>{ localSelectedProject.title }</h2>
                         <p>{ localSelectedProject.description }</p>
                         <p>{ localSelectedProject.priority }</p>
-                        <p>{ localSelectedProject.owner }</p>
-                        <p>{ localSelectedProject.collaborators }</p>
+                        <p>{ localSelectedProject.owner ? localSelectedProject.owner.userName : "No owner assigned" }</p>
+                        <h3>Collaborators:</h3>
+                        <ProjectAssignee assignees={filterValidAssignees(localSelectedProject.collaborators)} />
                         <p>{ localSelectedProject.dueDate.toISOString().slice( 0, ISO_DATE_LENGTH ) }</p>
                         <p>{ localSelectedProject.category }</p>
                         <p>{ localSelectedProject.tags }</p>

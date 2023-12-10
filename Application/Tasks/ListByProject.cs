@@ -25,8 +25,19 @@ namespace Application.Tasks
 
             public async Task<List<ProjectTask>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var project = await _ctx.Projects.Find(p => p.Id == request.ProjectId).SingleOrDefaultAsync();
-                return project != null ? project.kanbanBoard.Tasks.ToList() : new List<ProjectTask>();
+                var filter = Builders<Project>.Filter.Eq(p => p.Id, request.ProjectId);
+                var project = await _ctx.Projects.Find(filter).FirstOrDefaultAsync();
+
+                if (project == null)
+                    throw new Exception("Project not found");
+
+                // Check if the Kanban Board's Tasks exist. If not, return an empty list.
+                if (project.kanbanBoard?.Tasks == null)
+                {
+                    return new List<ProjectTask>();
+                }
+
+                return project.kanbanBoard.Tasks.ToList();
             }
         }
     }

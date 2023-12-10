@@ -30,8 +30,8 @@ Examples of unacceptable behavior include:
 * The use of sexualized language or imagery, and sexual attention or
   advances of any kind
 * Trolling, insulting or derogatory comments, and personal or political attacks
-* Public or private harassment
-* Publishing others' private information, such as a physical or email
+* Public or harassment
+* Publishing others' information, such as a physical or email
   address, without their explicit permission
 * Other conduct which could reasonably be considered inappropriate in a
   professional setting
@@ -99,7 +99,7 @@ sustained inappropriate behavior.
 
 **Consequence**: A temporary ban from any sort of interaction or public
 communication with the community for a specified period of time. No public or
-private interaction with the people involved, including unsolicited interaction
+interaction with the people involved, including unsolicited interaction
 with those enforcing the Code of Conduct, is allowed during this period.
 Violating these terms may lead to a permanent ban.
 

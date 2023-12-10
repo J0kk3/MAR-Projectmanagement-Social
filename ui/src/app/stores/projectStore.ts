@@ -5,7 +5,6 @@ import ObjectID from "bson-objectid";
 import { Project, Task } from "../models/project";
 //API Agent
 import agent from "../api/agent";
-
 export default class ProjectStore
 {
     projectRegistry = new Map<ObjectID, Project>();
@@ -128,7 +127,7 @@ export default class ProjectStore
         this.loading = true;
         try
         {
-            await agent.Tasks.updateTaskStatus( task.id!.toString(), task.status );
+            await agent.Tasks.updateTaskStatus( task.id!, task.status );
             runInAction( () =>
             {
                 const project = this.projectRegistry.get( task.projectId );
@@ -152,11 +151,11 @@ export default class ProjectStore
         }
     };
 
-    editTask = async ( projectId: ObjectID, taskId: ObjectID, task: Task ) =>
+    editTask = async ( userId: ObjectID, projectId: ObjectID, taskId: ObjectID, task: Task ) =>
     {
         try
         {
-            const updatedTask = await agent.Tasks.editTask( projectId, taskId, task );
+            const updatedTask = await agent.Tasks.editTask( userId.toString(), projectId, taskId, task );
             runInAction( () =>
             {
                 this.taskRegistry.set( taskId, updatedTask );

@@ -10,7 +10,7 @@ namespace Persistence
         readonly IMongoDatabase _db;
         readonly IConfiguration Configuration;
 
-        public string connectionString { get; private set; }
+        public string connectionString { get; set; }
 
         public DataContext(IConfiguration config)
         {

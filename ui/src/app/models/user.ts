@@ -1,6 +1,8 @@
+import ObjectID from "bson-objectid";
+
 export interface User
 {
-    id: string;
+    id: ObjectID;
     userName: string;
     token: string;
     image?: string;

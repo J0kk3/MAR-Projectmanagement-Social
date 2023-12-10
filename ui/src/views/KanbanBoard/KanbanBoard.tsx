@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
-import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
+import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import { observer } from "mobx-react-lite";
 import ObjectID from "bson-objectid";
 //API Agent
@@ -8,23 +8,18 @@ import agent from "../../app/api/agent";
 //Stores
 import { useStore } from "../../app/stores/store";
 //Types & Models
-import { KanbanBoard as KanbanBoardModel, TaskStatus as ProjectTaskStatus, Task, TaskStatus } from "../../app/models/project";
-import { DroppableIdToTaskStatus, TaskStatusMap, TaskStatusToDroppableId } from "../../app/models/enumsMap";
+import { KanbanBoard as KanbanBoardModel, TaskStatus, Task } from "../../app/models/project";
+import { DroppableIdToTaskStatus, TaskStatusToDroppableId } from "../../app/models/enumsMap";
+import { ModalContent } from "../../app/models/taskEnums";
 //Components
-import TaskCreationForm from "./TaskCreationForm";
 import TaskEditForm from "./TaskEditForm";
 import Modal from "../../Components/Modal/Modal";
+import KanbanColumn from "./KanbanColumn/KanbanColumn";
+import TaskDetails from "./Task/TaskDetails";
 //Styles
 import "./KanbanBoard.scss";
 
-enum ModalContent
-{
-    TaskDetails,
-    TaskCreationForm,
-    EditTaskForm
-}
-
-const allTaskStatuses: ProjectTaskStatus[] = Object.keys( ProjectTaskStatus ) as ProjectTaskStatus[];
+const allTaskStatuses: TaskStatus[] = Object.keys( TaskStatus ) as TaskStatus[];
 
 const KanbanBoard = () =>
 {
@@ -47,21 +42,25 @@ const KanbanBoard = () =>
         return undefined;
     }, [ idString ] );
 
-    const { projectStore } = useStore();
-    const { loadKanbanBoard, updateTaskInKanbanBoard, loadTasks, lastEditedTask } = projectStore;
+    const { projectStore, userStore } = useStore();
+    const { loadKanbanBoard, updateTaskInKanbanBoard, loadTasks, lastEditedTask, createTaskInKanbanBoard } = projectStore;
+    const { user } = userStore;
 
     const [ projectName, setProjectName ] = useState( "" );
     const [ isLoading, setIsLoading ] = useState( false );
     const [ kanbanBoard, setKanbanBoard ] = useState<KanbanBoardModel | null>( null );
-    const [ showAddTaskForms, setShowAddTaskForms ] = useState<Record<ProjectTaskStatus, boolean>>(
+    const [ showAddTaskForms, setShowAddTaskForms ] = useState<Record<TaskStatus, boolean>>(
         {
-            [ ProjectTaskStatus.ToDo ]: false,
-            [ ProjectTaskStatus.InProgress ]: false,
-            [ ProjectTaskStatus.InReview ]: false,
-            [ ProjectTaskStatus.Done ]: false
+            [ TaskStatus.ToDo ]: true,
+            [ TaskStatus.InProgress ]: true,
+            [ TaskStatus.InReview ]: true,
+            [ TaskStatus.Done ]: true
         } );
     const [ allTasks, setAllTasks ] = useState<Task[]>( [] );
     const [ editTask, setEditTask ] = useState<Task>();
+    const [ dragDropKey, setDragDropKey ] = useState<number>( 0 );
+
+
 
     const TaskStatusStrings: { [ key in TaskStatus ]: string } =
     {
@@ -69,23 +68,6 @@ const KanbanBoard = () =>
         [ TaskStatus.InProgress ]: "In Progress",
         [ TaskStatus.InReview ]: "Review",
         [ TaskStatus.Done ]: "Done",
-    };
-
-    const handleTaskCreated = ( newTask: Task ) =>
-    {
-        if ( kanbanBoard && kanbanBoard.title )
-        {
-            setKanbanBoard( {
-                ...kanbanBoard,
-                tasks: [ ...kanbanBoard.tasks, newTask ],
-                title: kanbanBoard.title
-            } );
-            setAllTasks( [ ...allTasks, newTask ] );
-        }
-        else
-        {
-            // Handle the case where kanbanBoard or kanbanBoard.title is undefined
-        }
     };
 
     //#region  Modal
@@ -121,35 +103,49 @@ const KanbanBoard = () =>
             console.error( "KanbanBoard is null" );
             return;
         }
-        if ( updatedTask.projectId && updatedTask.id )
+        if ( updatedTask.projectId && updatedTask.id && user )
         {
             try
             {
                 // Update the task in the server and capture the response
-                const updatedTaskFromServer = await agent.Tasks.editTask( updatedTask.projectId, updatedTask.id, updatedTask );
+                const { id: userId } = user;
+                const updatedTaskFromServer = await agent.Tasks.editTask( userId.toString(), updatedTask.projectId, updatedTask.id, updatedTask );
+
+                console.log( "Updated task from server: ", updatedTaskFromServer );
 
                 // We update the task in the state based on the server response
                 const newTasks = [ ...allTasks ];
-                const taskIndex = newTasks.findIndex( task => task.id === updatedTaskFromServer.id ); // find index of updated task
+                // Find index of updated task
+                const taskIndex = newTasks.findIndex( task => task.id === updatedTaskFromServer.id );
 
                 if ( taskIndex !== -1 )
                 {
-                    newTasks[ taskIndex ] = updatedTaskFromServer; // replace old task with updated task
-                    setAllTasks( newTasks ); // set the new state
+                    // Replace old task with updated task
+                    newTasks[ taskIndex ] = updatedTaskFromServer;
+                    // Set the new state
+                    setAllTasks( newTasks );
                     reorganizeTasks();
 
                     // Update the kanbanBoard state as well
-                    const updatedKanbanBoardTasks = kanbanBoard.tasks.map( task =>
+                    const updatedKanbanBoardTasks = kanbanBoard.tasks.map( ( task ) =>
                         task.id === updatedTaskFromServer.id ? updatedTaskFromServer : task
                     );
                     const updatedKanbanBoardTitle = kanbanBoard.title;
-                    setAllTasks( newTasks.map( task => ( { ...task } ) ) ); // Create a new object for each task
 
-                    setKanbanBoard( {
-                        ...kanbanBoard,
-                        tasks: updatedKanbanBoardTasks.map( task => ( { ...task } ) ), // Create a new object for each task
-                        title: updatedKanbanBoardTitle
-                    } );
+                    console.log( "Updated Kanban board tasks: ", updatedKanbanBoardTasks );
+
+                    // Update the task in the local state
+                    const updatedTasks = allTasks.map( task =>
+                        task.id === updatedTask.id ? updatedTask : task
+                    );
+                    setAllTasks( updatedTasks );
+
+                    setKanbanBoard(
+                        {
+                            ...kanbanBoard,
+                            tasks: updatedKanbanBoardTasks.map( task => ( { ...task } ) ),
+                            title: updatedKanbanBoardTitle
+                        } );
 
                     // Update the selected task
                     setSelectedTask( updatedTaskFromServer );
@@ -168,18 +164,21 @@ const KanbanBoard = () =>
     {
         try
         {
-            if ( id && task.id )
+            if ( id && task.id && user )
             {
-                await agent.Tasks.deleteTask( id, task.id );
+                // await agent.Tasks.deleteTask( id, task.id );
+                const { id: userId } = user;
+                await agent.Tasks.deleteTask( userId.toString(), id, task.id );
 
                 // Update local state
                 setAllTasks( allTasks.filter( t => t.id !== task.id ) );
                 if ( kanbanBoard )
                 {
-                    setKanbanBoard( {
-                        ...kanbanBoard,
-                        tasks: kanbanBoard.tasks.filter( t => t.id !== task.id ),
-                    } );
+                    setKanbanBoard(
+                        {
+                            ...kanbanBoard,
+                            tasks: kanbanBoard.tasks.filter( t => t.id !== task.id ),
+                        } );
                 }
 
                 // Close the modal
@@ -211,10 +210,10 @@ const KanbanBoard = () =>
     {
         const loadBoardAndTasks = async () =>
         {
-            if ( id )
+            if (id && id.toString() !== "000000000000000000000000")
             {
                 setIsLoading( true );
-                const loadedBoard = await loadKanbanBoard( id! );
+                const loadedBoard = await loadKanbanBoard( id );
                 setKanbanBoard( loadedBoard );
 
                 if ( loadedBoard && loadedBoard.projectId )
@@ -223,7 +222,7 @@ const KanbanBoard = () =>
                     setProjectName( project.title );
                 }
 
-                const tasks = await loadTasks( id! );
+                const tasks = await loadTasks( id );
                 setAllTasks( tasks );
                 setIsLoading( false );
             }
@@ -240,6 +239,20 @@ const KanbanBoard = () =>
             setSelectedTask( lastEditedTask ?? null );
         }
     }, [ lastEditedTask ] );
+
+    useEffect( () =>
+    {
+        if ( selectedTask )
+        {
+            const updatedTask = allTasks.find( t => t.id === selectedTask.id );
+            if ( updatedTask )
+            {
+                setSelectedTask( updatedTask );
+            }
+        }
+    }, [ allTasks, selectedTask ] );
+
+
 
     if ( !kanbanBoard )
     {
@@ -259,14 +272,14 @@ const KanbanBoard = () =>
 
         if ( task )
         {
-            const newTask = { ...task, status: getTaskStatusFromDroppableIdString( destination.droppableId ) };
+            const newTask: Task = { ...task, status: getTaskStatusFromDroppableIdString( destination.droppableId ) };
 
             if ( newTask.id )
             {
                 try
                 {
                     await agent.Tasks.updateTaskStatus(
-                        newTask.id.toString(),
+                        newTask.id,
                         getTaskStatusFromDroppableIdString( destination.droppableId )
                     );
 
@@ -282,7 +295,7 @@ const KanbanBoard = () =>
                     updateTaskInKanbanBoard( newTask );
 
                     // Update allTasks
-                    const updatedAllTasks = allTasks.map( ( t ) =>
+                    const updatedAllTasks: Task[] = allTasks.map( ( t ) =>
                         t.id === newTask.id ? newTask : t
                     );
 
@@ -296,7 +309,9 @@ const KanbanBoard = () =>
         }
     };
 
-    const getTasksByStatus = ( status: ProjectTaskStatus ) =>
+
+
+    const getTasksByStatus = ( status: TaskStatus ) =>
     {
         return allTasks.filter( task => task.status ? task.status === status : false );
     };
@@ -319,25 +334,45 @@ const KanbanBoard = () =>
         return status;
     }
 
+    const handleTaskCreated = async ( newTask: Task ) =>
+    {
+        setAllTasks( [ ...allTasks, newTask ] );
+        setDragDropKey( prevKey => prevKey + 1 );
+        if ( id )
+        {
+            try
+            {
+                const updatedBoard = await loadKanbanBoard( id );
+                if ( updatedBoard )
+                {
+                    setKanbanBoard( updatedBoard );
+                    setAllTasks( updatedBoard.tasks );
+                }
+            }
+            catch ( error )
+            {
+                console.error( "Failed to reload Kanban board:", error );
+            }
+        }
+        else
+        {
+            console.error( "Kanban board ID is undefined." );
+        }
+    };
+
+    if ( !kanbanBoard )
+    {
+        return <div>Loading...</div>;
+    }
+
     return (
         <>
-            <Modal
-                show={ modalVisible }
-                closeModal={ () => closeModal() }
-            >
-                { modalContent === ModalContent.TaskDetails && selectedTask &&
-                    <>
-                        <h3>{ selectedTask.name }</h3>
-                        <p>Description: { selectedTask.description }</p>
-                        <p>Due date: { new Date( selectedTask?.dueDate ).toLocaleDateString() }</p>
-                        <p>People assigned: { selectedTask.peopleAssigned.join( ", " ) }</p>
-                        <p>Status: { selectedTask.status }</p>
-                        <button onClick={ () => handleDelete( selectedTask ) }>Delete Task</button>
-                        <button onClick={ () => handleEdit( selectedTask ) }>Edit Task</button>
-                    </>
-                }
+            <Modal show={ modalVisible } closeModal={ closeModal }>
+                { modalContent === ModalContent.TaskDetails && selectedTask && (
+                    <TaskDetails task={ selectedTask } handleDelete={ handleDelete } handleEdit={ handleEdit } />
+                ) }
 
-                { modalContent === ModalContent.EditTaskForm && selectedTask &&
+                { modalContent === ModalContent.EditTaskForm && selectedTask && (
                     <TaskEditForm
                         task={ selectedTask }
                         onEdit={ handleEditTask }
@@ -345,69 +380,32 @@ const KanbanBoard = () =>
                         editTask={ editTask }
                         setEditTask={ setEditTask }
                     />
-                }
+                ) }
             </Modal>
+
             <h1 className="project-title">{ projectName }</h1>
-            <DragDropContext onDragEnd={ onDragEnd }>
+            <DragDropContext onDragEnd={ onDragEnd } key={ dragDropKey }>
                 <div className="kanban-board">
-                    { allTaskStatuses.map( status =>
-                    {
-                        return (
-                            <Droppable key={ status } droppableId={ getTaskStatusFromDroppableId( status ) }>
-                                { ( provided, snapshot ) => (
-                                    <div
-                                        className={ `kanban-column ${ snapshot.isDraggingOver ? "dragging-over" : "" }` }
-                                        { ...provided.droppableProps }
-                                        ref={ provided.innerRef }
-                                    >
-                                        <h3>{ TaskStatusMap[ status ] }</h3>
-                                        <div className="task-list">
-                                            { getTasksByStatus( status ).map( ( task: Task, index: number ) => (
-                                                <Draggable key={ task.id?.toString() || "fallback" } draggableId={ task.id?.toString() || "fallback" } index={ index }>
-                                                    { ( provided, snapshot ) => (
-                                                        <div
-                                                            className={ `task ${ snapshot.isDragging ? "is-dragging" : "" }` }
-                                                            ref={ provided.innerRef }
-                                                            { ...provided.draggableProps }
-                                                        >
-                                                            <hr className="task-divider" />
-                                                            <div { ...provided.dragHandleProps }>
-                                                                <div onClick={ () => openModal( task, ModalContent.TaskDetails ) }>
-                                                                    { task.name }
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    ) }
-                                                </Draggable>
-                                            ) ) }
-                                            { provided.placeholder }
-                                        </div>
-                                        { !showAddTaskForms[ status ] &&
-                                            <button className="add-task-button" onClick={ () => setShowAddTaskForms( { ...showAddTaskForms, [ status ]: true } ) }>
-                                                Add Task
-                                            </button>
-                                        }
-                                        { showAddTaskForms[ status ] && (
-                                            <TaskCreationForm
-                                                showCancelButton={ true }
-                                                onCancel={ () => setShowAddTaskForms( { ...showAddTaskForms, [ status ]: false } ) }
-                                                status={ status }
-                                                setShowAddTaskForms={ setShowAddTaskForms }
-                                                showAddTaskForms={ showAddTaskForms }
-                                                setKanbanBoard={ setKanbanBoard }
-                                                kanbanBoard={ kanbanBoard }
-                                                setAllTasks={ setAllTasks }
-                                                allTasks={ allTasks }
-                                                onTaskCreated={ handleTaskCreated }
-                                            />
-                                        ) }
-                                    </div>
-                                ) }
-                            </Droppable>
-                        );
-                    } ) }
+                    { allTaskStatuses.map( ( status ) => (
+                        <KanbanColumn
+                            status={ status }
+                            getTasksByStatus={ getTasksByStatus }
+                            getTaskStatusFromDroppableId={ getTaskStatusFromDroppableId }
+                            showAddTaskForms={ showAddTaskForms }
+                            setShowAddTaskForms={ setShowAddTaskForms }
+                            kanbanBoard={ kanbanBoard }
+                            setKanbanBoard={ setKanbanBoard }
+                            allTasks={ allTasks }
+                            setAllTasks={ setAllTasks }
+                            openModal={ openModal }
+                            key={ status }
+                            setDragDropKey={ setDragDropKey }
+                            dragDropKey={ dragDropKey }
+                            onTaskCreated={ handleTaskCreated }
+                        />
+                    ) ) }
                 </div>
-            </DragDropContext >
+            </DragDropContext>
         </>
     );
 };

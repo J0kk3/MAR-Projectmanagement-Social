@@ -17,7 +17,8 @@ namespace Persistence
                     new AppUser
                     {
                         Id = ObjectId.GenerateNewId(),
-                        UserName  = "jocke",
+                        UserName  = "Jocke",
+                        UserNameLower = "jocke",
                         Email = "test@testsson.com",
                         Bio = "I'm a test user",
                     },
@@ -25,6 +26,7 @@ namespace Persistence
                     {
                         Id = ObjectId.GenerateNewId(),
                         UserName = "Sabed",
+                        UserNameLower = "sabed",
                         Email = "sabed@cowork.com",
                         Bio = "I'm a test user",
                     }
@@ -44,16 +46,20 @@ namespace Persistence
 
                 var projectId = ObjectId.GenerateNewId();
 
+                var jockeId = userManager.Users.First(u => u.UserNameLower == "jocke").Id;
+                var sabedId = userManager.Users.First(u => u.UserNameLower == "sabed").Id;
+
                 var tasks = new List<ProjectTask>
                 {
                     new ProjectTask
                     {
                         Id = ObjectId.GenerateNewId(),
                         ProjectId = projectId,
+                        OwnerId = jockeId,
                         Name = "ToDo Task 0",
                         Description = "ToDo Task 0 Description",
                         DueDate = DateTime.Now.AddMonths(1),
-                        PeopleAssigned = new List<string> { "Jocke", "Sabed" },
+                        PeopleAssigned = new List<ObjectId> { jockeId, sabedId },
                         Status = Domain.TaskStatus.ToDo,
                     }
                 };
@@ -75,8 +81,8 @@ namespace Persistence
                         Title = "Project 0",
                         Description = "Project 0 Description",
                         Priority = 3,
-                        Owner = "Jocke",
-                        Collaborators = new List<string> { "Sabed" },
+                        OwnerId = jockeId,
+                        CollaboratorIds = new List<ObjectId> { sabedId },
                         DueDate = DateTime.Now.AddMonths(7),
                         Category = "Project 0 Category",
                         Tags = new List<string> { "Project 0 Tag 1", "Project 0 Tag 2" },

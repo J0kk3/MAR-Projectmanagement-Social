@@ -4,6 +4,7 @@ using MongoDB.Bson;
 //Project Namespaces
 using Domain;
 using Application.Tasks;
+using Application.DTOs;
 
 namespace API.Controllers
 {
@@ -11,7 +12,7 @@ namespace API.Controllers
     {
         // Get all projects.
         [HttpGet]
-        public async Task<ActionResult<List<Project>>> GetProjects()
+        public async Task<ActionResult<List<ProjectDto>>> GetProjects()
         {
             return await Mediator.Send(new Application.Projects.List.Query());
         }
@@ -31,6 +32,7 @@ namespace API.Controllers
         }
 
         // Edit an existing project by its ObjectId.
+        [Authorize(Policy = "IsOwner")]
         [HttpPut("{id}")]
         public async Task<IActionResult> EditProject(ObjectId id, Project project)
         {
@@ -39,6 +41,7 @@ namespace API.Controllers
         }
 
         // Delete a specific project by its ObjectId.
+        [Authorize(Policy = "IsOwner")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProject(ObjectId id)
         {
@@ -74,9 +77,16 @@ namespace API.Controllers
 
         // Delete a specific task from a specific project, both by their ObjectId.
         [HttpDelete("{projectId}/tasks/{taskId}")]
-        public async Task<IActionResult> DeleteTask(ObjectId projectId, ObjectId taskId)
+        public async Task<IActionResult> DeleteTask(ObjectId projectId, ObjectId taskId, [FromQuery] string userId)
         {
-            return Ok(await Mediator.Send(new Application.Tasks.Delete.Command { ProjectId = projectId, TaskId = taskId }));
+            // Convert string userId to ObjectId
+            if (!ObjectId.TryParse(userId, out ObjectId objectUserId))
+            {
+                return BadRequest("Invalid user ID.");
+            }
+            // Pass objectUserId in the command
+            return Ok(await Mediator.Send(new Application.Tasks.Delete.Command
+            { ProjectId = projectId, TaskId = taskId, UserId = objectUserId }));
         }
 
         // Get all tasks across all projects.
@@ -102,16 +112,11 @@ namespace API.Controllers
 
         // Update the status of a specific task by its ObjectId.
         [HttpPut("tasks/{id}")]
-        public async Task<IActionResult> UpdateTaskStatus(string id, [FromBody] MoveTaskToNewStatus.Command command)
+        public async Task<IActionResult> UpdateTaskStatus(ObjectId id, [FromBody] MoveTaskToNewStatus.Command command)
         {
-            if (!ObjectId.TryParse(id, out ObjectId objectId))
-            {
-                return BadRequest("Invalid id format");
-            }
+            Console.WriteLine($"URL id: {id}, command.TaskId: {command.TaskId}");
 
-            Console.WriteLine($"URL id: {objectId}, command.TaskId: {command.TaskId}");
-
-            if (command.TaskId != objectId)
+            if (command.TaskId != id)
             {
                 return BadRequest("TaskId in the command does not match the id in the URL");
             }
@@ -123,10 +128,29 @@ namespace API.Controllers
 
         // Edit a specific task from a specific project, both by their ObjectId.
         [HttpPut("{projectId}/tasks/{taskId}/details")]
-        public async Task<IActionResult> EditTask(ObjectId projectId, ObjectId taskId, ProjectTask task)
+        public async Task<IActionResult> EditTask(ObjectId projectId, ObjectId taskId, ProjectTask task, [FromQuery] string userId)
         {
+            // Convert string userId to ObjectId
+            if (!ObjectId.TryParse(userId, out ObjectId objectUserId))
+            {
+                return BadRequest("Invalid user ID.");
+            }
+
             task.Id = taskId;
-            return Ok(await Mediator.Send(new Application.Tasks.Edit.Command { ProjectId = projectId, TaskId = taskId, Task = task }));
+            return Ok(await Mediator.Send(new Application.Tasks.Edit.Command
+            {
+                ProjectId = projectId,
+                TaskId = taskId,
+                Task = task,
+                UserId = objectUserId
+            }));
+        }
+
+        // Edit the people assigned to a specific task from a specific project, both by their ObjectId.
+        [HttpPost("{projectId}/tasks/{taskId}/peopleAssigned")]
+        public async Task<IActionResult> EditPeopleAssigned(ObjectId projectId, ObjectId taskId, [FromBody] List<ObjectId> peopleAssignedIds)
+        {
+            return Ok(await Mediator.Send(new Application.Tasks.UpdatePeopleAssigned.Command { ProjectId = projectId, TaskId = taskId, PeopleAssignedIds = peopleAssignedIds }));
         }
     }
 }

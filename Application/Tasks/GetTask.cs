@@ -15,7 +15,7 @@ public class GetTask
 
     public class Handler : IRequestHandler<Query, ProjectTask>
     {
-        private readonly DataContext _ctx;
+        readonly DataContext _ctx;
 
         public Handler(DataContext ctx)
         {

@@ -1,5 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import ObjectID from "bson-objectid";
+//Models & Types
+import { Profile } from "./profile";
 
 export enum Visibility
 {
@@ -27,8 +29,8 @@ export interface Project
     title: string;
     description: string;
     priority: number;
-    owner: string;
-    collaborators: string[];
+    owner: Profile;
+    collaborators: Profile[];
     dueDate: Date;
     category: string;
     tags: string[];
@@ -49,9 +51,10 @@ export interface Task
 {
     id?: ObjectID;
     projectId: ObjectID;
+    ownerId: ObjectID | null;
     name: string;
     description: string;
     dueDate: Date;
-    peopleAssigned: string[];
+    peopleAssigned: ObjectID[];
     status: TaskStatus;
 }
