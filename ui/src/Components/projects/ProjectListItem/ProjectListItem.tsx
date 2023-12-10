@@ -41,16 +41,19 @@ const ProjectListItem = ( { project, onSelectProject }: Props ) =>
 
     const ISO_DATE_LENGTH = 10; //YYYY-MM-DD is 10 characters long
 
-    // const handleInputChange = ( event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement> ) =>
-    // {
-    //     setEditedProject( { ...editedProject, [ event.target.name ]: event.target.value } );
-    // };
     const handleInputChange = ( event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement> ) =>
     {
-        // Exclude 'owner' from being updated directly
-        if ( event.target.name !== "owner" )
+        const { name, value } = event.target;
+
+        if ( name === "tags" )
         {
-            setEditedProject( { ...editedProject, [ event.target.name ]: event.target.value } );
+            // Split the tags by comma and trim each tag
+            const tagsArray = value.split( "," ).map( tag => tag.trim() );
+            setEditedProject( { ...editedProject, tags: tagsArray } );
+        }
+        else if ( name !== "owner" )
+        {
+            setEditedProject( { ...editedProject, [ name ]: value } );
         }
     };
 
@@ -66,7 +69,13 @@ const ProjectListItem = ( { project, onSelectProject }: Props ) =>
         e.stopPropagation();
         if ( editMode && editProjectId === project.id )
         {
-            updateProject( editedProject );
+            // Extract and preserve only the ownerId
+            const updatedProject =
+            {
+                ...editedProject,
+                ownerId: editedProject.owner.id
+            };
+            updateProject( updatedProject );
         }
         else
         {
