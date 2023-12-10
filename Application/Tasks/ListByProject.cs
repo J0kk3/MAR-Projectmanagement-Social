@@ -31,8 +31,11 @@ namespace Application.Tasks
                 if (project == null)
                     throw new Exception("Project not found");
 
-                if (project.kanbanBoard == null)
-                    throw new Exception("Project does not contain a Kanban Board");
+                // Check if the Kanban Board's Tasks exist. If not, return an empty list.
+                if (project.kanbanBoard?.Tasks == null)
+                {
+                    return new List<ProjectTask>();
+                }
 
                 return project.kanbanBoard.Tasks.ToList();
             }
