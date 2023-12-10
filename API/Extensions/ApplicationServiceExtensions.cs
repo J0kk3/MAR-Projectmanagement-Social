@@ -7,6 +7,7 @@ using Persistence;
 using Domain;
 using Application.Interfaces;
 using Infrastructure.Security;
+using System.Net.NetworkInformation;
 
 namespace API.Extensions
 {
@@ -32,7 +33,10 @@ namespace API.Extensions
                 });
             });
 
-            services.AddMediatR(typeof(List.Handler));
+            services.AddMediatR(cfg =>
+            {
+                cfg.RegisterServicesFromAssembly(typeof(List.Handler).Assembly);
+            });
             //Locate all the mapping profiles in the Application project
             services.AddAutoMapper(typeof(MappingProfiles).Assembly);
             services.AddHttpContextAccessor();

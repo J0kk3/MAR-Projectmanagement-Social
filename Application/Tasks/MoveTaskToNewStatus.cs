@@ -46,7 +46,7 @@ namespace Application.Tasks
                 _httpContextAccessor = httpContextAccessor;
             }
 
-            public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
+            public async Task Handle(Command request, CancellationToken cancellationToken)
             {
                 // Fetch the project containing the task
                 var projectFilter = Builders<Project>.Filter.ElemMatch(p => p.kanbanBoard.Tasks, t => t.Id == request.TaskId);
@@ -76,8 +76,6 @@ namespace Application.Tasks
 
                 // Update the project in the database
                 await _ctx.Projects.ReplaceOneAsync(projectFilter, project, cancellationToken: cancellationToken);
-
-                return Unit.Value;
             }
         }
     }

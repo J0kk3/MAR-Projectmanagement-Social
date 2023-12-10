@@ -1,4 +1,5 @@
 import ObjectID from "bson-objectid";
+import { Team } from "./team";
 
 export interface User
 {
@@ -6,6 +7,7 @@ export interface User
     userName: string;
     token: string;
     image?: string;
+    teams?: Team[];
 }
 
 export interface UserFormValues

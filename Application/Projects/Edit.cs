@@ -24,7 +24,7 @@ namespace Application.Projects
                 _ctx = ctx;
             }
 
-            public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
+            public async Task Handle(Command request, CancellationToken cancellationToken)
             {
                 var filter = Builders<Project>.Filter.Eq(p => p.Id, request.Project.Id);
                 var project = await _ctx.Projects.Find(filter).FirstOrDefaultAsync();
@@ -32,8 +32,6 @@ namespace Application.Projects
                 _mapper.Map(request.Project, project);
 
                 await _ctx.Projects.ReplaceOneAsync(filter, project);
-
-                return Unit.Value;
             }
         }
     }

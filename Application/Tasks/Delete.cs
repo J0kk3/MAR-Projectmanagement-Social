@@ -24,7 +24,7 @@ namespace Application.Tasks
                 _ctx = ctx;
             }
 
-            public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
+            public async Task Handle(Command request, CancellationToken cancellationToken)
             {
                 var project = await _ctx.Projects.Find(p => p.Id == request.ProjectId).SingleOrDefaultAsync();
 
@@ -46,8 +46,6 @@ namespace Application.Tasks
                         await _ctx.Projects.ReplaceOneAsync(filter, project);
                     }
                 }
-
-                return Unit.Value;
             }
         }
     }

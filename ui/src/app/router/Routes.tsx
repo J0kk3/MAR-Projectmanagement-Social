@@ -11,6 +11,7 @@ import Search from "../../views/Search/Search";
 import Profile from "../../views/Profile/Profile";
 import CreateProjectForm from "../../Components/projects/ProjectForm/CreateProjectForm";
 import KanbanBoard from "../../views/KanbanBoard/KanbanBoard";
+import TeamOverview from "../../views/TeamOverview/TeamOverview";
 
 export const routes: RouteObject[] =
     [
@@ -28,6 +29,7 @@ export const routes: RouteObject[] =
                                 { path: "projects", element: <ProjectOverview /> },
                                 { path: "kanbanboard/:id", element: <KanbanBoard /> },
                                 { path: "create-project", element: <CreateProjectForm /> },
+                                { path: "teams", element: <TeamOverview /> },
                                 { path: "search", element: <Search /> },
                                 { path: "profile", element: <Profile /> },
                             ]

@@ -24,6 +24,7 @@ const NavBar = () =>
                     <li><NavLink to="/dashboard">Dashboard</NavLink></li>
                     <li><NavLink to="/profile">Profile</NavLink></li>
                     <li><NavLink to="/projects">Projects Overview</NavLink></li>
+                    <li><NavLink to="/teams">Team Overview</NavLink></li>
                     <li><NavLink to="/search">Search</NavLink></li>
                     <li><button onClick={ logout }>Logout</button></li>
                 </ul>

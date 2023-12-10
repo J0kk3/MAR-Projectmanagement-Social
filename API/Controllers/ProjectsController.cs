@@ -37,7 +37,8 @@ namespace API.Controllers
         public async Task<IActionResult> EditProject(ObjectId id, Project project)
         {
             project.Id = id;
-            return Ok(await Mediator.Send(new Application.Projects.Edit.Command { Project = project }));
+            await Mediator.Send(new Application.Projects.Edit.Command { Project = project });
+            return NoContent();
         }
 
         // Delete a specific project by its ObjectId.
@@ -45,7 +46,8 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProject(ObjectId id)
         {
-            return Ok(await Mediator.Send(new Application.Projects.Delete.Command { Id = id }));
+            await Mediator.Send(new Application.Projects.Delete.Command { Id = id });
+            return NoContent();
         }
 
         // Get the Kanban board of a specific project by its ObjectId.
@@ -85,8 +87,9 @@ namespace API.Controllers
                 return BadRequest("Invalid user ID.");
             }
             // Pass objectUserId in the command
-            return Ok(await Mediator.Send(new Application.Tasks.Delete.Command
-            { ProjectId = projectId, TaskId = taskId, UserId = objectUserId }));
+            await Mediator.Send(new Application.Tasks.Delete.Command
+            { ProjectId = projectId, TaskId = taskId, UserId = objectUserId });
+            return NoContent();
         }
 
         // Get all tasks across all projects.

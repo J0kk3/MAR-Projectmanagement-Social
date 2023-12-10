@@ -22,12 +22,10 @@ namespace Application.Projects
                 _ctx = ctx;
             }
 
-            public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
+            public async Task Handle(Command request, CancellationToken cancellationToken)
             {
                 var filter = Builders<Project>.Filter.Eq(p => p.Id, request.Id);
                 await _ctx.Projects.DeleteOneAsync(filter);
-
-                return Unit.Value;
             }
         }
     }
